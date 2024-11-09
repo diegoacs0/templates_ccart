@@ -1,0 +1,192 @@
+<div>
+  <div class="block md:hidden container mx-auto px-4">
+    <div id="navbar" class="py-4 flex items-center justify-between gap-4 text-sky-950 whitespace-nowrap">
+      <button id="nav-drawer-button" class="border rounded-md w-8 h-8 dark:border-neutral-800 dark:text-neutral-300">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <a
+        href="<%= cc.dist_url %>/cart"
+        class="ms-2 py-1 px-3 rounded bg-slate-100 text-sky-950 font-semibold cart-summary dark:bg-neutral-800 dark:text-neutral-300"
+      >
+        <i class="fa-solid fa-basket-shopping"></i>
+        <%= cc.cart.total_quantity ? 
+        `${cc.cart.total_quantity} ite${cc.cart.total_quantity > 1 ? 'ns' : 'm'} por ${cc.cart.total_price_display}` : 
+        'Carrinho vazio' %>
+      </a>
+    </div>
+
+    <div id="nav-drawer" class="hidden fixed h-[100vh] bg-white z-20 w-[100vw] left-0 top-0 overflow-y-auto p-4 dark:bg-[#121212] dark:text-neutral-300">
+      <button id="nav-drawer-close" class="absolute right-0 px-4">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <ul class="space-y-1">
+        <li class="mb-4 font-medium">Categorias (<%= cc.categories.length %>)</li>
+
+        <% cc.categories.forEach((category, index) => { %>
+          <% const has_subcategories = category.sub_categories.length > 0 %>
+          <li data-type="category">
+            <% if (has_subcategories) { %>
+              <button
+                class="flex items-center gap-1 font-medium <%= cc.current_page === `category/${category.slug}` && 'text-brand-contrast' %>"
+                onclick="handleMobileSubcategory(event)"
+              >
+                <%= category.name %>
+
+                <% if (category.sub_categories.length > 0) { %>
+                  <i class="fa-solid fa-chevron-down text-xs"></i>
+                <% } %>
+              </button>
+
+              <ul data-open="false" class="hidden data-[open=true]:block bg-neutral-800 rounded mt-2">
+                <% category.sub_categories.forEach((sub_category) => { %>
+                  <li>
+                    <a 
+                      class="py-1.5 px-2.5 flex text-sm font-semibold <%= cc.current_page === `category/${sub_category.slug}` && 'text-brand-contrast' %>" 
+                      href="<%= cc.dist_url + '/category/' + sub_category.slug %>"
+                    >
+                      <%= sub_category.name %>
+                    </a>
+                  </li>
+                <% }) %>
+              </ul>
+            <% } else { %>
+              <a
+                href="<%= cc.dist_url %>/category/<%= category.slug %>"
+                class="font-medium <%= cc.current_page === `category/${category.slug}` && 'text-brand-contrast' %>"
+              >
+                <%= category.name %>
+              </a>
+            <% } %>
+          </li>
+        <% }) %>
+      </ul>
+    </div>
+  </div>
+
+
+  <div class="relative">
+    <% const background = cc.theme.background ? `url(${cc.theme.background})` : cc.theme.primary_color %>
+
+    <div class="h-56 bg-[<%= background %>] bg-cover bg-center bg-no-repeat">
+      <div class="absolute top-0 h-full w-full flex justify-center items-center">
+        <div class="flex flex-wrap container mx-auto px-28 items-center justify-between">
+          <div class="w-[286.483px]"></div>
+
+          <a href="<%= cc.dist_url %>/" class="<%= cc.theme.logo_position === 'START' 
+            ? '-order-1' : cc.theme.logo_position === 'END' ? 
+            'order-1' : '' %> transition hover:scale-110">
+            <% if (cc.theme.logo) { %>
+              <img
+                class="w-44"
+                src="<%= cc.theme.logo %>"
+              />
+            <% } else { %>
+              <h1 class="text-white font-extrabold text-4xl me-auto"><%= cc.store.name %></h1>
+            <% } %>
+          </a>
+
+          <div class="whitespace-nowrap hidden md:block <%= cc.theme.logo_position === 'END' ? '-order-1' : '' %>">
+            <button 
+              class="rounded w-[35px] h-[35px] min-h-full bg-slate-100 items-center 
+                justify-center text-sky-950 dark:bg-neutral-800 dark:text-neutral-300" 
+              onclick="toggleTheme()"
+            >
+              <i class="fa-solid fa-moon"></i>
+            </button>
+
+            <% if (cc.theme.socials.discord) { %>
+              <a
+                href="<%= cc.theme.socials.discord %>"
+                target="_blank"
+                class="py-2 px-3 rounded bg-slate-100 text-sky-950 font-semibold dark:bg-neutral-800 dark:text-neutral-300"
+              >
+                <i class="fa-solid fa-life-ring me-1"></i>
+                Suporte
+              </a>
+            <% } %>
+
+            <a
+              href="<%= cc.dist_url %>/cart"
+              class="ms-2 py-2 px-3 rounded bg-slate-100 text-sky-950 font-semibold cart-summary dark:bg-neutral-800 dark:text-neutral-300"
+            >
+              <i class="fa-solid fa-basket-shopping"></i>
+              <%= cc.cart.total_quantity ? 
+              `${cc.cart.total_quantity} ite${cc.cart.total_quantity > 1 ? 'ns' : 'm'} por ${cc.cart.total_price_display}` : 
+              'Carrinho vazio' %>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="border-b border-b-gray-200 dark:border-b-neutral-800 dark:bg-neutral-900">
+    <div class="container mx-auto px-28">
+      <ul id="navbar" class="py-4 hidden md:flex items-center gap-4 text-sky-950 whitespace-nowrap dark:text-neutral-300">
+        <li>
+          <a
+            href="<%= cc.dist_url %>/"
+            class="font-medium <%= cc.current_page === 'index' && 'text-brand-contrast' %>"
+          >
+            <i class="fa-solid fa-house-chimney me-1"></i>
+            Página Inicial
+          </a>
+        </li>
+
+        <div class="h-[20px] border-r border-r-gray-200"></div>
+
+        <ul class="overflow-x-auto w-full flex items-center gap-4 px-1" style="scrollbar-width: thin">
+          <% cc.categories.forEach((category, index) => { %>
+          <% const has_subcategories = category.sub_categories.length > 0 %>
+          <li data-type="category" class="group">
+
+            <% if (has_subcategories) { %>
+              <button
+                class="flex items-center gap-1 font-medium <%= cc.current_page === `category/${category.slug}` && 'text-brand-contrast' %>"
+              >
+                <%= category.name %>
+
+                <% if (category.sub_categories.length > 0) { %>
+                  <i class="fa-solid fa-chevron-down text-xs"></i>
+                <% } %>
+              </button>
+
+              <ul class="categories_dropdown absolute min-w-[160px] bg-white py-2 transition-all delay-200 mt-4 border shadow-sm rounded-b-md
+                opacity-0 invisible z-50 hover:opacity-100 hover:visible group-hover:opacity-100 group-hover:visible dark:bg-neutral-900 dark:border-neutral-800"
+              >
+                <% category.sub_categories.forEach((sub_category) => { %>
+                  <li>
+                    <a 
+                      class="py-1.5 px-2 flex text-sm font-semibold hover:bg-slate-100 hover:dark:bg-neutral-800
+                      <%= cc.current_page === `category/${sub_category.slug}` && 'text-brand-contrast' %>" 
+                      href="<%= cc.dist_url + '/category/' + sub_category.slug %>"
+                    >
+                      <%= sub_category.name %>
+                    </a>
+                  </li>
+                <% }) %>
+              </ul>
+            <% } else { %>
+              <a
+                href="<%= !has_subcategories ? cc.dist_url + '/category/' + category.slug : '#'  %>"
+                class="flex items-center gap-1 font-medium <%= cc.current_page === `category/${category.slug}` && 'text-brand-contrast' %>"
+              >
+                <%= category.name %>
+
+                <% if (category.sub_categories.length > 0) { %>
+                  <i class="fa-solid fa-chevron-down text-xs"></i>
+                <% } %>
+              </a>
+            <% } %>
+          </li>
+          <% }) %>
+        </ul>
+
+        <li class="ms-auto">
+          <a class="font-medium <%= cc.current_page === 'blog' && 'text-brand-contrast' %>" href="<%= cc.dist_url %>/blog">Blog</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

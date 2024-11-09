@@ -1,0 +1,66 @@
+<div>
+  <div class="p-4 flex justify-between">
+    <h1 class="font-bold text-lg flex items-center gap-2 text-sky-950 dark:text-neutral-400">Detalhes do pacote 
+      <span class="text-xs bg-brand-contrast/10 text-brand-contrast px-1.5 py-1 rounded">
+        <%= cc.category.name %>
+      </span>
+    </h1>
+
+    <button class="bg-slate-100 rounded-lg w-8 h-8 dark:bg-neutral-800 dark:text-neutral-300" onclick="closeModal()">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
+  <div class="p-4 flex items-start gap-4">
+    <% if (cc.package.image) { %>
+      <img src="<%= cc.package.image %>" class="rounded-md max-w-[196px] object-contain hidden md:block">
+    <% } %>
+
+    <div>
+      <h3 class="text-sky-950 font-extrabold text-2xl uppercase <%= cc.package.image ? 'mt-2' : 'mt-0' %> dark:text-neutral-300">
+        <%= cc.package.name %>
+      </h3>
+    
+      <div class="mt-1">
+        <p class="text-sm text-gray-500 dark:text-neutral-500">por apenas</p>
+        <h6 class="text-brand font-extrabold text-2xl"><%= cc.package.price_display %></h6>
+      </div>
+
+      <div class="CentralDraft mt-4">
+        <% if (cc.package.description) { %>
+          <%~ cc.package.description %>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-4 flex gap-2">
+    <button class="max-w-fit
+      ms-auto 
+      px-4 
+      py-2 
+      rounded-md 
+      flex-1 
+      text-sky-950 
+      font-semibold 
+      hover:bg-slate-100 
+      transition-colors 
+      duration-150 hover:dark:bg-neutral-800 dark:text-neutral-300" 
+      onclick="closeModal()">
+      Fechar
+    </button>
+
+    <% const has_stock = cc.package.inventory_amount === null || cc.package.inventory_amount > 0 %>
+    <% const current_cart_item = cc.cart?.packages.find((package) => package.meta.id === cc.package.id) %>
+    <% const has_variables = cc.package.variables.length %>
+    <button 
+      id="<%= cc.package.id %>"
+      data-func="<%= !has_stock ? 'none' : current_cart_item ? 'goto-cart' : has_variables ? 'open-selector' : 'add-to-cart' %>" 
+      data-slug="<%= cc.package.slug %>"
+      class="max-w-fit px-4 py-2 rounded-md flex-1 text-white font-semibold <%= !has_stock ? 'bg-red-500' : 'bg-[#29e66e]' %>"
+      >
+        <i class="fa-solid fa-basket-shopping me-2"></i>
+        <%= !has_stock ? 'Sem estoque' : current_cart_item ? 'Ver carrinho' : 'Comprar' %>
+    </button>
+  </div>
+</div>

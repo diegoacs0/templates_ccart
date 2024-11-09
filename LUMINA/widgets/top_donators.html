@@ -1,0 +1,53 @@
+<div class="
+  w-full flex items-center h-40	max-md:py-5
+  rounded-xl max-md:flex-col max-md:h-full bg-gradient-to-b 
+  md:bg-gradient-to-r from-muted to-brand/80 from-30%
+  ">
+
+  <div class="
+    flex flex-col justify-center pl-6 h-full w-full rounded-xl
+    max-md:w-full max-md:text-center max-md:px-5 max-md:from-transparent
+    ">
+    <h2 class="text-2xl text-white font-medium max-md:text-2xl">
+      Doadores do mês
+    </h2>
+    <p class="text-base font-medium text-muted-foreground mt-1 max-md:text-base">
+      Veja quem mais contribuiu com o nosso servidor!
+    </p>
+    <% const widget = cc.widgets.find((widget) => widget.type === 'CONNECTION_BOARD') %>
+    <button id="copy-ip" onclick="handleCopyIpToClipboard(`<%= widget?.data.address ?? '' %>`)" 
+      class="mt-4 text-base text-white font-medium max-w-72 backdrop-blur-sm bg-white/5 hover:bg-white/0 transition
+      py-1.5 rounded w-full max-md:mx-auto max-md:text-sm border border-brand">
+      <span id="copy-ip">
+        Acesse o servidor
+      </span>
+    </button>
+  </div>
+
+  <div class="flex justify-end gap-6 items-center w-full max-w-3xl pr-6 max-md:mt-10 max-md:p-0 max-md:justify-center">
+    <% if (cc.widget.top_donators.length) { %>
+      <% cc.widget.top_donators.filter((_,index) => index < 3).forEach((donator, index) => { %>
+        <div class="relative flex flex-col items-center gap-2 mt-[<%= index * 12 %>px]">
+          <div class="
+            h-[22px] px-2 rounded-sm bg-black/40 text-brand font-semibold flex 
+            justify-center items-center text-sm border border-brand whitespace-nowrap
+            ">
+            <%= index + 1 %>º - <%= donator.username %>
+          </div>
+
+          <% if (cc.store.type === 'MINECRAFT') { %>
+            <img class="rounded-sm" src="https://mc-heads.net/avatar/<%= donator.username %>/40.png" />
+          <% } else { %>
+            <div class="h-10 w-10 rounded border border-brand/50 flex justify-center items-center">
+              <img src="<%= cc.cdn_url %>/public/assets/images/medal-<%= index + 1%>.png" width="20" />
+            </div>
+          <% } %>
+
+          <% if (cc.widget.data.show_amount) { %>
+            <p class="font-medium text-sm"><%= donator.spent %></p>
+          <% } %>
+      </div>
+      <% }) %>
+    <% } %>
+  </div>
+</div>

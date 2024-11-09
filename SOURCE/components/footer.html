@@ -1,0 +1,90 @@
+<footer class="mt-8">
+  <div class="bg-slate-100 dark:bg-neutral-900">
+    <div class="container mx-auto px-4 md:px-28 py-12 flex flex-wrap justify-between items-center">
+      <div>
+        <h2 class="font-bold text-3xl text-sky-950 dark:text-neutral-400"><%= cc.store.name %></h2>
+        <% if (cc.store.type !== 'STANDALONE') { %>
+          <p class="text-gray-500 dark:text-neutral-500"><%= cc.store.name %> não possuí filiação alguma com <%= cc.store.type === 'MINECRAFT' ? 'Mojang Studios' : 'Rockstar Games' %>.</p>
+        <% } %>  
+      </div>
+  
+      <div class="flex gap-2 items-center text-lg text-white mt-4 lg:mt-0">
+        <% if (cc.theme.socials.discord) { %>
+          <a class="rounded-full w-12 h-12 flex justify-center items-center bg-brand-contrast" href="<%= cc.theme.socials.discord %>" target="_blank">
+            <i class="fa-brands fa-discord"></i>
+          </a>
+        <% } %>
+
+        <% if (cc.theme.socials.facebook) { %>
+          <a class="rounded-full w-12 h-12 flex justify-center items-center bg-brand-contrast" href="<%= cc.theme.socials.facebook %>" target="_blank">
+            <i class="fa-brands fa-facebook-f"></i>
+          </a>
+        <% } %>
+
+        <% if (cc.theme.socials.instagram) { %>
+            <a class="rounded-full w-12 h-12 flex justify-center items-center bg-brand-contrast" href="<%= cc.theme.socials.instagram %>" target="_blank">
+              <i class="fa-brands fa-instagram"></i>
+            </a>
+        <% } %>
+
+        <% if (cc.theme.socials.twitter) { %>
+            <a class="rounded-full w-12 h-12 flex justify-center items-center bg-brand-contrast" href="<%= cc.theme.socials.twitter %>" target="_blank">
+              <i class="fa-brands fa-twitter"></i>
+            </a>
+        <% } %>
+
+        <% if (cc.theme.socials.tiktok) { %>
+            <a class="rounded-full w-12 h-12 flex justify-center items-center bg-brand-contrast" href="<%= cc.theme.socials.tiktok %>" target="_blank">
+              <i class="fa-brands fa-tiktok"></i>
+            </a>
+        <% } %>
+
+        <% if (cc.theme.socials.youtube) { %>
+          <a class="rounded-full w-12 h-12 flex justify-center items-center bg-brand-contrast" href="<%= cc.theme.socials.youtube %>" target="_blank">
+            <i class="fa-brands fa-youtube"></i>
+          </a>
+        <% } %>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-slate-200 font-semibold text-sky-950 dark:bg-neutral-800 dark:text-neutral-500">
+    <div class="container mx-auto px-4 md:px-28 py-8 flex flex-wrap justify-between items-center gap-4">
+      <p>Copyright © <%= new Date().getFullYear() %> - <%= cc.store.name %>.</p>
+
+      <div class="inline-flex gap-4">
+        <button onclick="showTerms()">Política de Privacidade</button>
+        <button onclick="showTerms()">Termos</button>
+      </div>
+
+      <a href="https://centralcart.com.br" target="_blank">
+        <img width="32" src="<%= cc.cdn_url %>/public/centralcart-icon.png">
+      </a>
+    </div>
+  </div>
+</footer>
+
+<div id="terms-modal" class="hidden">
+  <div class="rounded">
+    <div class="flex items-center justify-between border-b border-b-gray-200 p-4 dark:border-b-neutral-800">
+      <h1 class="font-bold text-lg">Leia os termos</h1>
+
+      <button class="bg-slate-100 rounded-lg w-8 h-8 dark:bg-neutral-800 dark:text-neutral-300" onclick="closeModal()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+  
+    <div class="border-b border-b-gray-200 p-4 dark:border-b-neutral-800">
+      <% if (cc.theme.terms_content) { %>
+        <div class="CentralDraft">
+          <%~ cc.theme.terms_content %>
+        </div>
+      <% } %>
+    </div>
+  
+    <div class="flex p-4">
+      <button class="ms-auto py-2 px-3 rounded bg-brand text-white font-semibold" onclick="closeModal()">Fechar</button>
+    </div>
+  </div>
+</div>

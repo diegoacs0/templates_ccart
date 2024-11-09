@@ -1,0 +1,313 @@
+<% layout("@layouts/layout") %>
+
+<div class="bg-zinc-100 border-b border-b-zinc-200 dark:bg-zinc-900 dark:border-b-neutral-800">
+  <div class="container mx-auto px-4 md:px-28 py-6">
+    <h1 class="text-2xl font-extrabold text-sky-950 dark:text-neutral-400">Carrinho</h1>
+    <p class="text-gray-500 dark:text-gray-500">Confira ou finalize a compra dos pacotes!</p>
+  </div>
+</div>
+
+<div class="mt-8 container mx-auto px-4 md:px-28 grid grid-cols-1 lg:grid-cols-[206px_1fr] xl:grid-cols-[306px_1fr] gap-6">
+  <div class="h-fit">
+    <a class="flex items-center gap-2" href="<%= cc.dist_url %>">
+      <div class="flex items-center justify-center w-8 h-8 bg-slate-100 text-sky-950 rounded dark:bg-neutral-800 dark:text-neutral-300">
+        <i class="fa-solid fa-arrow-left"></i>
+      </div>
+      <p class="font-semibold text-sky-950 dark:text-neutral-400">Continuar comprando</p>
+    </a>
+
+    <% const highlight = cc.widgets.find((widget) => widget.type === 'PRODUCT_HIGHLIGHT') %>
+    <% if (highlight && highlight.package) { %>
+      <div class="mt-8">
+        <i class="fa-solid fa-ranking-star text-sky-950 dark:text-neutral-400"></i>
+        <h3 class="text-sky-950 font-bold inline-flex dark:text-neutral-400">Leve também:</h3>
+        
+        <div class="mt-2">
+          <%~ include('@components/package', {package: highlight.package, ...cc}) %>
+        </div>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="rounded-md shadow-sm overflow-hidden border h-fit dark:border-neutral-800">
+    <div class="flex items-center justify-between p-4 bg-slate-200 dark:bg-neutral-900">
+      <h1 class="text-lg font-bold text-sky-950 dark:text-neutral-400">
+        Checkout
+      </h1>
+
+      <h2 id="cart-total-price" class="font-bold text-sky-950 cart-price dark:text-neutral-400"><%= cc.cart.total_price_display %></h2>
+    </div>
+
+    <div class="p-4">
+      <div>
+        <table class="w-full">
+          <thead>
+            <tr class="text-gray-500 dark:text-neutral-500">
+              <th class="p-2 text-start font-normal text-sm border-b dark:border-b-neutral-800">Pacote</th>
+              <th class="p-2 text-start font-normal text-sm border-b dark:border-b-neutral-800"></th>
+              <th class="p-2 text-start font-normal text-sm border-b dark:border-b-neutral-800">Preço</th>
+              <th class="p-2 text-start font-normal text-sm border-b dark:border-b-neutral-800">Quantidade</th>
+              <th class="p-2 text-start font-normaltext-sm border-b dark:border-b-neutral-800"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (cc.cart.packages.length) { %>
+              <% cc.cart.packages.forEach((package, index) => { %>
+                <tr class="odd:bg-slate-50 group/tr dark:odd:bg-neutral-900 dark:text-neutral-400">
+                  <td class="p-2 border-b group-last/tr:border-none dark:border-neutral-800"><%= package.meta.name %></td>
+                  <td class="p-2 border-b group-last/tr:border-none dark:border-neutral-800">
+                    <% if (package.meta.variables.length) { %>
+                      <button 
+                      id="<%= package.meta.id %>"
+                      data-func="open-selector" 
+                      data-slug="<%= package.meta.slug %>"
+                      data-ignore
+                      class="text-sky-950 text-sm hover:underline dark:text-white"
+                      >
+                        Ver opções
+                      </button>  
+                    <% } %>
+                  </td>
+                  <td class="p-2 border-b font-semibold text-sky-950 group-last/tr:border-none dark:text-neutral-400 dark:border-neutral-800"><%= package.meta.price_display %></td>
+                  <td class="p-2 border-b group-last/tr:border-none dark:border-neutral-800">
+                    <div class="flex gap-2 items-center">
+                      <button
+                      data-cart-action="decrease"
+                      data-package-id="<%= package.meta.id %>"
+                      class="<%= package.meta.type === 'SINGLE' ? 'hidden' : '' %>
+                      px-3 py-0.5 rounded-3xl bg-slate-200 text-sm text-sky-950 
+                      border-b-2 border-b-slate-300 focus:border-b-0 dark:bg-neutral-800 dark:border-b-neutral-700 dark:text-neutral-500"
+                      >
+                        <i class="fa-solid fa-minus"></i>
+                      </button>
+
+                      <input 
+                        data-cart-action="input" 
+                        data-package-id="<%= package.meta.id %>" 
+                        class="w-10 py-0.5 border bg-slate-200 rounded-full text-center font-semibold text-sm disabled:opacity-50 text-sky-950" 
+                        value="<%= package.quantity %>" 
+                        autocomplete="off" 
+                        <%= package.meta.type === 'SINGLE' ? 'readonly' : '' %>
+                      />
+
+                      <button 
+                        data-cart-action="increase"
+                        data-package-id="<%= package.meta.id %>" 
+                        class="<%= package.meta.type === 'SINGLE' ? 'hidden' : '' %>
+                        px-3 py-0.5 rounded-3xl bg-slate-200 text-sm text-sky-950 
+                        border-b-2 border-b-slate-300 focus:border-b-0 dark:bg-neutral-800 dark:border-b-neutral-700 dark:text-neutral-500"
+                      >
+                        <i class="fa-solid fa-plus"></i>
+                      </button>
+                    </div>
+                  </td>
+
+                  <td class="p-2 border-b group-last/tr:border-none dark:border-neutral-800">
+                    <button
+                      data-cart-action="remove" 
+                      data-package-id="<%= package.meta.id %>" 
+                      class="px-3 py-0.5 rounded-3xl bg-slate-200 text-sm text-sky-950 
+                      border-b-2 border-b-slate-300 focus:border-b-0 dark:bg-neutral-800 dark:border-b-neutral-700 dark:text-neutral-500"
+                    >
+                      <i class="fa-solid fa-xmark"></i>
+                    </button>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr class="table-row">
+                <td colspan="4" class="text-center p-8 text-sm font-semibold">
+                  <div class="block">
+                    <p class="mb-4">Nenhum pacote no carrinho :(</p>
+                  
+                    <a
+                      href="<%= cc.dist_url %>/"
+                      class="py-2 px-3 rounded bg-slate-100 text-sky-950 font-semibold dark:bg-neutral-800 dark:text-neutral-300"
+                    >
+                    <i class="fa-solid fa-basket-shopping"></i>
+                    Continuar comprando
+                  </a>
+                  </div>
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table> 
+
+        <div class="mt-12">
+          <h6 class="font-semibold border-b text-sky-950 pb-1 dark:text-neutral-500 dark:border-b-neutral-800">Resgatar cupom de desconto</h6>
+
+          <form class="flex mt-4" onsubmit="(function (event) {event.preventDefault()})(event)">
+            <% const discount = cc.cart.discount %>
+            <input 
+              class="px-2 
+                py-1 border
+              bg-slate-50
+                rounded-full
+                rounded-r-none
+                text-sm 
+                text-sky-950 focus-visible:outline-none
+                disabled:opacity-50 dark:placeholder-neutral-600"
+              placeholder="Digite o código" 
+              value="<%= discount?.coupon || '' %>"
+              autocomplete="off"
+            />
+            <button 
+              data-coupon-action="<%= discount ? 'remove' : 'apply' %>" 
+              class="px-4 rounded-r-full font-semibold text-sm text-white <%= discount ? 'bg-red-500' : 'bg-brand' %> disabled:opacity-50"
+              type="submit"
+            >
+              <%= discount ? 'Remover' : 'Resgatar' %>
+            </button>
+          </form>
+        </div>
+
+        <div class="mt-12">
+          <h6 class="font-semibold border-b text-sky-950 pb-1 dark:text-neutral-500 dark:border-b-neutral-800">Método de pagamento</h6>
+
+          <div class="mt-4 text-sky-950 font-medium flex flex-col gap-2 dark:text-neutral-400">
+            <% cc.gateways.forEach((gateway, index) => { %>
+              <label for="<%= gateway.gateway %>" class="flex items-center"> 
+                <input 
+                  type="radio" 
+                  id="<%= gateway.gateway %>" 
+                  name="payment_gateway" 
+                  value="<%= gateway.gateway %>" 
+                  data-require-document="<%= gateway.require_document %>"
+                >
+
+                <img src="<%= cc.cdn_url + `/public/gateway-icons/icon-${gateway.gateway.toLowerCase()}.svg` %>" class="ms-2 w-6">
+                <span class="ms-1"><%= gateway.display %></span>
+              </label>
+            <% }) %>
+          </div>
+        </div>
+
+        <form id="checkout-form">
+          <div class="mt-12">
+            <h6 class="font-semibold border-b text-sky-950 pb-1 dark:text-neutral-500 dark:border-b-neutral-800">Detalhes da cobrança</h6>
+
+            <div class="mt-4 text-gray-500 dark:text-neutral-500">
+              <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                <% if (cc.cart.require_discord) { %>
+                  <div>
+                    <label class="text-sm">Vincule o Discord</label>
+                    <input id="discord" name="discord" type="hidden">
+                    <button type="button" class="py-1 px-4 w-full 
+                      bg-[#5865f2] h-[30px] rounded-full text-white 
+                      text-sm font-semibold flex items-center 
+                      justify-center discord-button"
+                    >
+                      <i class="fa-brands fa-discord me-1"></i>
+                      Entrar com o Discord
+                    </button>
+                  </div>
+                <% } %>
+              </div>
+
+              <% if (cc.checkout_variables.length) { %>
+                <div id="checkout_variables" class="mt-2 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                  <% cc.checkout_variables.map((variable) => { %>
+                    <div>
+                      <label for="<%= variable.name %>" class="text-sm"><%= variable.description %></label>
+            
+                      <% if (variable.type === 'NUMBER') { %>
+                        <div class="flex">
+                          <span class="px-4 border border-r-0 bg-slate-50 rounded-full rounded-r-none text-sky-950 font-semibold flex items-center dark:bg-neutral-900 dark:text-neutral-500 dark:border-neutral-800">#</span>
+                          <input id="<%= variable.name %>" class="px-2 py-1 border bg-slate-50 rounded-full rounded-l-none text-sm text-sky-950 w-full font-medium number-only" />
+                        </div>
+                      <% } else { %>
+                        <input id="<%= variable.name %>" class="px-2 py-1 border bg-slate-50 rounded-full text-sm text-sky-950 w-full font-medium" />
+                      <% } %>
+                    </div>
+                  <% }) %>
+                </div>
+              <% } %>
+
+              <div class="mt-2 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-2">
+                <div>
+                  <label for="name" class="text-sm">Nome completo</label>
+                  <input id="name" name="name" type="text" class="px-2 py-1 border bg-slate-50 rounded-full text-sm text-sky-950 w-full font-medium" />
+                </div>
+
+                <div>
+                  <label for="email" class="text-sm">Email</label>
+                  <input id="email" name="email" type="email" class="px-2 py-1 border bg-slate-50 rounded-full text-sm text-sky-950 w-full font-medium" />
+                </div>
+
+                <div class="<%= cc.store.require_document ? 'block' : 'hidden' %>" <%= cc.store.require_document ? 'data-required' : '' %>>
+                  <label for="cpf" class="text-sm">CPF</label>
+                  <input id="cpf" name="cpf" type="text" class="px-2 py-1 border bg-slate-50 rounded-full text-sm text-sky-950 w-full font-medium" />
+                </div>
+
+                <div class="<%= cc.store.require_phone ? 'block' : 'hidden' %>">
+                  <label for="tel" class="text-sm">Telefone</label>
+                  <input id="tel" name="tel" type="text" class="px-2 py-1 border bg-slate-50 rounded-full text-sm text-sky-950 w-full font-medium" />
+                  <span class="text-xs">+Cód. país + (DDD) + nº. Exemplo: +55 (15) 99264-7447</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-12">
+            <h6 class="font-semibold border-b text-sky-950 pb-1 dark:text-neutral-500 dark:border-neutral-800">Finalização</h6>
+
+            <div class="mt-4 flex flex-wrap gap-2 items-center justify-between">
+              <div>
+                <input id="terms" name="terms" type="checkbox" />
+                <label for="terms" class="text-sm text-gray-500 dark:text-neutral-500">
+                  Eu aceito os 
+                  <b class="cursor-pointer text-sky-950 dark:text-neutral-300" onclick="(function (e) {e.preventDefault(); showTerms()})(event)">
+                    termos e condições
+                  </b> 
+                  desta compra.
+                </label>
+              </div>
+
+              <button id="checkout-button" type="submit" class="float-right py-2 px-6 rounded bg-brand text-white 
+                font-semibold group disabled:opacity-50 whitespace-nowrap"
+              >
+                Comprar
+                <i class="fa-solid fa-angle-right text-sm transition group-hover:translate-x-1"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="pix-modal">
+  <div class="p-4 flex justify-between">
+    <h1 class="font-bold text-lg flex items-center gap-2 text-sky-950">Concluir pagamento</h1>
+
+    <button class="bg-slate-100 rounded-lg w-8 h-8" onclick="closeModal()">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
+  <div class="p-4 flex flex-col items-center">
+    <h1 class="text-sky-950 font-bold text-xl">Escaneie o código QR abaixo:</h1>
+    
+    <img id="qr-content" width="300" height="300" src="data:image/jpeg;base64,placeholder">
+    
+    <h3 class="text-sky-950 font-semibold">ou use o código copia e cola</h3>
+
+    <div class="p-4 flex gap-2 items-center mt-2">
+      <input id="qr-copy-code" readonly value="" class="border rounded px-2 py-1 w-full h-10 select-all" />
+
+      <button id="copy-pix" class="px-4 py-2 bg-slate-100 rounded-md text-sky-950 font-semibold whitespace-nowrap">
+        <i class="fa-solid fa-copy"></i>
+        Copiar
+      </button>
+    </div>
+  </div>
+
+  <div class="p-4 flex">
+    <a id="return-to" href="<%= cc.dist_url %>" class="ms-auto max-w-fit px-4 py-2 bg-brand rounded-md flex-1 text-white font-semibold">
+      <i class="fa-solid fa-basket-shopping me-2"></i>
+      Pronto!
+    </a>
+  </div>
+</div>

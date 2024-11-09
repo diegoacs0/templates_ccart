@@ -1,0 +1,103 @@
+<footer class="mx-auto w-full max-w-[1216px] flex flex-col mt-12 gap-8 px-3">
+  <div
+    class="flex justify-between items-center gap-5 border-b pb-10 max-md:flex-col max-md:items-start">
+    <div class="flex flex-col gap-2 max-w-sm">
+      <div class="relative flex gap-2 items-center">
+        <% if (cc.theme.logo) { %>
+          <img src="<%= cc.theme.logo %>" class="w-10" alt="Logo">
+        <% } %>
+        <h2 class="text-white font-semibold text-2xl max-md:text-xl"><%= cc.store.name %></h2>
+      </div>
+      <p class="text-sm text-muted-foreground max-md:mt-3 font-medium leading-6">
+        Se você acredita em nosso objetivo de proporcionar uma melhor experiência de jogo e deseja fazer parte dessa 
+        jornada conosco, considere fazer uma doação hoje. Juntos, podemos continuar construindo e fortalecendo esta comunidade incrível.
+      </p>
+    </div>
+
+    <div class="flex gap-11 max-md:mt-4">
+
+      <div class="text-sm">
+        <h2 class="text-white font-medium">Acessar</h2>
+        <ul class="flex flex-col gap-2 mt-4">
+          <li><a href="<%= cc.dist_url %>/" class="text-muted-foreground hover:underline hover:text-brand">Inicio</a></li>
+          <li><a href="<%= cc.dist_url %>/cart" class="text-muted-foreground hover:underline hover:text-brand">Carrinho</a></li>
+          <li><a href="<%= cc.dist_url %>/blog" class="text-muted-foreground hover:underline hover:text-brand">Blog</a></li>
+          <li><button class="text-muted-foreground hover:underline hover:text-brand" onclick="showTerms()">Termos</button></li>
+        </ul>
+      </div>
+
+      <%
+        let show_social = cc.theme.socials.discord 
+        || cc.theme.socials.tiktok 
+        || cc.theme.socials.instagram 
+        || cc.theme.socials.youtube 
+        || cc.theme.socials.facebook
+        || cc.theme.socials.twitter 
+      %>
+
+      <div class="text-sm <%= !show_social ? 'hidden' : '' %>">
+        <h2 class="text-white font-medium">Redes Sociais</h2>
+        <ul class="flex flex-col gap-2 mt-4">
+          <% if (cc.theme.socials.discord) { %>
+            <li><a href="<%= cc.theme.socials.discord %>" class="text-muted-foreground hover:underline hover:text-brand">Discord</a></li>
+          <% } %>
+          
+          <% if (cc.theme.socials.tiktok) { %>
+            <li><a href="<%= cc.theme.socials.tiktok %>" class="text-muted-foreground hover:underline hover:text-brand">TikTok</a></li>
+          <% } %>
+
+          <% if (cc.theme.socials.instagram) { %>
+            <li><a href="<%= cc.theme.socials.instagram %>" class="text-muted-foreground hover:underline hover:text-brand">Instagram</a></li>
+          <% } %>
+
+          <% if (cc.theme.socials.youtube) { %>
+            <li><a href="<%= cc.theme.socials.youtube %>" class="text-muted-foreground hover:underline hover:text-brand">YouTube</a></li>
+          <% } %>
+
+          <% if (cc.theme.socials.facebook) { %>
+            <li><a href="<%= cc.theme.socials.facebook %>" class="text-muted-foreground hover:underline hover:text-brand">Facebook</a></li>
+          <% } %>
+
+          <% if (cc.theme.socials.twitter) { %>
+            <li><a href="<%= cc.theme.socials.twitter %>" class="text-muted-foreground hover:underline hover:text-brand">Twitter</a></li>
+          <% } %>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-between gap-2 pb-8 max-md:flex-col">
+    <p class="text-sm max-md:mt-5 text-muted-foreground text-center font-medium">
+      Todos os direitos reservados - <%= cc.store.name %> © <%= new Date().getFullYear() %>
+    </p>
+
+    <a href="https://centralcart.com.br" target="_blank">
+      <img src="https://cdn.centralcart.com.br/public/centralcart-icon.png" class="w-8" />
+    </a>
+  </div>
+</footer>
+
+<div id="terms-modal" class="hidden">
+  <div class="flex items-center justify-between border-b border-b-muted p-6">
+    <h1 class="font-bold text-lg text-white">Confira os termos</h1>
+
+    <button class="bg-red-500 hover:bg-red-500/80 transition rounded-full w-6 h-6 flex items-center justify-center" onclick="closeModal()">
+      <i class="fa-solid fa-xmark text-muted"></i>
+    </button>
+  </div>
+
+  <div class="border-b border-b-muted p-4 bg-background/60">
+    <% if (cc.theme.terms_content) { %>
+      <div class="CentralDraft">
+        <%~ cc.theme.terms_content %>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="flex p-6">
+    <button class="ms-auto h-10 px-4 flex items-center justify-center rounded bg-brand 
+      hover:bg-brand/80 transition text-white font-medium tracking-wider" onclick="closeModal()">
+      Fechar
+    </button>
+  </div>
+</div>

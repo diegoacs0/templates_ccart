@@ -1,0 +1,55 @@
+<div class="relative bg-muted w-full max-w-[280px] max-lg:max-w-full 
+  rounded-xl bg-[url('<%= cc.cdn_url %>/public/assets/templates/LUMINA/product-backdground.png')] 
+  bg-cover bg-no-repeat bg-center object-cover h-auto hover:ring-2 ring-brand transition">
+  <div class="flex flex-col items-center p-6 h-full gap-4 rounded-xl <%= cc.highlighted ? 'bg-gradient-to-b from-transparent to-brand/60' : '' %>">
+    <% if (cc.highlighted) { %>
+      <span
+        class="absolute top-0 left-0 bg-white z-50 m-2.5 px-2 text-xs py-1 rounded text-center text-brand font-semibold">
+        EM DESTAQUE
+      </span>
+    <% } %>
+
+    <div class="w-full flex justify-center items-center mb-auto">
+      <div class="w-full flex justify-center items-start">
+        <% if (cc.package.image) { %>
+          <img class="max-h-full mx-auto rounded" src="<%= cc.package.image %>" />
+        <% } else { %>
+          <img src="<%= cc.cdn_url %>/public/no-picture.png" class="w-32 h-32" />
+        <% } %>
+      </div>
+    </div>
+
+    <h2 class="font-semibold text-[23px] text-white"><%= cc.package.name %></h2>
+    <div class="flex flex-col items-center text-white leading-8">
+      <span class="text-white text-opacity-50 text-base">
+        por
+      </span>
+      <span class="text-2xl font-semibold text-white">
+        <%= cc.package.price_display %>
+      </span>
+    </div>
+    
+    <div class="mt-5 w-full transition rounded-b-xl flex items-center justify-center text-white">
+      <button class="h-14 w-[55px] rounded-l-lg flex items-center transition
+        justify-center hover:shadow-center <%= cc.highlighted ? 'bg-white/30 hover:bg-white/35' : 'bg-brand brightness-110 hover:brightness-125' %>"
+        onclick="showPackage(`<%= cc.package.slug %>`)"  
+      >
+        <i class="fa-solid fa-circle-question text-xl text-black/60"></i>
+      </button>
+
+      <% const current_cart_item = cc.cart.packages.find((package) => package.meta.id === cc.package.id) %>
+      <% const has_variables = cc.package.variables.length %>
+      <% const has_stock = cc.package.inventory_amount === null || cc.package.inventory_amount > 0 %>
+      <button class="h-14 flex items-center justify-center gap-2 font-medium text-lg w-[175px] whitespace-nowrap rounded-r-lg disabled:cursor-not-allowed
+        transition hover:shadow-center <%= cc.highlighted ? 'bg-white/20 hover:bg-white/30' : 'bg-brand hover:brightness-110' %>"
+        id="<%= cc.package.id %>"
+        data-func="<%= current_cart_item ? 'goto-cart' : has_variables ? 'select-options' : 'add-to-cart' %>" 
+        data-slug="<%= cc.package.slug %>"
+        <%= !has_stock ? 'disabled' : '' %>
+      >
+        <i class="fa-solid fa-cart-plus text-base text-white/60"></i>
+        <%= !has_stock ? 'Sem estoque' : current_cart_item ? 'Ver carrinho' : 'Comprar' %>
+      </button>
+    </div>
+  </div>
+</div>

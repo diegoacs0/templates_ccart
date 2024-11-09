@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="index,nofollow"/>
+    <meta property="twitter:image" content="<%= cc.theme.logo %>"/>
+    <meta property="twitter:card" content="summary"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:locale" content="pt_BR"/>
+    <meta property="og:title" content="<%= cc.page_title %>"/>
+    <meta property="og:site_name" content="<%= cc.store.name %>"/>
+    <meta property="og:description" content="<%= cc.theme.description %>"/>
+    <meta property="og:image" content="<%= cc.theme.logo %>"/>
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="627"/>
+    <meta name="description" content="<%= cc.theme.description %>"/>
+    <meta name="keywords" content="<%= cc.theme.keywords %>"/>
+
+    <link 
+      rel="icon" 
+      type="image/x-icon" 
+      href="<%= cc.theme.favicon || cc.cdn_url + '/public/36x36.png' %>"
+    />
+
+    <title><%= cc.page_title %></title>
+
+    <script
+      src="https://code.jquery.com/jquery-3.6.4.js"
+      integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E="
+      crossorigin="anonymous"
+    ></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link 
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Orbitron:wght@900&family=Poppins:wght@400;500;600;700&family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" 
+      rel="stylesheet" 
+    />
+
+    <link 
+      rel="stylesheet" 
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" 
+      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" 
+      crossorigin="anonymous" 
+    />
+
+    <link rel="stylesheet" href="<%= cc.cdn_url %>/public/assets/css/centraldraft.css" />
+    <link rel="stylesheet" href="<%= cc.cdn_url %>/public/assets/fontawesome/all.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+    <link rel="stylesheet" href="<%= cc.dist_url %>/assets/core.css" />
+  </head>
+
+  <body>
+    <div id="package-modal-container" class="modal fade">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+        </div>
+      </div>
+    </div>
+
+    <%~ include('@components/header', cc) %>
+
+    <!-- Main content -->
+    <div id="store" class="cc__index___grid container">
+      <div class="cc__index___sidebar">
+        <div class="cc__index___sidebar__navigation">
+          <ul>
+            <li class="<%= cc.current_page === 'index' && 'active' %>">
+              <a href="<%= cc.dist_url %>/">
+                <i class="fa-solid fa-house"></i>
+                INÍCIO
+              </a>
+            </li>
+      
+            <% cc.categories.forEach((category) => { %>
+              <% if (category.sub_categories.length > 0) { %>
+                <li>
+                  <button href="<%= cc.dist_url %>/category/<%= category.slug %>" onclick="openSubcategoryMenu(this)">
+                    <i class="fa-solid fa-bars"></i>
+                    <%= category.name %>
+                    <i class="fa-solid fa-caret-right"></i>
+                  </button>
+
+                  <div class="cc__subcategories___list__wrapper">
+                    <ul class="cc__subcategories___list">
+                      <% category.sub_categories.forEach((sub_category) => { %>
+                        <li class="<%= cc.current_page === 'category/' + sub_category.slug && 'active' %>">
+                          <a href="<%= cc.dist_url %>/category/<%= sub_category.slug %>">
+                            <%= sub_category.name %>
+                          </a>
+                        </li>
+                      <% }) %>
+                    </ul>
+                  </div>
+                </li>
+              <% } else { %>
+                <li class="<%= cc.current_page === 'category/' + category.slug && 'active' %>">
+                  <a href="<%= cc.dist_url %>/category/<%= category.slug %>">
+                    <i class="fa-solid fa-bars"></i>
+                    <%= category.name %>
+                    <i class="fa-solid fa-caret-right"></i>
+                  </a>
+                </li>
+              <% } %>
+            <% }) %>
+          </ul>
+        </div>
+    
+        <div class="cc__index___widgets">
+          <% cc.widgets.forEach((widget) => { %>
+            
+            <% if (widget.type === 'DISCORD') { %>
+              <%~ include('@widgets/discord', {widget}) %>
+            <% } %>
+
+
+            <% if (widget.type === 'CONNECTION_BOARD') { %>
+              <%~ include('@widgets/connection_board', {...cc, widget}) %>
+            <% } %>
+
+            <% if (widget.type === 'MONTH_GOAL') { %>
+              <%~ include('@widgets/month_goal', {...cc, widget}) %>
+            <% } %>
+
+            <% if (widget.type === 'TOP_DONATORS') { %>
+              <%~ include('@widgets/top_donators', {...cc, widget}) %>
+            <% } %>
+
+            <% if (widget.type === 'PRODUCT_HIGHLIGHT' && widget.package !== null) { %>
+              <%~ include('@widgets/product_highlight', {...cc, widget}) %>
+            <% } %>
+            
+          <% }) %>
+        </div>
+      </div>
+
+      <div class="cc__index___content">
+        <div class="cc__index___content__panel">
+          <%~ cc.body %>
+        </div>
+      </div>
+    </div>
+    <!-- Main content -->
+
+    <!-- Footer -->
+    <%~ include('@components/footer', cc) %>
+    <!-- Footer -->
+  </body>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+
+  <script type="text/javascript">
+    const dist_url = '<%= cc.dist_url %>'
+  </script>
+  <script src="<%= cc.cdn_url %>/public/assets/js/CentralCart.js?v=<%= Math.floor(Date.now() / 60_000) %>" type="module"></script>
+  <script src="<%= cc.dist_url %>/assets/scripts.js"></script>
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+</html>

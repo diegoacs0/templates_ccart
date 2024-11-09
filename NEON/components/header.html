@@ -1,0 +1,134 @@
+<header>
+  <nav>
+    <div class="container">
+      <ul>
+        <li>
+          <div class="cc__nav_links">
+            <a class="animate <%= cc.current_page === 'index' && 'active' %>" href="<%= cc.dist_url %>/"><i class="fa-solid fa-house"></i> INÍCIO</a>
+
+            <% if (cc.theme.socials.discord !== null) { %> <a class="animate" href="<%= cc.theme.socials.discord %>"><i class="fa-brands fa-discord"></i></a> <% } %>
+            <% if (cc.theme.socials.twitter !== null) { %> <a class="animate" href="<%= cc.theme.socials.twitter %>"><i class="fa-brands fa-twitter"></i></a> <% } %>
+            <% if (cc.theme.socials.instagram !== null) { %> <a class="animate" href="<%= cc.theme.socials.instagram %>"><i class="fa-brands fa-instagram"></i></a> <% } %>
+            <% if (cc.theme.socials.youtube !== null) { %> <a class="animate" href="<%= cc.theme.socials.youtube %>"><i class="fa-brands fa-youtube"></i></a> <% } %>
+            <% if (cc.theme.socials.facebook !== null) { %> <a class="animate" href="<%= cc.theme.socials.facebook %>"><i class="fa-brands fa-facebook"></i></a> <% } %>
+            <% if (cc.theme.socials.tiktok !== null) { %> <a class="animate" href="<%= cc.theme.socials.tiktok %>"><i class="fa-brands fa-tiktok"></i></a> <% } %>
+          </div>
+
+          <div class="cc__nav_buttons">
+            <a href="#store" class="cc__header___store_btn">LOJA</a>
+
+            <a
+              href="<%= cc.dist_url %>/cart"
+              class="animate <%= cc.current_page === 'cart' ? 'active' : ''%>"
+            >
+              <i class="fa-solid fa-cart-shopping"></i>
+              CARRINHO
+            </a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="cc__header___hero container" style="<%= cc.theme.background && '--bg-img: url(' + cc.theme.background + ')'%>">
+    <div class="cc__header___hero__wrapper">
+      <div class="cc__header___hero__widget <%= cc.store.type === 'STANDALONE' ? 'invisible' : '' %>">
+        <i class="fa-solid fa-fire-flame-curved"></i>
+        <% const widget = cc.widgets.find((widget) => widget.type === 'CONNECTION_BOARD') %>
+        <% if (['FIVEM', 'REDM'].includes(cc.store.type)) { %>
+          <a href="<%= widget && widget?.data ? cc.store.type.toLowerCase() + '://connect/' + widget?.data.address : '#' %>" data-ip="<%= widget?.data.address ?? '' %>"> 
+            <h1>CONECTE-SE JÁ!</h1>
+            <p>
+              <% if (widget?.data.address) { %>
+                <span>
+                  <span class="online-players" data-ip="<%= widget?.data.address ?? '' %>">...</span> online •
+                </span>
+              <% } %>
+              
+              Clique para jogar
+            </p>
+          </a>
+        <% } else { %>
+          <button style="background: none; text-align: start;" data-ip="<%= widget?.data.address ?? '' %>" onclick="copyIp(this)">
+            <h1>CONECTE-SE JÁ!</h1>
+            <p>
+              <% if (widget?.data.address) { %>
+                <span>
+                  <span class="online-players" data-ip="<%= widget?.data.address ?? '' %>">...</span> online •
+                </span>
+              <% } %>
+    
+              Clique para jogar
+            </p>
+          </button>
+        <% } %>
+      </div>
+      
+
+      <div
+        class="cc__header___hero__logo 
+        <%= cc.theme.logo_position === 'START' ? 
+        'left' : cc.theme.logo_position === 'END' ? 
+        'right' : ''%>"
+      >
+        <a href="<%= cc.dist_url %>/">
+          <% if (cc.theme.logo) { %>
+            <img src="<%= cc.theme.logo %>" />
+          <% } else { %>
+            <h1><%= cc.store.name %></h1>
+          <% } %>
+        </a>
+      </div>
+
+      <div class="cc__header___hero__widget <%= cc.store.type === 'STANDALONE' ? 'invisible' : '' %>">
+        
+        <% if (cc.theme.socials.discord) { %>
+          <a href="<%= cc.theme.socials.discord %>">
+        <% } else { %>
+          <a>
+        <% } %>
+          <h1>ENTRAR NO DISCORD</h1>
+          <p>Participe da comunidade</p>
+        </a>
+
+        <i class="fa-brands fa-discord right"></i>
+      </div>
+    </div>
+  </div>
+</header>
+
+<% if (widget?.data.address) { %>
+  <% if (cc.store.type === 'MINECRAFT') { %>
+    <script>
+      $(() => {
+      const online_players_label = $('.online-players')
+      const ip = online_players_label.attr('data-ip')
+
+      $.get('https://mcapi.us/server/status?ip=' + ip)
+        .then((res) => {
+          online_players_label.text(res.players.now)
+        })
+        .catch(() => online_players_label.text(0))
+      })
+    </script>
+  <% } %>
+
+  <% if (['FIVEM', 'REDM'].includes(cc.store.type)) { %>
+    <script>
+      $(() => {
+        const online_players_label = $('.online-players')
+        const ip = online_players_label.attr('data-ip')
+
+        const cfx_id = ip.split('cfx.re/join/')[1]
+
+        if (!cfx_id || cfx_id.length < 6) return
+
+        $.get('https://players.centralcart.workers.dev/' + cfx_id)
+          .then((res) => {
+            online_players_label.text(res)
+          })
+          .catch(() => online_players_label.text(0))
+      })
+    </script>
+  <% } %>
+<% } %>

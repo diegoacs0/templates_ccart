@@ -1,0 +1,29 @@
+<div class="bg-muted rounded-xl max-lg:flex-grow h-full">
+  <img src="<%= cc.post.image %>"
+    class="w-full rounded-xl rounded-b-none object-cover max-h-40" alt="Post image"
+    onerror="this.src = '<%= cc.cdn_url + `/public/assets/templates/LUMINA/no-image.png` %>'">
+
+  <div class="px-3.5 flex flex-col items-start h-[calc(100%-160px)] pb-4">
+    <div class="flex justify-center items-center gap-3 mt-4">
+      <span class="text-white font-normal text-sm">
+        Postagem
+      </span>
+      <div class="w-[14px] h-[1px] bg-muted-foreground"></div>
+      <p class="px-1 text-sm bg-brand-contrast/10 text-brand-contrast rounded"><%= cc.post.published_at %></p>
+    </div>
+
+    <h3 class="text-white font-medium mt-4">
+      <%= cc.post.title %>
+    </h3>
+
+    <p class="text-sm mt-4 text-muted-foreground">
+      <%= cc.post?.excerpt %>
+    </p>
+
+    <div class="mt-auto w-full">
+      <a href="<%= cc.post?.path %>" class="w-full flex justify-center items-center mt-4 bg-brand-contrast hover:bg-brand-contrast/80 transition text-white font-medium py-1 rounded">
+        Ler mais
+      </a>
+    </div>
+  </div>
+</div>

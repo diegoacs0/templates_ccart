@@ -1,0 +1,47 @@
+<div class="flex flex-col gap-8">
+  <% if (!cc.widgets.length) { %>
+    <div class="rounded-md border dark:border-neutral-700 overflow-hidden">
+      <div class="bg-slate-100 p-4 border-b dark:bg-neutral-800 dark:border-neutral-700">
+        <p class="text-sky-950 dark:text-neutral-400">Barra lateral</p>
+      </div>
+
+      <div class="p-4">
+        <p class="text-gray-600 dark:text-neutral-500">Configure os itens da barra lateral acessando o menu <b>Widgets</b> no painel de controle!</p>
+      </div>
+    </div>
+
+    <div class="rounded-md border dark:border-neutral-700 overflow-hidden">
+      <div class="bg-slate-100 p-4 border-b dark:bg-neutral-800 dark:border-neutral-700">
+        <p class="text-sky-950 dark:text-neutral-400">Produto em destaque</p>
+      </div>
+
+      <div class="p-4">
+        <p class="text-gray-600 dark:text-neutral-500">Defina um pacote para ficar em destaque e aumentar a conversão da sua loja.</p>
+      </div>
+    </div>
+  <% } else { %>
+    <% cc.widgets.forEach((widget) => { %>
+
+      <% if (widget.type === 'DISCORD') { %>
+        <div><%~ include('@widgets/discord', {widget}) %></div>
+      <% } %> 
+
+      <% if (widget.type === 'CONNECTION_BOARD') { %>
+        <div><%~ include('@widgets/connect', {widget, ...cc}) %></div>
+      <% } %> 
+
+      <% if (widget.type === 'PRODUCT_HIGHLIGHT' && widget.package !== null) { %>
+        <div><%~ include('@widgets/package_hl', {widget, ...cc}) %></div>
+      <% } %> 
+
+      <% if (widget.type === 'MONTH_GOAL' && widget.package !== null) { %>
+        <div><%~ include('@widgets/month_goal', {widget}) %></div>
+      <% } %> 
+
+      <% if (widget.type === 'TOP_DONATORS' && widget.package !== null) { %>
+        <div><%~ include('@widgets/top_donators', {widget, ...cc}) %></div>
+      <% } %>
+
+    <% }) %>
+  <% } %>
+</div>

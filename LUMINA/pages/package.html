@@ -1,0 +1,41 @@
+<div>
+  <div class="flex items-center justify-between p-6">
+    <div class="flex gap-1.5 items-center">
+      <img src="<%= cc.cdn_url %>/public/assets/templates/LUMINA/currency.png" alt="Coin">
+      <h1 class="font-bold text-lg text-white"><%= cc.package.name %></h1>
+    </div>
+
+    <button class="bg-red-500 hover:bg-red-500/80 transition rounded-full w-6 h-6 flex items-center justify-center" onclick="closeModal()">
+      <i class="fa-solid fa-xmark text-muted"></i>
+    </button>
+  </div>
+
+  <div class="p-4 bg-background/60">
+    <% if (cc.package.description) { %>
+      <div class="CentralDraft">
+        <%~ cc.package.description %>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="flex p-6">
+    <div>
+      <p class="font-medium text-sm text-muted-foreground italic">pague:</p>
+      <h3 class="text-xl font-bold font-montserrat text-brand leading-none"><%= cc.package.price_display %></h3>
+    </div>
+
+    <% const current_cart_item = cc.cart.packages.find((package) => package.meta.id === cc.package.id) %>
+    <% const has_variables = cc.package.variables.length %>
+    <% const has_stock = cc.package.inventory_amount === null || cc.package.inventory_amount > 0 %>
+    <button class="ms-auto px-5 py-3 flex gap-2 items-baseline justify-center rounded-full bg-brand 
+      hover:bg-brand/80 transition text-white font-medium"
+      id="<%= cc.package.id %>"
+      data-func="<%= current_cart_item ? 'goto-cart' : has_variables ? 'select-options' : 'add-to-cart' %>" 
+      data-slug="<%= cc.package.slug %>"
+      <%= !has_stock ? 'disabled' : '' %>
+    >
+      <i class="fa-solid fa-cart-plus text-base text-white/60"></i>
+      <%= !has_stock ? 'Sem estoque' : current_cart_item ? 'Ver carrinho' : 'Comprar' %>
+    </button>
+  </div>
+</div>

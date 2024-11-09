@@ -1,0 +1,155 @@
+<% layout("@layouts/layout") %>
+
+<% if (cc.order) { %>
+  <% 
+    const date = new Date(cc.order.created_at);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    const created_at = `${day}/${month}/${year} às ${hours}:${minutes}`;
+  %>
+
+  <div class="bg-zinc-100 border-b border-b-zinc-200 dark:bg-zinc-900 dark:border-b-neutral-800">
+    <div class="container mx-auto px-28 py-6">
+      <h1 class="text-2xl font-extrabold text-sky-950 dark:text-neutral-400">Informações do pedido</h1>
+      <div class="flex justify-between">
+        <p class="text-gray-500 dark:text-neutral-500">Feito em <%= created_at %></p>
+        <p class="text-gray-400 text-sm dark:text-neutral-400"><%= cc.order.internal_id %></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-8 container mx-auto px-28 grid grid-cols-[306px_1fr] gap-6">
+    <div>
+      <a class="flex items-center gap-2" href="<%= cc.dist_url %>">
+        <div class="flex items-center justify-center w-8 h-8 bg-slate-100 text-sky-950 rounded dark:bg-neutral-800 dark:text-neutral-300">
+          <i class="fa-solid fa-arrow-left"></i>
+        </div>
+        <p class="font-semibold text-sky-950 dark:text-neutral-400">Página inicial</p>
+      </a>
+    </div>
+
+    <div>
+      <div class="rounded-md shadow-sm overflow-hidden border h-fit dark:border-neutral-800">
+        <div class="flex items-center justify-between p-4 bg-slate-200  dark:bg-neutral-900">
+          <div class="flex items-center gap-2 text-sky-950 font-bold dark:text-neutral-300">
+            <% if (cc.order.status === 'APPROVED') { %>
+            <i class="fa-solid fa-circle-check text-xl text-green-500"></i>
+            <h1>Pagamento processado!</h1>
+            <% } %>
+      
+            <% if (cc.order.status === 'PENDING') { %>
+            <i class="fa-solid fa-circle-exclamation text-xl text-orange-400"></i>
+            <h1>Pagamento pendente</h1>
+            <% } %>
+      
+            <% if (cc.order.status === 'CANCELED' || cc.order.status === 'RECUSED') { %>
+            <i class="fa-solid fa-circle-xmark text-xl text-red-600"></i>
+            <h1>Pagamento cancelado ou recusado</h1>
+            <% } %>
+      
+            <% if (cc.order.status === 'CHARGEDBACK' || cc.order.status === 'REFUNDED') { %>
+            <i class="fa-solid fa-hand-holding-dollar text-xl text-purple-400"></i>
+            <h1>Pagamento devolvido ou em disputa</h1>
+            <% } %>
+          </div>
+        </div>
+
+        <div class="p-4 text-sky-950 dark:text-neutral-300">
+          <div>
+            <div class="flex items-center gap-2 font-medium">
+              <i class="fa-solid fa-file-invoice"></i>
+              <p>Detalhes do pedido:</p>
+            </div>
+
+            <div class="mt-2 grid grid-cols-2">
+              <div class="flex flex-col gap-4">
+                <% const client_identifier = cc.order.variables.find((variable) => variable.name === 'client_identifier')?.value %>
+                <% if (client_identifier) { %>
+                  <div>
+                    <p class="text-gray-500"><%= cc.store.type === 'MINECRAFT' ? 'Nickname' : 'ID na cidade' %></p>
+                    <p class="font-bold">#<%= client_identifier %></p>
+                  </div>
+                <% } %>
+
+                <div>
+                  <p class="text-gray-500">Email para contato</p>
+                  <p class="font-bold"><%= cc.order.client_email %></p>
+                </div>
+
+                <% if (cc.order.promo_code) { %>
+                  <div>
+                    <p class="text-gray-500">Cupom</p>
+                    <p class="font-bold"><%= cc.order.promo_code %></p>
+                  </div>
+                <% } %>
+              </div>
+
+              <div class="flex flex-col gap-4">
+                <div>
+                  <p class="text-gray-500">Valor total</p>
+                  <p class="font-bold"><%= cc.order.price_display %></p>
+                </div>
+
+                <div>
+                  <p class="text-gray-500">Situação do pagamento</p>
+                  <p class="font-bold"><%= cc.order.status_display %></p>
+                </div>
+
+                <div>
+                  <p class="text-gray-500">Método de pagamento</p>
+                  <p class="font-bold"><%= cc.order.gateway_display %></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8">
+            <div class="flex items-center gap-2 font-medium">
+              <i class="fa-solid fa-box-open"></i>
+              <p>Itens do pedido:</p>
+            </div>
+
+            <div class="mt-2 flex flex-col p-4 border rounded-md dark:border-neutral-800">
+              <% cc.order.packages.forEach((package, index) => { %>
+                <span class="flex gap-1.5">
+                  <%= package.quantity %>x
+                  <a class="font-medium">
+                    <%= package.name %>
+                  </a>
+
+                  <% if (cc.store.type === 'STANDALONE') { %>
+                    <% const content = cc.order.queued_commands.filter((cmd) => cmd.order_package_id === package.id && cmd.command.startsWith("sendKey")) %>
+                    <% content.map((command) => { %>
+                      <% const key = command.command.split('"').at(1) %>
+
+                      <span class="ms-auto flex gap-1.5 items-center"><%= key %> 
+                        <button onclick="(() => {
+                          navigator.clipboard.writeText(`<%= key %>`);
+                          toast({
+                            content: 'Copiado!'
+                          })
+                        })()">
+                          <i class="fa-regular fa-copy"></i>
+                        </button>
+                      </span>
+                    <% }) %>
+                  <% } %>
+                </span>
+                <br>
+              <% }) %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% } else { %>
+  <meta http-equiv="refresh" content="0; url='<%= cc.dist_url %>/'" />
+  <div class="mt-8 container mx-auto px-28">
+    Pedido não encontrado, redirecionando...
+  </div>
+<% } %>

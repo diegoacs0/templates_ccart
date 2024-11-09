@@ -1,0 +1,89 @@
+<% layout("@layouts/layout") %>
+
+<div class="cc__order___wrapper">
+  <% if (cc.order) { %>
+  <div class="cc__order___info">
+    <div class="cc__order___status">
+      <% if (cc.order.status === 'APPROVED') { %>
+      <i class="fa-solid fa-circle-check" style="color: #00dc82"></i>
+      <p>Pedido pago com sucesso!</p>
+      <% } %>
+
+      <% if (cc.order.status === 'PENDING') { %>
+      <i class="fa-solid fa-circle-exclamation" style="color: #ffa600"></i>
+      <p>Pagamento pendente.</p>
+      <% } %>
+
+      <% if (cc.order.status === 'CANCELED' || cc.order.status === 'RECUSED') { %>
+      <i class="fa-solid fa-circle-xmark" style="color: #dc0000"></i>
+      <p>Pagamento cancelado ou recusado.</p>
+      <% } %>
+
+      <% if (cc.order.status === 'CHARGEDBACK' || cc.order.status === 'REFUNDED') { %>
+      <i class="fa-solid fa-hand-holding-dollar" style="color: #ffa600"></i>
+      <p>Pagamento devolvido ou em disputa.</p>
+      <% } %>
+    </div>
+
+    <div class="cc__order___details">
+      <div>
+        <h5><%= ['FIVEM', 'REDM'].includes(cc.store.type) ? 'ID na cidade' : 'Nickname' %>:</h5>
+        <p>#<%= cc.order.client_identifier %></p>
+      </div>
+
+      <div>
+        <h5>E-mail:</h5>
+        <p><%= cc.order.client_email %></p>
+      </div>
+
+      <div>
+        <h5>Situação do pagamento:</h5>
+        <p><%= cc.order.status_display %></p>
+      </div>
+
+      <div>
+        <h5>Valor total:</h5>
+        <p><%= cc.order.price_display %></p>
+      </div>
+
+      <div>
+        <h5>Produtos:</h5>
+        <ul>
+          <% cc.order.packages.map((package, index) => { %>
+            <li>
+              <p>x<%= package.quantity %> <%= package.name %></p>
+              <p
+                class="cc__order___badge"
+                style="background-color: <%= cc.order.status === 'APPROVED' ? '#00dc82' : '#ffa600' %>"
+              >
+                <% const content = cc.order.queued_commands.filter((cmd) => cmd.order_package_id === package.id && cmd.command.startsWith("sendKey")) %>
+                <% if (cc.store.type === 'STANDALONE' && content.length) { %>
+                  <% content.map((command) => { %>
+                    <% const key = command.command.split('"').at(1) %>
+                    <%= key %> 
+
+                    <button style="background-color: transparent;" onclick="(() => {
+                      navigator.clipboard.writeText(`<%= key %>`);
+
+                      showToast('Pronto!', 'Valor copiado!')
+                    })()">
+                      <i class="fa-solid fa-copy" style="opacity: 0.7;"></i>
+                    </button>
+                  <% }) %>
+                <% } else { %>
+                  <%= cc.order.status === 'APPROVED' ? 'Concluído' : 'Aguardando' %>
+                <% } %>
+              </p>
+            </li>
+          <% }) %>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <% } else { %>
+    <h1>404</h1>
+    <p>Pedido não encontrado.</p>
+    <div class="cc__order___not_found">
+  </div>
+  <% } %>
+</div>

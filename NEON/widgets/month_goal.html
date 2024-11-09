@@ -1,0 +1,16 @@
+<div>
+  <div class="cc__widget___goal">
+    <h1>
+      META DO MÊS
+    </h1>
+
+    <p class="muted">Ajude-nos a continuar online.</p>
+
+    <div class="cc__widget___goal_bar" style="--goal_percent: <%=  cc.widget.percent %>%">
+      <% if (cc.widget.data.show) { %>
+        <span><%= cc.widget.goal_display %></span>
+      <% } %>
+    </div>
+    <h3 class="cc__widget___goal_text"><%= cc.widget.percent %>% completo</h3>
+  </div>
+</div>

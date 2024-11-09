@@ -1,0 +1,61 @@
+<div class="bg-slate-100 rounded-md text-center p-6 dark:bg-neutral-800">
+  <h2 class="font-semibold text-lg text-sky-950 dark:text-neutral-400">Visite agora mesmo nosso servidor!</h2>
+  
+  <div class="flex mt-4">
+    <input readonly value="<%= cc.widget.data.address %>" class="w-8/12 border border-brand dark:border-brand p-1 text-center font-medium 
+      rounded-l-md rounded-none focus-visible:outline-none dark:bg-neutral-900 dark:text-neutral-400 focus-visible:ring-0" />
+    <% if (['FIVEM', 'REDM'].includes(cc.store.type)) { %>
+      <a href="<%= cc.store.type.toLowerCase() %>://connect/<%= cc.widget.data.address %>" class="bg-brand rounded-r-md py-2 px-3 text-black font-semibold flex-1 whitespace-nowrap">
+        <i class="fa-solid fa-paperclip"></i>
+        Conectar
+      </a>
+    <% } else { %>
+      <button class="bg-brand rounded-r-md py-2 px-3 text-black font-semibold flex-1 whitespace-nowrap" data-ip="<%= cc.widget.data.address ?? '' %>" onclick="copyIp(this)">
+        <i class="fa-solid fa-paperclip"></i>
+        Copiar
+      </button>
+    <% } %>
+  </div>
+
+  <% if (cc.widget?.data.address) { %>
+    <div class="mt-1.5 text-sky-950 dark:text-neutral-400">
+      Junte-se à <span class="online-players font-semibold" data-ip="<%= cc.widget?.data.address ?? '' %>">...</span> jogadores online!
+    </div>
+  <% } %>
+</div>
+
+<% if (cc.widget?.data.address) { %>
+  <% if (cc.store.type === 'MINECRAFT') { %>
+    <script>
+      $(() => {
+      const online_players_label = $('.online-players')
+      const ip = online_players_label.attr('data-ip')
+
+      $.get('https://mcapi.us/server/status?ip=' + ip)
+        .then((res) => {
+          online_players_label.text(res.players.now)
+        })
+        .catch(() => online_players_label.text(0))
+      })
+    </script>
+  <% } %>
+
+  <% if (['FIVEM', 'REDM'].includes(cc.store.type)) { %>
+    <script>
+      $(() => {
+        const online_players_label = $('.online-players')
+        const ip = online_players_label.attr('data-ip')
+
+        const cfx_id = ip.split('cfx.re/join/')[1]
+
+        if (cfx_id?.length < 6) return
+
+        $.get('https://players.centralcart.workers.dev/' + cfx_id)
+          .then((res) => {
+            online_players_label.text(res)
+          })
+          .catch(() => online_players_label.text(0))
+      })
+    </script>
+  <% } %>
+<% } %>

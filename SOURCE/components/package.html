@@ -1,0 +1,36 @@
+<div class="p-4 border rounded-md flex flex-col justify-between dark:border-neutral-800">
+  <div class="flex justify-center">
+    <img src="<%= cc.package.image || cc.cdn_url + '/public/no-picture.png' %>" class="rounded-md max-w-[196px]">
+  </div>
+
+  <div>
+    <h3 class="text-sky-950 font-extrabold text-2xl uppercase mt-2 dark:text-neutral-300">
+      <%= cc.package.name %>
+    </h3>
+  
+    <div class="mt-1">
+      <p class="text-sm text-gray-500 dark:text-neutral-500">por apenas</p>
+      <h6 class="text-brand font-extrabold text-2xl"><%= cc.package.price_display %></h6>
+    </div>
+  
+    <div class="mt-4 flex justify-between gap-2">
+      <% const has_stock = cc.package.inventory_amount === null || cc.package.inventory_amount > 0 %>
+      <% const current_cart_item = cc.cart?.packages.find((package) => package.meta.id === cc.package.id) %>
+      <% const has_variables = cc.package.variables.length %>
+
+      <button 
+        id="<%= cc.package.id %>"
+        data-func="<%= !has_stock ? 'none' : current_cart_item ? 'goto-cart' : has_variables ? 'open-selector' : 'add-to-cart' %>" 
+        data-slug="<%= cc.package.slug %>"
+        class="px-3 py-2 rounded-md flex-1 text-white font-semibold <%= !has_stock ? 'bg-red-500' : 'bg-[#29e66e]' %>"
+      >
+        <i class="fa-solid fa-basket-shopping me-2"></i>
+        <%= !has_stock ? 'Sem estoque' : current_cart_item ? 'Ver carrinho' : 'Comprar' %>
+      </button>
+      
+      <button class="px-4 py-2 bg-slate-100 rounded-md flex-[0.2] font-semibold dark:bg-neutral-800 dark:text-neutral-300" onclick="showPackage(`<%= cc.package.slug %>`)">
+        <i class="fa-regular fa-circle-question"></i>
+      </button>
+    </div>
+  </div>
+</div>

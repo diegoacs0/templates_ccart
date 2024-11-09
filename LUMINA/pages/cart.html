@@ -1,0 +1,360 @@
+<% layout("@layouts/layout") %>
+
+<main class="mx-auto w-full max-w-[1216px] flex flex-col mt-12 gap-8 px-3">
+  <div class="flex justify-between gap-8 max-sm:flex-col">
+    <div class="w-full h-full max-w-[280px] bg-muted rounded-xl pb-5 max-sm:max-w-full">
+      <div class="relative flex flex-col gap-3">
+        <%~ include('@components/category_menu', cc) %>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-5 w-full h-fit">
+      <div class="bg-muted rounded-xl w-full">
+        <div class="flex justify-between items-center p-6 border-b">
+          <h2 class="font-medium text-xl text-white">
+            <i class="fa-regular fa-star text-xl text-brand"></i>
+            Carrinho
+          </h2>
+
+          <span class="bg-brand/10 text-brand text-sm px-2 py-0.5 rounded flex items-baseline justify-center font-medium">
+            <%= cc.cart.total_quantity ? 
+            `${cc.cart.total_quantity} ite${cc.cart.total_quantity > 1 ? 'ns' : 'm'} no carrinho` : 
+            'Carrinho vazio' %>
+          </span>
+        </div>
+
+        <div class="relative w-full">
+          <div class="overflow-auto">
+            <table class="table-auto w-full text-sm text-left overflow-auto">
+              <thead>
+                <tr class="border-b">
+                  <th class="p-6 font-medium uppercase text-muted-foreground">Produto</th>
+                  <th class="p-6 font-medium uppercase text-muted-foreground">Preço</th>
+                  <th class="p-6 font-medium uppercase text-muted-foreground hidden sm:block">Quantidade</th>
+                  <th class="hidden sm:block"></th>
+                </tr>
+              </thead>
+              <tbody class="text-base">
+                <% if (cc.cart.packages.length) { %>
+                  <% cc.cart.packages.forEach((package, index) => { %>
+                    <tr class="">
+                      <td class="flex flex-col justify-center gap-2 p-6 py-3">
+
+                        <div class="flex items-center gap-2">
+                          <div class="bg-muted-contrast w-12 h-12 flex items-center justify-center rounded-md p-1">
+                            <img src="<%= package.meta.image %>" class="rounded" onerror="this.src = '<%= cc.cdn_url %>/public/no-picture.png'" />
+                          </div>
+                          <span class="text-white font-medium"><%= package.meta.name %></span>
+                        </div>
+
+                        <div class="flex items-center gap-2 sm:hidden">
+                          <button 
+                            class="px-3 py-0.5 rounded-3xl bg-red-500 
+                            text-sm text-white border-b-2 border-b-red-400 focus:border-b-0
+                            <%= package.meta.type === 'SINGLE' ? 'hidden' : '' %>"
+                            data-cart-action="decrease"
+                            data-package-id="<%= package.meta.id %>"
+                          >
+                            
+                            <i class="fa-solid fa-minus text-white"></i>
+                          </button>
+    
+                          <input 
+                            class="px-2 rounded-md w-9 h-8 text-sm flex items-center justify-center text-center disabled:opacity-50" 
+                            data-cart-action="input" 
+                            data-package-id="<%= package.meta.id %>"
+                            value="<%= package.quantity %>" 
+                            autocomplete="off" 
+                            <%= package.meta.type === 'SINGLE' ? 'readonly' : '' %>
+                          />
+    
+                          <button 
+                            class="px-3 py-0.5 rounded-3xl bg-green-500 
+                            text-sm text-white border-b-2 border-b-green-400 focus:border-b-0
+                            <%= package.meta.type === 'SINGLE' ? 'hidden' : '' %>"
+                            data-cart-action="increase"
+                            data-package-id="<%= package.meta.id %>"
+                          >
+                            <i class="fa-solid fa-plus text-white"></i>
+                          </button>
+                        </div>
+                      </td>
+                      <td class="p-6 py-3 text-[#1ed96f] font-medium">
+                        <div class="flex flex-col items-between gap-8">
+                          <span><%= package.meta.price_display %></span>
+  
+                          <div class="flex items-center gap-2 sm:hidden">
+                            <% if (package.meta.variables.length) { %>
+                              <button 
+                                id="<%= package.meta.id %>"
+                                data-func="select-options" 
+                                data-slug="<%= package.meta.slug %>"
+                                class="px-3 py-0.5 rounded-3xl bg-background text-sm text-white border-b-2 border-b-black/50 focus:border-b-0"
+                              >
+                                <i class="fa-solid fa-gears"></i>
+                              </button>  
+                            <% } %>
+      
+                            <button 
+                              data-cart-action="remove" 
+                              data-package-id="<%= package.meta.id %>" 
+                              class="px-3 py-0.5 rounded-3xl bg-red-500 text-sm text-muted border-b-2 border-b-red-400 focus:border-b-0"
+                            >
+                              <i class="fa-solid fa-xmark"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="p-6 py-3 hidden sm:table-cell">
+                        <div class="flex items-center gap-2">
+                          <button 
+                            class="px-3 py-0.5 rounded-3xl bg-red-500 
+                            text-sm text-white border-b-2 border-b-red-400 focus:border-b-0
+                            <%= package.meta.type === 'SINGLE' ? 'hidden' : '' %>"
+                            data-cart-action="decrease"
+                            data-package-id="<%= package.meta.id %>"
+                          >
+                            <i class="fa-solid fa-minus text-white"></i>
+                          </button>
+    
+                          <input 
+                            class="px-2 rounded-md w-9 h-8 text-sm flex items-center justify-center text-center disabled:opacity-50" 
+                            data-cart-action="input" 
+                            data-package-id="<%= package.meta.id %>"
+                            value="<%= package.quantity %>" 
+                            autocomplete="off" 
+                            <%= package.meta.type === 'SINGLE' ? 'readonly' : '' %>
+                          />
+    
+                          <button 
+                            class="px-3 py-0.5 rounded-3xl bg-green-500 
+                            text-sm text-white border-b-2 border-b-green-400 focus:border-b-0
+                            <%= package.meta.type === 'SINGLE' ? 'hidden' : '' %>"
+                            data-cart-action="increase"
+                            data-package-id="<%= package.meta.id %>"
+                          >
+                            <i class="fa-solid fa-plus text-white"></i>
+                          </button>
+                        </div>
+                      </td>
+                      <td class="p-6 py-3 hidden sm:table-cell">
+                        <div class="flex items-center justify-end gap-2">
+                          <% if (package.meta.variables.length) { %>
+                            <button 
+                              id="<%= package.meta.id %>"
+                              data-func="select-options" 
+                              data-slug="<%= package.meta.slug %>"
+                              class="px-3 py-0.5 rounded-3xl bg-background text-sm text-white border-b-2 border-b-black/50 focus:border-b-0"
+                            >
+                              <i class="fa-solid fa-gears"></i>
+                            </button>  
+                          <% } %>
+    
+                          <button 
+                            data-cart-action="remove" 
+                            data-package-id="<%= package.meta.id %>" 
+                            class="px-3 py-0.5 rounded-3xl bg-red-500 text-sm text-muted border-b-2 border-b-red-400 focus:border-b-0"
+                          >
+                            <i class="fa-solid fa-xmark"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  <% }) %>
+                <% } else { %>
+                  <tr class="table-row">
+                    <td colspan="4" class="text-center p-8 text-sm">
+                      <div class="block">
+                        <p class="mb-4">Nenhum produto encontrado no seu carrinho.</p>
+                      
+                        <a
+                          href="<%= cc.dist_url %>/"
+                          class="py-2 px-3 rounded bg-brand/10 hover:bg-brand/20 transition text-brand font-semibold tracking-wider"
+                        >
+                        <i class="fa-solid fa-basket-shopping"></i>
+                        Explorar loja
+                      </a>
+                      </div>
+                    </td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+     
+          <form class="border-y text-white p-6 py-3 font-normal 
+            flex flex-wrap items-center justify-between gap-5 w-full whitespace-nowrap"
+            onsubmit="(function (event) {event.preventDefault()})(event)"
+          >
+            <% const discount = cc.cart.discount %>
+            <label for="coupon" class="max-sm:hidden text-sm">Tem um cupom de desconto?</label>
+
+            <div class="flex items-center justify-between max-sm:w-full gap-2 h-full">
+              <input 
+                id="coupon" 
+                class="h-8 rounded-full text-sm px-3" 
+                value="<%= discount?.coupon || '' %>"
+                autocomplete="off" 
+              />
+
+              <button 
+                class="rounded-full flex items-center gap-1 max-w-28 h-[30px] px-4 text-sm font-medium <%= discount ? 'bg-red-500' : 'bg-brand-contrast' %>"
+                data-coupon-action="<%= discount ? 'remove' : 'apply' %>"
+              >
+                <i class="fa-solid fa-ticket text-white/70"></i>
+                <span class="discount-label"><%= discount ? 'Remover' : 'Aplicar' %></span>
+              </button>
+            </div>
+          </form>
+
+          <div class="p-6 flex flex-wrap items-center justify-between gap-6 whitespace-nowrap w-full">
+            <h2 class="max-md:hidden text-lg font-semibold text-white font-montserrat">
+              Valor total: <span class="text-brand font-bold cart-price"><%= cc.cart.total_price_display %></span>
+            </h2>
+
+            <button class="ms-auto px-5 py-3 flex gap-2 items-baseline justify-center rounded-full bg-brand 
+              hover:bg-brand/80 transition text-white font-medium max-md:w-full" onclick="checkoutDrawerOpen()" id="open-modal-cart">
+              <i class="fa-solid fa-basket-shopping"></i>
+              Finalizar compra <span class="md:hidden -ms-1">por</span>
+              <span class="md:hidden -ms-1 cart-price"><%= cc.cart.total_price_display %></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="checkout-drawer" class="hidden fixed h-screen w-screen top-0 z-[1000] place-items-end">
+  <div id="drawer-content" class="slide-in bg-muted w-[400px] h-full text-white">
+    <div class="p-4 border-b flex justify-between items-center">
+      <h3 class="font-semibold text-lg">Checkout</h3>
+
+      <button class="bg-red-500 hover:bg-red-500/80 transition rounded-full w-6 h-6 flex items-center justify-center" onclick="checkoutDrawerClose()">
+        <i class="fa-solid fa-xmark text-muted"></i>
+      </button>
+    </div>
+
+    <form id="checkout-form" class="p-4 gap-4 flex flex-col h-[calc(100vh-61px)] overflow-y-auto" tabindex="-1">
+      <% if (cc.cart.require_discord) { %>
+        <div>
+          <input id="discord" name="discord" type="hidden">
+          <button data-discord="true" type="button" class="py-1 px-4 w-full 
+            bg-[#5865f2] h-9 rounded text-white 
+            text-sm font-semibold flex items-center 
+            justify-center"
+          >
+            <i class="fa-brands fa-discord me-1"></i>
+            Entrar com o Discord
+          </button>
+        </div>
+      <% } %>
+
+      <div class="space-y-1">
+        <label for="email">Email</label>
+        <input id="email" class="w-full h-10" />
+      </div>
+
+      <% if (cc.checkout_variables.length) { %>
+        <div id="checkout_variables">
+          <% cc.checkout_variables.map((variable) => { %>
+            <div class="space-y-1">
+              <label for="<%= variable.name %>"><%= variable.description %></label>
+    
+              <% if (variable.type === 'NUMBER') { %>
+                <div class="relative">
+                  <span class="absolute top-1/2 -translate-y-1/2 pl-2 font-montserrat font-medium text-muted-foreground">#</span>
+                  <input id="<%= variable.name %>" class="w-full h-10 pl-6 number-only" />
+                </div>
+              <% } else { %>
+                <input id="<%= variable.name %>" class="w-full h-10" />
+              <% } %>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <div class="space-y-1">
+        <label for="name">Nome completo</label>
+        <input id="name" class="w-full h-10" />
+      </div>
+
+      <% if (cc.store.require_phone) { %>
+        <div class="space-y-1">
+          <label for="tel">Telefone</label>
+          <input id="tel" class="w-full h-10" />
+        </div>
+      <% } %>
+
+      <div class="space-y-1 <%= !cc.store.require_document ? 'hidden' : 'block' %>" data-required="<%= cc.store.require_document ? 'true' : 'false' %>">
+        <label for="cpf">CPF</label>
+        <input id="cpf" class="w-full h-10" />
+      </div>
+
+      <div class="space-y-1">
+        <label>Forma de pagamento</label>
+        <div class="grid grid-cols-3 gap-2">
+          <% cc.gateways.forEach((gateway, index) => { %>
+            <button 
+              data-gateway="true"
+              data-require-document="<%= gateway.require_document %>"
+              type="button"
+              value="<%= gateway.gateway %>"
+              class="flex-1 whitespace-nowrap rounded-md border p-2 px-2.5 pt-3 text-start text-xs shadow-sm"
+            >
+              <img src="<%= cc.cdn_url + `/public/gateway-icons/icon-${gateway.gateway.toLowerCase()}.svg` %>" class="h-4 w-4">
+              <p class="mt-1"><%= gateway.display %></p>
+            </button>
+          <% }) %>
+        </div>
+      </div>
+
+      <div class="mt-auto space-y-2">
+        <div class="flex items-center justify-center gap-1 text-sm">
+          <input id="terms" type="checkbox" class="bg-brand" />
+          <label for="terms" class="text-muted-foreground">
+            Eu aceito os 
+            <span class="cursor-pointer text-brand font-medium" onclick="showTerms(event)">
+              termos e condições
+            </span> 
+            desta compra. 
+          </label>
+        </div>
+
+        <button id="checkout-button" type="submit" class="w-full px-5 py-3 flex gap-2 items-baseline justify-center rounded-full bg-brand 
+          hover:bg-brand/80 transition text-white font-medium max-md:w-full"
+        >
+          <i id="checkout-load" class="fa-solid fa-basket-shopping"></i>
+          <p>
+            Pagar <span class="cart-price"><%= cc.cart.total_price_display %></span>
+          </p>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="pix-drawer-content" class="hidden">
+  <div class="p-4 gap-4 flex flex-col h-[calc(100vh-61px)] overflow-y-auto">
+    <p class="font-semibold">Aqui está o PIX copia e cola</p>
+    <p class="text-muted-foreground">Copie o código ou use a câmera para ler o QR Code e realize o pagamento no app do seu banco.</p>
+
+    <div class="border rounded-md border-white/20 border-dashed flex flex-col p-4">
+      <div class="rounded-md mx-auto bg-white">
+        <img id="qr-content" class="rounded-md w-[250px] h-[250px]" src="data:image/jpeg;base64,placeholder" />
+      </div>
+
+      <div class="relative mt-4">
+        <button id="copy-pix" class="absolute px-4 mr-2 text-sm py-1 font-medium bg-brand rounded right-0 top-1/2 -translate-y-1/2">Copiar</button>
+        <input id="qr-copy-code" class="w-full h-11 pr-24" disabled readonly value="" />
+      </div>
+    </div>
+
+    <a id="return-to" href="<%= cc.dist_url %>" class="mt-auto w-full px-5 py-3 flex gap-2 items-baseline justify-center rounded-full bg-brand 
+      hover:bg-brand/80 transition text-white font-medium max-md:w-full"
+    >
+      <i class="fa-regular fa-circle-check"></i>
+      Confirmar pagamento
+    </a>
+  </div>
+</div>

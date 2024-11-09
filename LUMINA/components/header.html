@@ -1,0 +1,187 @@
+<header class="
+  w-full h-72 bg-muted inline-flex bg-center
+  bg-[url(<%= cc.theme.background ? cc.theme.background : cc.cdn_url + '/public/assets/templates/LUMINA/image-background.svg' %>)] bg-cover bg-no-repeat object-cover
+  max-md:h-[auto] max-md:py-10 
+">
+  <div class="w-full max-w-[1216px] mx-auto flex justify-between items-center max-md:flex-col max-md:gap-6 px-3">
+    <div class="flex items-center gap-5 w-full max-w-[290px] justify-start <%= cc.store.type === 'STANDALONE' ? 'invisible' : '' %>">
+      <div class="bg-muted flex items-center justify-center rounded-md w-12 h-12 border">
+        <i class="fa-solid fa-server text-brand text-xl"></i>
+      </div>
+      
+      <% const widget = cc.widgets.find((widget) => widget.type === 'CONNECTION_BOARD') %>
+      <button id="copy-ip" class="inline-flex flex-col items-start whitespace-nowrap" onclick="handleCopyIpToClipboard(`<%= widget?.data.address ?? '' %>`)">
+        <span class="font-semibold text-muted-foreground">
+          <%= cc.store.type === 'MINECRAFT' ? widget?.data.address || 'Conecte-se já!' : 'Conecte-se já!' %>
+        </span>
+        <span id="copy-ip" class="text-sm text-white w-fit self-start">
+          <% if (widget?.data.address) { %>
+            <span>
+              <span class="online-players" data-ip="<%= widget?.data.address ?? '' %>">...</span> online •
+            </span>
+          <% } %>
+
+          Clique para jogar.
+        </span>
+      </button>
+    </div>
+
+    <a href="<%= cc.dist_url %>/" class="logo-anim <%= cc.theme.logo_position === 'START' ? '-order-1' : cc.theme.logo_position === 'END' ? 'order-1' : '' %>">
+      <% if (cc.theme.logo) { %>
+        <img src="<%= cc.theme.logo %>" class="w-52 h-52 object-contain" />
+      <% } else { %>
+        <h1 class="text-5xl font-bold text-white"><%= cc.store.name %></h1>
+      <% } %>
+    </a>
+
+    <div class="flex items-center gap-5 w-full max-w-[290px] justify-end <%= cc.store.type === 'STANDALONE' ? 'invisible' : '' %>">
+      <a class="inline-flex flex-col text-right whitespace-nowrap" href="<%= cc.theme.socials.discord %>" target="_blank">
+        <span class="font-semibold text-muted-foreground">
+          Acesse o nosso Discord
+        </span>
+        <span class="text-sm text-white w-fit self-end">
+          Clique para entrar
+        </span>
+      </a>
+      <div class="bg-muted flex items-center justify-center rounded-md w-12 h-12 border">
+        <i class="fa-brands fa-discord text-brand text-xl"></i>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="menu"
+  class="group fixed inset-0 bg-[#222436] bg-opacity-90 backdrop-blur-sm z-[9999] h-screen overflow-y-auto hidden">
+
+  <button type="button" class="absolute top-10 right-10 max-sm:top-5 max-sm:right-5 hover:opacity-100"
+    onclick="handleMenu(false)">
+    <i class="fa-solid fa-xmark text-2xl text-white"></i>
+  </button>
+
+  <div class="w-full max-w-[580px] mx-auto h-fit py-16">
+    <a href="<%= cc.dist_url %>/" class="flex w-full justify-center <%= cc.theme.logo_position === 'START' ? '-order-1' : cc.theme.logo_position === 'END' ? 'order-1' : '' %>">
+      <% if (cc.theme.logo) { %>
+        <img src="<%= cc.theme.logo %>" class="w-52 h-52 object-contain" />
+      <% } else { %>
+        <h1 class="text-5xl font-bold text-white"><%= cc.store.name %></h1>
+      <% } %>
+    </a>
+
+    <nav class="mt-5 text-center">
+      <ul class="inline-flex flex-col items-center gap-5">
+        <li>
+          <a href="<%= cc.dist_url %>/" class="flex gap-2 items-baseline tracking-[0.05em] text-lg text-white font-semibold">
+            <i class="fa-solid fa-house text-xl text-brand"></i>
+            Ínicio
+          </a>
+        </li>
+        <li>
+          <a href="<%= cc.dist_url %>/cart" class="flex gap-2 items-baseline tracking-[0.05em] text-lg text-white font-semibold">
+            <i class="fa-regular fa-star text-xl text-brand"></i>
+            <div class="flex items-center gap-1.5">
+              Carrinho <span class="bg-brand text-sm w-5 rounded flex items-baseline justify-center cart-quantity"><%= cc.cart.total_quantity %></span>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="<%= cc.dist_url %>/blog" class="flex gap-2 items-baseline tracking-[0.05em] text-lg text-white font-semibold">
+            <i class="fa-regular fa-star text-xl text-brand"></i>
+            Blog
+          </a>
+        </li>
+      </ul>
+
+      <% const first_available = cc.categories.find((category) => category.hide_category !== true)
+
+      if (!first_available?.hide_subcategory) {
+        first_category_slug = first_available?.slug
+      } else first_category_slug = first_available.sub_categories[0]?.slug %>
+
+      <a class="flex mt-6 items-center gap-2 bg-brand hover:bg-brand/80 transition tracking-[0.05em]
+        px-[40px] rounded-md max-w-sm py-2.5 text-lg text-white font-semibold w-max mx-auto text-center cursor-pointer select-none"
+        <%= first_category_slug ? `href=${cc.dist_url}/category/${first_category_slug}` : '' %>
+      >
+        <i class="fa-solid fa-cart-shopping text-base"></i>
+        Loja
+      </a>
+    </nav>
+  </div>
+</section>
+
+<aside
+  class="w-full h-[90px] bg-muted inline-flex justify-center items-center max-md:justify-end max-md:p-0 gap-6">
+  <button type="button" id="menu-button" class="mr-5 opacity-50 max-md:inline-block hidden" onclick="handleMenu(true)">
+    <i class="fa-solid fa-bars text-2xl text-white"></i>
+  </button>
+
+  <div class="w-full max-w-[1216px] flex justify-between items-center max-md:hidden px-3">
+    <nav>
+      <ul class="flex gap-12">
+        <li>
+          <a href="<%= cc.dist_url %>/" class="flex gap-2 items-baseline tracking-[0.05em] text-lg text-white font-semibold">
+            <i class="fa-solid fa-house text-xl text-brand"></i>
+            Ínicio
+          </a>
+        </li>
+        <li>
+          <a href="<%= cc.dist_url %>/cart" class="flex gap-2 items-baseline tracking-[0.05em] text-lg text-white font-semibold">
+            <i class="fa-regular fa-star text-xl text-brand"></i>
+            <div class="flex items-center gap-1.5">
+              Carrinho <span class="bg-brand text-sm w-5 rounded flex items-baseline justify-center cart-quantity"><%= cc.cart.total_quantity %></span>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="<%= cc.dist_url %>/blog" class="flex gap-2 items-baseline tracking-[0.05em] text-lg text-white font-semibold">
+            <i class="fa-regular fa-star text-xl text-brand"></i>
+            Blog
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <a
+      class="flex items-center gap-2 bg-brand hover:bg-brand/80 transition tracking-[0.05em]
+      px-[40px] rounded-md max-w-sm py-2.5 text-lg text-white font-semibold w-auto cursor-pointer select-none"
+      <%= first_category_slug ? `href=${cc.dist_url}/category/${first_category_slug}` : '' %>
+    >
+      <i class="fa-solid fa-cart-shopping text-base"></i>
+      Loja
+    </a>
+  </div>
+</aside>
+
+<% if (widget?.data.address) { %>
+  <% if (cc.store.type === 'MINECRAFT') { %>
+    <script>
+      $(() => {
+      const online_players_label = $('.online-players')
+      const ip = online_players_label.attr('data-ip')
+
+      $.get('https://mcapi.us/server/status?ip=' + ip)
+        .then((res) => {
+          online_players_label.text(res.players.now)
+        })
+        .catch(() => online_players_label.text(0))
+      })
+    </script>
+  <% } %>
+
+  <% if (['FIVEM', 'REDM'].includes(cc.store.type)) { %>
+    <script>
+      $(() => {
+        const online_players_label = $('.online-players')
+        const ip = online_players_label.attr('data-ip')
+
+        const cfx_id = ip.split('cfx.re/join/')[1]
+
+        if (cfx_id?.length < 6) return
+
+        $.get('https://players.centralcart.workers.dev/' + cfx_id)
+          .then((res) => {
+            online_players_label.text(res)
+          })
+          .catch(() => online_players_label.text(0))
+      })
+    </script>
+  <% } %>
+<% } %>

@@ -1,0 +1,18 @@
+<% layout("@layouts/layout") %>
+
+<main class="mx-auto w-full max-w-[1216px] flex flex-col mt-12 gap-8 px-3">
+    <% if (cc.posts.length) { %>
+      <section class="grid md:grid-cols-4 gap-4 w-full max-w-[1216px] mx-auto">
+        <% cc.posts.forEach((post) => { %>
+          <%~ include('@components/post_preview', {post, ...cc}) %>
+        <% }) %>
+      </section>
+    <% } else { %>
+      <div class="border text-muted-foreground p-6 rounded-xl flex items-center w-full gap-2">
+        <i class="fa-regular fa-newspaper text-3xl"></i>
+        <p>
+          Nenhuma postagem encontrada.
+        </p>
+      </div>
+    <% } %>
+</main>

@@ -1,0 +1,32 @@
+<div>
+  <div class="cc__widget___donators">
+    <h1>
+      DOADORES DO MÊS
+    </h1>
+
+    <p class="muted">Veja quem mais contribuiu.</p>
+
+    <div class="box">
+      <% if (cc.widget.top_donators.length) { %>
+        <ul>
+          <% cc.widget.top_donators.forEach((donator, index) => { %>
+            <li>
+              <% if (cc.store.type === 'MINECRAFT') { %>
+                <img src="https://mc-heads.net/avatar/<%= donator.username %>/32.png" />
+              <% } else { %>
+                <img src="<%= cc.cdn_url %>/public/assets/images/medal-<%= index + 1%>.png" width="24" />
+              <% } %>
+              <p><%= donator.username %></p>
+              <% if (cc.widget.data.show_amount) { %>
+                <p class="ms-auto spent"><%= donator.spent %></p>
+              <% } %>
+            </li>
+          <% }) %>
+        </ul>
+      <% } else { %>
+        <p style="font-size: 14px;">Nenhum jogador até o momento. Seja o primeiro!</p>  
+      <% } %>
+    </div>
+
+  </div>
+</div>

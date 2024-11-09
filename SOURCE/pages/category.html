@@ -1,0 +1,107 @@
+<% layout("@layouts/layout") %>
+
+<div class="bg-zinc-100 border-b border-b-zinc-200 dark:bg-zinc-900 dark:border-b-neutral-800">
+  <div class="container mx-auto px-4 md:px-28 py-6">
+    <h1 class="text-2xl font-extrabold text-sky-950 dark:text-neutral-400"><%= cc.category.name %></h1>
+    <p class="text-gray-500 dark:text-gray-500">Ajude o servidor a se manter online fazendo uma doação!</p>
+  </div>
+</div>
+
+<div class="mt-8 container mx-auto px-4 md:px-28 grid grid-cols-1 md:grid-cols-[306px_1fr] gap-6">
+  <div class="flex flex-col gap-8">
+    <div class="border rounded-md p-6 dark:border-neutral-800">
+      <i class="fa-solid fa-arrow-up-wide-short text-sky-950 dark:text-neutral-500"></i>
+      <p class="text-sky-950 font-bold inline-flex dark:text-neutral-500">Filtrar por:</p>
+
+      <form method="get" class="mt-2">
+        <div>
+          <p class="font-semibold text-sky-950 dark:text-neutral-500">Nome do produto</p>
+          <input name="title" value="<%= cc.query.title || '' %>" class="mt-1 py-1.5 px-2 w-full border rounded-md box-border h-9">
+        </div>
+
+        <div class="mt-4">
+          <p class="font-semibold text-sky-950 dark:text-neutral-500">Ordenar por</p>
+          <select name="order_by" class="mt-1 py-1.5 px-2 w-full border rounded-md box-border h-9">
+            <option value="id:asc">Popularidade</option>
+            <option value="id:desc">Recentes</option>
+            <option value="price:asc">Menor preço</option>
+            <option value="price:desc">Maior preço</option>
+          </select>
+        </div>
+
+        <button type="submit" class="mt-4 py-2 px-3 bg-brand rounded-md w-full font-semibold text-white">Aplicar filtros</button>
+      </form>
+    </div>
+
+    <% const highlight = cc.widgets.find((widget) => widget.type === 'PRODUCT_HIGHLIGHT') %>
+    <% if (highlight && highlight.package) { %>
+      <div>
+        <i class="fa-solid fa-ranking-star text-sky-950 dark:text-neutral-400"></i>
+        <h3 class="text-sky-950 font-bold inline-flex dark:text-neutral-400">Produto em destaque:</h3>
+        
+        <div class="mt-2">
+          <%~ include('@components/package', {package: highlight.package, ...cc}) %>
+        </div>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="flex flex-col -order-1 md:order-none">
+    <div class="grid xl:grid-cols-3 gap-6 self-start w-full">
+      <% cc.packages.data.forEach((package, index) => { %>
+        <%~ include('@components/package', {package, ...cc}) %>
+      <% }) %>
+    </div>
+
+    <div class="flex justify-center mt-8 text-center select-none">
+      <% let params = new URLSearchParams(cc.query)  %>
+      <% params.delete('page') %>
+      <% params = params ? '&' + params : '' %>
+      <% const meta = cc.packages.meta %>
+      <% const items = [1] %>
+      <% let r = 2 %>
+      <% let r1 = meta.current_page - r %>
+      <% let r2 = meta.current_page + r %>
+      <% for (let i = r1 > 2 ? r1 : 2; i <= Math.min(meta.last_page, r2); i++) items.push(i) %>
+      <% if (r2 + 1 < meta.last_page) items.push('…') %>
+      <% if (r2 < meta.last_page) items.push(meta.last_page) %>
+    
+      <a class="px-2 
+      py-1
+      border
+      rounded
+      h-8
+      rounded-r-none
+      <%= !meta.previous_page_url ?
+      'text-gray-300 pointer-events-none dark:text-neutral-600' :
+      'text-brand-contrast' %> dark:border-neutral-800"
+      href="<%= cc.dist_url + `/category/${cc.category.slug}` + meta.previous_page_url + params %>">Anterior</a>
+    
+      <% items.forEach((page) => { %>
+        <a class="px-2 
+        py-1 
+        border 
+        w-8 
+        h-8 
+        border-l-0 
+        <%= meta.current_page === page ? 
+        'bg-brand-contrast/30 text-brand-contrast' : 
+        !isNaN(page) ? 'text-sky-950 dark:text-neutral-500' : 'text-gray-300 pointer-events-none' %> dark:border-neutral-800"
+        href="<%= cc.dist_url + `/category/${cc.category.slug}/?page=${page}` + params %>"><%= page %></a>
+      <% }) %>
+    
+      <a class="px-2 
+      py-1 
+      border 
+      rounded 
+      h-8 
+      rounded-l-none 
+      border-l-0 
+      <%= !meta.next_page_url ? 
+      'text-gray-300 pointer-events-none' : 
+      'text-brand-contrast' %> dark:border-neutral-800 dark:text-neutral-600"
+      aria-disabled="true"
+      href="<%= cc.dist_url + `/category/${cc.category.slug}` + meta.next_page_url + params %>">Próxima</a>
+    </div>
+  </div>
+</div>

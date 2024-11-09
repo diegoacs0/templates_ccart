@@ -1,0 +1,32 @@
+<div class="w-full md:max-w-xs flex flex-col flex-1 self-stretch gap-4 min-w-[260px]">
+  <div>
+    <% if (cc.post.image) { %>
+      <img src="<%= cc.post?.image %>" class="rounded-md">
+    <% } else { %>
+      <div class="flex justify-center items-center bg-gray-200 rounded-md p-10">
+        <i class="fa-solid fa-image text-8xl text-gray-400"></i>
+      </div>
+    <% } %>
+
+    <p class="mt-1 text-sm text-gray-500 dark:text-neutral-600">Publicado em <span class="bg-brand-contrast/20 px-1 py-0 rounded-md text-brand-contrast"><%= cc.post.published_at %></span></p>
+
+    <h3 class="mt-2 text-lg text-blue-950 font-semibold leading-5 dark:text-neutral-400"><%= cc.post?.title %></h3>
+
+    <p class="mt-2 text-gray-500 dark:text-neutral-500">
+      <%= cc.post?.excerpt %>
+    </p>
+  </div>
+
+  <a href="<%= cc.post?.path %>" class="w-fit 
+    mt-auto
+    py-1 
+    px-2 
+    rounded 
+    text-sm 
+    bg-neutral-900 
+    text-white font-semibold dark:bg-neutral-800 dark:text-neutral-400"
+  >
+    Continuar lendo
+    <i class="fa-solid fa-arrow-right ms-1 text-xs"></i>
+  </a>
+</div>

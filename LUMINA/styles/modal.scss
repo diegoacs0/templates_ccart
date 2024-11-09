@@ -1,0 +1,91 @@
+@keyframes slideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-10%);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-10%);
+  }
+}
+
+.modal_show_slide {
+  animation: slideDown cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation-duration: 0.5s;
+}
+
+.modal_hide_slide {
+  animation: slideUp cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation-duration: 0.5s;
+}
+
+.swal2-popup {
+  border-radius: 8px;
+}
+
+/* Drawer */
+@keyframes fadeIn {
+  from {
+    background-color: rgba(0,0,0,0);
+  }
+  to {
+    background-color: rgba(0,0,0,0.4);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    background-color: rgba(0,0,0,0.4);
+  }
+  to {
+    background-color: rgba(0,0,0,0);
+  }
+}
+
+#checkout-drawer {
+  animation: fadeIn 0.4s forwards;
+}
+
+#checkout-drawer.fade-out {
+  animation: fadeOut 0.4s forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(500px);
+  }
+  to {
+    transform: translateX(0px);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0px);
+  }
+  to {
+    transform: translateX(500px);
+  }
+}
+
+
+.slide-in {
+  animation: slideIn 0.4s forwards;
+}
+
+.slide-out {
+  animation: slideOut 0.4s forwards;
+}

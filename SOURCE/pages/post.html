@@ -1,0 +1,27 @@
+<% layout("@layouts/layout") %>
+
+<div class="bg-zinc-100 border-b border-b-zinc-200 dark:bg-zinc-900 dark:border-b-neutral-800">
+  <div class="container mx-auto px-4 md:px-28 py-6">
+    <h1 class="text-2xl font-extrabold text-sky-950  dark:text-neutral-400"><%= cc.post.title %></h1>
+    <div class="flex justify-between max-w-full xl:max-w-[calc(100%-26rem)] text-gray-500 dark:text-neutral-500">
+      <p>Publicado em <%= cc.post.published_at %></p>
+      <p>Por: <%= cc.post.author %></p>
+    </div>
+  </div>
+</div>
+
+<div class="mt-8 container mx-auto px-4 md:px-28 grid grid-cols-1 lg:grid-cols-[1fr_354px] gap-8">
+  <div>
+    <% if (cc.post.image) { %>
+      <img class="rounded-md max-h-40 w-full object-cover" src="<%= cc.post.image %>">
+    <% } else { %>
+      <div class="flex justify-center items-center rounded-md h-40 w-full bg-gray-200">
+        <i class="fa-solid fa-image text-8xl text-gray-400"></i>
+      </div>
+    <% } %>
+    
+    <div class="CentralDraft mt-8"><%~ cc.post.content %></div>
+  </div>
+
+  <%~ include('@components/widget_bar', cc) %>
+</div>

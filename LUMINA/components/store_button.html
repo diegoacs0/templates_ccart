@@ -1,0 +1,19 @@
+<% const first_available = cc.categories.find((category) => category.hide_category !== true)
+
+if (!first_available?.hide_subcategory) {
+  first_category_slug = first_available?.slug
+} else first_category_slug = first_available.sub_categories[0]?.slug %>
+
+<a class="h-[108px] max-md:h-[140px] flex items-end bg-brand hover:bg-brand/80 transition rounded-xl overflow-hidden cursor-pointer select-none"
+  <%= first_category_slug ? `href=${cc.dist_url}/category/${first_category_slug}` : '' %>
+>
+  <div class="absolute -top-3.5 right-0 w-[275px] h-[99px] 
+  bg-[url('<%= cc.cdn_url %>/public/assets/templates/LUMINA/money.png')] 
+  bg-auto max-md:h-[150px] bg-no-repeat bg-center object-cover">
+  </div>
+
+  <div
+    class="w-full h-[45px] bg-black bg-opacity-15 z-50 flex items-center justify-center text-white text-lg font-semibold tracking-wide backdrop-blur-lg">
+    Acesse a nossa loja
+  </div>
+</a>

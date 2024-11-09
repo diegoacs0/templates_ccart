@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:title" content="<%= cc.page_title %>" />
+  <meta property="og:site_name" content="<%= cc.store.name %>" />
+  <meta property="og:description" content="<%= cc.theme.description %>" />
+  <meta name="description" content="<%= cc.theme.description %>" />
+  <meta name="keywords" content="<%= cc.theme.keywords %>" />
+
+  <link
+    rel="icon"
+    type="image/x-icon"
+    href="<%= cc.theme.favicon || cc.cdn_url + '/public/36x36.png' %>"
+  />
+
+  <title><%= cc.page_title %></title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="<%= cc.cdn_url %>/public/assets/fontawesome/all.css" />
+
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+  </style>
+
+  <link rel="stylesheet" href="<%= cc.dist_url %>/assets/core.css" />
+  <link rel="stylesheet" href="<%= cc.cdn_url %>/public/assets/css/centraldraft.css" />
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            'roboto': ['Roboto', 'sans-serif'],
+            'montserrat': ['Montserrat', 'sans-serif'],
+          },
+          colors: {
+            'background': "#181A28",
+            'muted': '#222436',
+            'muted-foreground': '#777B9E',
+            'muted-contrast': '#282A3F',
+            'demo-gray-850': '#181A28', 
+            'demo-purple-850': '#5011B8',
+            'brand': '<%= cc.theme.primary_color %>',
+            'brand-contrast': '<%= cc.theme.secondary_color %>',
+            'border': "#2d3044",
+          },
+          boxShadow: {
+            'center': 'rgba(0,0,0,.15) 0 4px 20px'
+          }
+        },
+      },
+    }
+  </script>
+
+  <style type="text/tailwindcss">
+    @layer base {
+      * {
+        @apply border-border;
+      }
+
+      input, select {
+        @apply bg-background border rounded font-medium text-white px-2 font-normal;
+      }
+
+      input:focus-visible, select:focus-visible {
+        outline: none;
+        @apply ring-2 ring-brand;
+      }
+
+      p {
+        color: white;
+      }
+
+      input[type="checkbox"] {
+        @apply accent-brand
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-background h-screen">
+  <%~ include('@components/header', cc) %>
+
+  <%~ cc.body %>
+
+  <div class="mx-auto w-full max-w-[1216px] flex flex-col mt-8 px-3">
+    <% const donators_widget = cc.widgets.find((widget) => widget.type === 'TOP_DONATORS') %>
+
+    <% if (donators_widget) { %>
+      <%~ include('@widgets/top_donators', {widget: donators_widget, ...cc}) %>
+    <% } %>
+  </div>
+
+  <%~ include('@components/footer', cc) %>
+</body>
+
+<script type="text/javascript">
+  const dist_url = '<%= cc.dist_url %>'
+  const store_type = '<%= cc.store.type %>'
+</script>
+<script src="<%= cc.cdn_url %>/public/assets/js/CentralCart.js?v=<%= Math.floor(Date.now() / 60_000) %>" type="module"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script src="<%= cc.dist_url %>/assets/scripts.js"></script>
+<script src="<%= cc.dist_url %>/assets/store.js"></script>
+<script src="<%= cc.dist_url %>/assets/drawer.js"></script>
+</html>

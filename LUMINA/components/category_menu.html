@@ -1,0 +1,32 @@
+<%~ include('@components/store_button', cc) %>
+
+<% cc.categories.forEach((category, index) => { %>
+  <div class="group flex flex-col gap-2 px-4" id="accordion-<%= category.slug %>">
+    <% if (category.sub_categories.length > 0) { %>
+      <button
+        class="group w-full h-10 rounded-md pl-4 pr-2.5 flex items-center gap-2 bg-muted-contrast"
+        onclick="handleOpenAccordion('accordion-<%= category.slug %>')">
+        <i class="fa-solid fa-star text-white opacity-60"></i>
+        <span class="text-white"><%= category.name %></span>
+
+        <i class="fa-solid fa-chevron-down ml-auto text-white"></i>
+      </button>
+
+      <div class="group flex flex-col gap-2 text-white data-[open=false]:hidden" data-open="false">
+        <% category.sub_categories.forEach((sub_category) => { %>
+          <a href="<%= cc.dist_url %>/category/<%= sub_category.slug %>" class="w-full h-[40px] px-4 
+            flex items-center gap-3 first:rounded-t-md last:rounded-b-md <%= cc.category?.slug === sub_category.slug ? 'bg-brand-contrast' : 'bg-muted-contrast' %>">
+
+            <img src="<%= cc.cdn_url %>/public/assets/templates/LUMINA/currency.png" alt="">
+            <span class="text-sm"><%= sub_category.name %></span>
+          </a>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <a class="group w-full h-10 rounded-md pl-4 pr-2.5 flex items-center gap-2 <%= cc.category?.slug === category.slug ? 'bg-brand-contrast' : 'bg-muted-contrast' %>" href="<%= cc.dist_url %>/category/<%= category.slug %>">
+        <i class="fa-solid fa-star text-white opacity-60"></i>
+        <span class="text-white"><%= category.name %></span>
+      </a>
+    <% } %>
+  </div>
+<% }) %>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="index,nofollow" />
+    <meta property="twitter:image" content="<%= cc.theme.logo %>" />
+    <meta property="twitter:card" content="summary" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:title" content="<%= cc.page_title %>" />
+    <meta property="og:site_name" content="<%= cc.store.name %>" />
+    <meta property="og:description" content="<%= cc.theme.description %>" />
+    <meta property="og:image" content="<%= cc.theme.logo %>" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="627" />
+    <meta name="description" content="<%= cc.theme.description %>" />
+    <meta name="keywords" content="<%= cc.theme.keywords %>" />
+
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="<%= cc.theme.favicon || cc.cdn_url + '/public/36x36.png' %>"
+    />
+
+    <title><%= cc.page_title %></title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="<%= cc.cdn_url %>/public/assets/css/centraldraft.css" />
+    <link rel="stylesheet" href="<%= cc.cdn_url %>/public/assets/fontawesome/all.css" />
+    <link rel="stylesheet" href="<%= cc.dist_url %>/assets/core.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script
+      src="https://code.jquery.com/jquery-3.6.4.js"
+      integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E="
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              'brand': '<%= cc.theme.primary_color %>',
+              'brand-contrast': '<%= cc.theme.secondary_color %>',
+            },
+            fontFamily: {
+              sans: ['Montserrat', 'sans-serif'],
+            },
+          },
+        },
+      }
+    </script>
+
+    <style type="text/tailwindcss">
+      @layer base {
+        input, select {
+          @apply bg-white border rounded font-medium text-black px-2 
+          font-normal dark:bg-neutral-900 dark:border-neutral-800 dark:text-neutral-400 ;
+        }
+
+        input:focus-visible, select:focus-visible {
+          outline: none;
+          @apply ring-2 ring-brand;
+        }
+      }
+    </style>
+
+    <script>
+      if (localStorage.theme === 'dark') {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
+    </script>
+  </head>
+
+  <body class="dark:bg-[#121212] dark:text-neutral-500">
+    <%~ include('@components/header', cc) %>
+
+    <div class="min-h-[calc(100vh-281px-252px-32px)]">
+      <%~ cc.body %>
+    </div>
+
+    <%~ include('@components/footer', cc) %>
+  </body>
+
+  <script type="text/javascript">
+    const dist_url = '<%= cc.dist_url %>'
+  </script>
+  <script src="<%= cc.cdn_url %>/public/assets/js/CentralCart.js?v=<%= Math.floor(Date.now() / 60_000) %>" type="module"></script>
+  <script src="<%= cc.dist_url %>/assets/scripts.js"></script>
+  
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+</html>

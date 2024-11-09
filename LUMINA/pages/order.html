@@ -1,0 +1,146 @@
+<% layout("@layouts/layout") %>
+
+<% if (cc.order) { %>
+  <main class="mx-auto w-full max-w-[1216px] flex flex-col mt-12 gap-8 px-3">
+    <% 
+      const date = new Date(cc.order.created_at);
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+
+      const created_at = `${day}/${month}/${year} às ${hours}:${minutes}`;
+    %>
+
+    <section class="flex gap-10 w-full mx-auto">
+      <div class="w-full bg-muted rounded-xl overflow-hidden">
+        <div class="p-4 bg-muted-contrast w-full px-8 py-6 flex flex-col justify-center border-b text-white font-bold text-lg">
+          <div class="flex items-center gap-2">
+            <% if (cc.order.status === 'APPROVED') { %>
+              <i class="fa-solid fa-circle-check text-xl text-green-500"></i>
+              <h2>Pagamento processado!</h2>
+              <% } %>
+        
+              <% if (cc.order.status === 'PENDING') { %>
+              <i class="fa-solid fa-circle-exclamation text-xl text-orange-400"></i>
+              <h2>Pagamento pendente</h2>
+              <% } %>
+        
+              <% if (cc.order.status === 'CANCELED' || cc.order.status === 'RECUSED') { %>
+              <i class="fa-solid fa-circle-xmark text-xl text-red-600"></i>
+              <h2>Pagamento cancelado ou recusado</h2>
+              <% } %>
+        
+              <% if(cc.order.status === 'CHARGEDBACK' || cc.order.status === 'REFUNDED') { %>
+              <i class="fa-solid fa-hand-holding-dollar text-xl text-purple-400"></i>
+              <h2>Pagamento devolvido ou em disputa</h2>
+            <% } %>
+          </div>
+          <div class="flex w-full justify-between items-center mt-0.5">
+            <p class="text-sm text-muted-foreground font-medium">Feito em <%= created_at %></p>
+            <p class="text-sm text-muted-foreground font-normal"><%= cc.order.internal_id %></p>
+          </div>
+        </div>
+
+        <div class="flex justify-between gap-4 p-8">
+          <div class="space-y-1 flex-1">
+            <label class="font-medium text-white">Email</label>
+            <input class="w-full h-10" readonly value="<%= cc.order.client_email %>" />
+          </div>
+
+          <div class="space-y-1 flex-1">
+            <label class="font-medium text-white">Valor total</label>
+            <input class="w-full h-10" readonly value="<%= cc.order.price_display %>" />
+          </div>
+
+          <% if (cc.order.promo_code) { %>
+            <div class="space-y-1 flex-1">
+              <label class="font-medium text-white">Cupom</label>
+              <input class="w-full h-10" readonly value="<%= cc.order.promo_code %>" />
+            </div>
+          <% } %>
+
+          <div class="space-y-1 flex-1">
+            <label class="font-medium text-white">Método de pagamento</label>
+            <input class="w-full h-10" readonly value="<%= cc.order.gateway_display %>" />
+          </div>
+
+          <div class="space-y-1 flex-1">
+            <label class="font-medium text-white">Status</label>
+
+            <% 
+              let status_color = 'orange'
+              
+              if (cc.order.status === 'APPROVED') status_color = 'green'
+              if (cc.order.status === 'REJECTED') status_color = 'red'
+              if (cc.order.status === 'CANCELED') status_color = 'green'
+              if (cc.order.status === 'REFUNDED') status_color = 'purple'
+              if (cc.order.status === 'CHARGEDBACK') status_color = 'purple'
+            %>
+            <div class="relative">
+              <span class="absolute mx-2 top-1/2 -translate-y-1/2 px-1 
+                rounded-sm font-medium text-sm bg-<%= status_color %>-500/10 text-<%= status_color %>-500">
+                <%= cc.order.status_display %>
+              </span>
+              <input class="w-full h-10" readonly />
+            </div>
+          </div>
+        </div>
+
+        <div class="px-8">
+          <h3 class="font-medium text-white">
+            <i class="fa-solid fa-list-ul me-1"></i>
+            Itens do pedido
+          </h3>
+
+          <div class="border rounded p-4 mt-2">
+            <% cc.order.packages.forEach((package, index) => { %>
+              <% const approved = cc.order.status === 'APPROVED' %>
+              <div class="flex w-full items-center">
+                <span class="text-brand me-2"><%= package.quantity %>x</span>
+                <span class="text-white font-semibold"><%= package.name %></span>
+
+                <span class="ms-auto px-2 py-0.5 rounded-sm text-sm font-medium
+                  text-<%= approved ? 'green' : 'orange' %>-500 bg-<%= approved ? 'green' : 'orange' %>-500/10"
+                >
+                  <% if (cc.store.type === 'STANDALONE') { %>
+                    <% const content = cc.order.queued_commands.filter((cmd) => cmd.order_package_id === package.id && cmd.command.startsWith("sendKey")) %>
+                    <% content.map((command) => { %>
+                      <% const key = command.command.split('"').at(1) %>
+                      <span class="ms-auto flex gap-1.5 items-center"><%= key %> 
+                        <button onclick="(() => {
+                          navigator.clipboard.writeText(`<%= key %>`);
+                          toast({
+                            title: 'Pronto!',
+                            content: 'Valor copiado.'
+                          })
+                        })()">
+                          <i class="fa-regular fa-copy"></i>
+                        </button>
+                      </span>
+                    <% }) %>
+                  <% } else { %>
+                    <%= approved ? 'CONCLUÍDO' : 'AGUARDANDO' %>
+                  <% } %>
+                </span>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+
+        <div class="p-8">
+          <a href="<%= cc.dist_url %>/" class="
+            ms-auto px-5 py-3 flex gap-2 items-baseline justify-center rounded-full bg-brand 
+            hover:bg-brand/80 transition text-white font-medium w-full text-lg
+          ">
+            <i class="fa-solid fa-house"></i>
+            Voltar para o inicio
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+<% } else { %>
+  <meta http-equiv="refresh" content="0; url='<%= cc.dist_url %>/'" />
+<% } %>

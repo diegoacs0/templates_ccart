@@ -1,0 +1,54 @@
+<div class="modal-header">
+  <h5 class="modal-title"><%= cc.package.name %></h5>
+  <button
+    type="button"
+    class="btn-close btn-close-white"
+    data-bs-dismiss="modal"
+    aria-label="Fechar"
+  ></button>
+</div>
+
+<div class="modal-body">
+  <div id="option_wrapper" class="cc__package___options">
+    <% cc.package.variables.forEach((variable, index) => { %>
+      <% const cart_package = cc.cart.packages.find((cp) => cp.package_id === cc.package.id) %>
+      <% const selected_option = cart_package?.options.find((option) => option.variable.id === variable.id) %>
+
+      <div>
+        <label for="<%= variable.name %>"><%= variable.description %>:</label>
+
+        <% if (variable.type === 'SELECT') { %>
+          <select id="<%= variable.name %>">
+            <% variable.options.forEach((option, index) => { %>
+              <option 
+                value="<%= option.id %>" 
+                <%= selected_option?.variable_option_id === option.id ? 'selected': '' %>
+              >
+                <%= option.name %> <%= option.price ? `(${option.price_display})` : '' %>
+              </option>
+            <% }) %> 
+          </select>
+        <% } else { %>
+          <input id="<%= variable.name %>" type="<% variable.type === 'TEXT' ? 'text' : 'number' %>" value="<%= selected_option?.value || '' %>">
+        <% } %>
+      </div>
+    <% }) %>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button style="margin-top: 18px;" class="btn-outline" data-bs-dismiss="modal">
+    Cancelar
+  </button>
+
+  <% const current_cart_item = cc.cart?.packages.find((package) => package.meta.id === cc.package.id) %>
+  <button id="<%= cc.package.id %>"
+    data-func="<%= current_cart_item ? 'update-options' : 'add-to-cart' %>"
+    data-slug="<%= cc.package.slug %>"
+    style="margin-top: 18px;"
+    class="btn-primary"
+  >
+    <i class="me-2 fa-solid fa-basket-shopping"></i>
+    <%= current_cart_item ? 'Atualizar' : 'Adicionar ao carrinho' %>
+  </button>
+</div>

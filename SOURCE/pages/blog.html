@@ -1,0 +1,83 @@
+<% layout("@layouts/layout") %>
+
+<div class="bg-zinc-100 border-b border-b-zinc-200 dark:bg-zinc-900 dark:border-b-neutral-800">
+  <div class="container mx-auto px-4 md:px-28 py-6">
+    <h1 class="text-2xl font-extrabold text-sky-950 dark:text-neutral-400">
+      <i class="fa-regular fa-newspaper"></i>
+      Blog
+    </h1>
+    <p class="text-gray-500 dark:text-gray-500">Veja as ultimas noticias e fique por dentro dos acontecimentos do servidor!</p>
+  </div>
+</div>
+
+<% if (cc.posts.length) { %>
+<div class="mt-8 container mx-auto px-4 md:px-28">
+  <div class="grid grid-cols-1 md:grid-cols-[1fr_0.7fr] gap-8 min-h-[20rem]">
+
+    <img class="flex-1 rounded-lg h-full w-full object-cover bg-slate-200" src="<%= cc.posts[0].image %>">
+
+    <div class="flex flex-col flex-1 min-h-full">
+      <p class="mt-1 text-sm text-gray-500">
+        Publicado em 
+        <span class="bg-brand-contrast/20 px-1 py-0 rounded-md text-brand-contrast">
+          <%= cc.posts[0].published_at %>
+        </span>
+      </p>
+      <h1 class="text-3xl font-semibold text-sky-950 dark:text-neutral-400"><%= cc.posts[0].title %></h1>
+      <p class="my-8 text-gray-500">
+        <%~ cc.posts[0].excerpt %>
+      </p>
+      <a href="<%= cc.posts[0].path %>" class="w-fit
+        mt-auto
+        py-1 
+        px-2 
+        rounded 
+        text-sm 
+        bg-neutral-900 
+        text-white font-semibold dark:bg-neutral-800 dark:text-neutral-400"
+      >
+        Continuar lendo
+        <i class="fa-solid fa-arrow-right ms-1 text-xs"></i>
+      </a>
+    </div>
+  </div>
+
+  <div class="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8">
+
+    <% cc.posts.forEach((post, index) => { %>
+      <% if (index !== 0) { %>
+        <div class="flex flex-col">
+          <img class="flex-1 rounded-lg max-h-60 object-cover bg-slate-200" src="<%= post.image %>">
+          
+          <div class="flex flex-col mt-2 h-full">
+            <p class="text-sm text-gray-500">
+              Publicado em 
+              <span class="bg-brand-contrast/20 px-1 py-0 rounded-md text-brand-contrast">
+                <%= post.published_at %>
+              </span>
+            </p>
+            <h1 class="mt-2 text-2xl font-semibold text-sky-950 dark:text-neutral-400"><%= post.title %></h1>
+
+            <p class="my-4 text-gray-500">
+              <%~ post.excerpt %>
+            </p>
+
+            <a href="<%= post.path %>" class="w-fit 
+              mt-auto
+              py-1 
+              px-2 
+              rounded 
+              text-sm 
+              bg-neutral-900 
+              text-white font-semibold dark:bg-neutral-800 dark:text-neutral-400"
+            >
+              Continuar lendo
+              <i class="fa-solid fa-arrow-right ms-1 text-xs"></i>
+            </a>
+          </div>
+        </div>
+      <% } %>
+    <% }) %>
+  </div>
+</div>
+<% } %>

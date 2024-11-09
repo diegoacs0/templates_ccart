@@ -1,0 +1,51 @@
+<% layout("@layouts/layout") %>
+
+<div class="mt-8 container mx-auto px-4 md:px-28 grid grid-cols-1 lg:grid-cols-[1fr_354px] gap-8">
+  <div>
+    <% if (cc.theme.index_content) { %>
+      <div class="CentralDraft mb-12"><%~ cc.theme.index_content %></div>
+    <% } %>
+
+    <div class="flex flex-wrap gap-4">
+      <%~ include('@components/advantage', {icon: 'fa-solid fa-truck-fast', 
+      title: 'Envio imediato', 
+      desc: 'Receba pelo pacote que comprou em poucos segundos após a confirmação do pagamento.'}) 
+      %>
+
+      <%~ include('@components/advantage', {icon: 'fa-solid fa-envelope-open', 
+      title: 'Suporte eficiente', 
+      desc: 'Em caso de dúvidas, entre em contato com o nosso suporte clicando em Suporte no topo da página.'}) 
+      %>
+
+      <%~ include('@components/advantage', {icon: 'fa-solid fa-shield-halved', 
+      title: 'Compra segura', 
+      desc: 'Seus dados são criptografados de ponta-à-ponta e processados pelo método de pagamento escolhido.'}) 
+      %>
+    </div>
+
+    <div class="mt-12 gap-4">
+      <h2 class="font-semibold text-xl text-sky-950 dark:text-neutral-500">Ultimas atualizações</h2>
+
+      <div class="mt-4 flex-wrap flex items-center gap-4">
+        <% if (cc.posts.data.length) { %>
+
+          <% cc.posts.data.forEach((post, index) => { %>
+
+            <% if (index < 3) { %>
+              <%~ include('@components/post_preview', {post, ...cc}) %>
+            <% } %>
+
+          <% }) %>
+
+        <% } else { %>
+          <div class="max-w-xs flex flex-col flex-1 self-stretch gap-4 p-8 border border-slate-200 rounded-lg text-center dark:border-neutral-800">
+            <i class="fa-regular fa-newspaper text-5xl text-gray-700 dark:text-neutral-600"></i>
+            <p class="text-lg font-medium text-blue-950 dark:text-neutral-600">Nenhuma atualização recente.</p>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <%~ include('@components/widget_bar', cc) %>
+</div>

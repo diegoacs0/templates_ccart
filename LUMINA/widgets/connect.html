@@ -1,0 +1,24 @@
+<div
+  class="w-full h-64 bg-[url('<%= cc.cdn_url %>/public/assets/templates/LUMINA/connect-<%= cc.store.type.toLowerCase() %>.png')] 
+  bg-no-repeat bg-right md:bg-[length:60%] object-cover rounded-xl">
+  <div class="
+      flex flex-col justify-center pl-14 h-full w-full 
+      rounded-xl from-50% bg-gradient-to-r from-muted to-transparent
+      max-md:w-full max-md:text-center max-md:px-5 
+  ">
+    <h2 class="text-3xl text-white font-semibold max-md:text-2xl">
+      Jogue agora <i class="fa-solid fa-gamepad text-brand"></i>
+    </h2>
+    <p class="text-lg text-white font-light mt-1 opacity-50 max-md:text-base md:w-[396px]">
+      Junte-se a outros jogadores e divirta-se no nosso servidor! Estamos te aguardando.
+    </p>
+    <button id="copy-ip" onclick="handleCopyIpToClipboard('<%= cc.widget.data.address %>')" 
+      class="bg-brand hover:bg-brand/80 transition mt-6 text-base text-white font-semibold
+      px-[40px] py-2.5 rounded-b-2xl w-full max-w-72 max-md:mx-auto max-md:text-[14px] tracking-wide
+    ">
+      <span id="copy-ip">
+        Acesse o nosso servidor
+      </span>
+    </button>
+  </div>
+</div>
