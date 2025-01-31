@@ -17,7 +17,7 @@
     <% } %>
   </div>
 
-  <% if (cc.widget?.data.address) { %>
+  <% if (cc.store.type !== 'GTA-SA' && cc.widget?.data.address) { %>
     <div class="mt-1.5 text-sky-950 dark:text-neutral-400">
       Junte-se à <span class="online-players font-semibold" data-ip="<%= cc.widget?.data.address ?? '' %>">...</span> jogadores online!
     </div>

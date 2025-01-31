@@ -1,19 +1,22 @@
-<div>
-  <div class="cc__widget___connection">
-    <h1>
-      JUNTE-SE A NÓS
-    </h1>
+<div class="p-6 bg-muted flex flex-col rounded-lg border">
+  <h2 class="text-xl font-bold">JUNTE-SE A NOS</h2>
 
-    <p class="muted">Clique no botão abaixo para jogar.</p>
+  <p class="text-muted-foreground">Clique no botão abaixo para jogar.</p>
 
-    <% if (['FIVEM', 'REDM'].includes(cc.store.type)) { %>
-      <a href="<%= cc.store.type.toLowerCase() %>://connect/<%= cc.widget.data.address %>">
-        <strong>JOGAR AGORA!</strong>
-      </a>
-    <% } else { %>
-      <button data-ip="<%= cc.widget.data.address %>" onclick="copyIp(this)">
-        <strong>JOGAR AGORA</strong>
-      </button>
-    <% } %>
-    </div>
+  <% if (['FIVEM', 'REDM'].includes(cc.store.type)) { %>
+    <a 
+      href="<%= cc.store.type.toLowerCase() %>://connect/<%= cc.widget.data.address %>" 
+      class="btn-primary mt-4"
+    >
+      JOGAR AGORA!
+    </a>
+  <% } else { %>
+    <button 
+      data-ip="<%= cc.widget.data.address %>" 
+      onclick="copyIp(this)"
+      class="btn-primary mt-4"
+    >
+      JOGAR AGORA!
+    </button>
+  <% } %>
 </div>

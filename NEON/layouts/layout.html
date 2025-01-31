@@ -1,6 +1,52 @@
+<% 
+function hexToHSL(hex) {
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    r = parseInt(result[1], 16);
+    g = parseInt(result[2], 16);
+    b = parseInt(result[3], 16);
+    r /= 255, g /= 255, b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+    if(max == min){
+      h = s = 0; // achromatic
+    }else{
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch(max){
+        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+        case g: h = (b - r) / d + 2; break;
+        case b: h = (r - g) / d + 4; break;
+      }
+      h /= 6;
+    }
+
+  h = Math.round(h * 360);
+  s = Math.round(s * 100);
+  l = Math.round(l * 100);
+
+  cssString = `${h} ${s}% ${l}%`;
+
+  return cssString;
+}
+%>
+
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="scroll-smooth">
   <head>
+    <style>
+      :root {
+        --primary: <%= hexToHSL(cc.theme.primary_color) %>;
+        --secondary: <%= hexToHSL(cc.theme.secondary_color) %>;
+        --background: 223 25% 11%;
+        --foreground: 0 0% 98%;
+        --border: 223 25% 18%;
+        --muted: 223 25% 14%;
+        --muted-foreground: 240 5% 65%;
+        --accent: 221 22% 14%;
+        --accent-foreground: 240 5% 65%;
+      }
+    </style>
+
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -34,89 +80,169 @@
       crossorigin="anonymous"
     ></script>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link 
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Orbitron:wght@900&family=Poppins:wght@400;500;600;700&family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" 
-      rel="stylesheet" 
-    />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
-    <link 
-      rel="stylesheet" 
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" 
-      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" 
-      crossorigin="anonymous" 
-    />
-
-    <link rel="stylesheet" href="<%= cc.cdn_url %>/public/assets/css/centraldraft.css" />
+    <link rel="stylesheet" href="<%= cc.cdn_url %>/public/assets/css/centralcart.css" />
     <link rel="stylesheet" href="<%= cc.cdn_url %>/public/assets/fontawesome/all.css" />
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
-    <link rel="stylesheet" href="<%= cc.dist_url %>/assets/core.css" />
+    <link rel="stylesheet" href="<%= cc.style('modal.css') %>" />
+    <link rel="stylesheet" href="<%= cc.style('core.css') %>" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: 'hsl(var(--primary))',
+              secondary: 'hsl(var(--secondary))',
+              background: 'hsl(var(--background))',
+              foreground: 'hsl(var(--foreground))',
+              border: 'hsl(var(--border))',
+              muted: 'hsl(var(--muted))',
+              'muted-foreground': 'hsl(var(--muted-foreground))',
+              accent: 'hsl(var(--accent))',
+              'accent-foreground': 'hsl(var(--accent-foreground))'
+            }
+          },
+          container: {
+            padding: {
+              DEFAULT: '1rem',
+              sm: '2rem',
+            },
+            center: true,
+            screens: {
+              sm: '480px',
+              md: '768px',
+              lg: '976px',
+              xl: '1340px',
+            },
+          },
+        },
+      }
+    </script>
+
+    <style type="text/tailwindcss">
+      @layer base {
+        * {
+          @apply border-border;
+        }
+
+        body {
+          @apply bg-background text-foreground font-["Roboto_Condensed"];
+        }
+
+        input, select {
+          @apply bg-background border rounded-md font-medium text-foreground px-2 h-8 text-sm;
+          appearance: textfield;
+          font-family: 'Roboto Condensed', sans-serif;
+        }
+
+        input:focus-visible, select:focus-visible {
+          outline: none;
+          @apply ring-2 ring-primary;
+        }
+
+        .bg-primary {
+          color: lch(from hsl(var(--primary)) calc((49.44 - l) * infinity) 0 0);
+        }
+
+        .bg-background {
+          color: lch(from hsl(var(--background)) calc((49.44 - l) * infinity) 0 0);
+        }
+      }
+
+      @layer components {
+        .btn-primary {
+          @apply bg-primary rounded flex items-center justify-center py-2 px-4 transition hover:bg-primary/80 font-semibold text-sm font-['Poppins'];
+        }
+        
+        .btn-secondary {
+          @apply bg-primary/20 text-primary border border-primary/20 rounded flex items-center justify-center py-2 px-4 transition 
+          hover:bg-primary/30 font-semibold text-sm font-['Poppins'];
+        }
+
+        .btn-outline {
+          @apply bg-transparent border border-primary text-primary rounded flex items-center justify-center py-2 px-4 transition hover:bg-primary/10 font-semibold text-sm font-['Poppins'];
+        }
+      }
+    </style>
   </head>
 
-  <body>
-    <div id="package-modal-container" class="modal fade">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+  <body class="bg-background text-foreground">
+    <div class="modal micromodal-slide" id="package-modal" aria-hidden="true">
+      <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+        <div id="package-modal-container" class="modal__container w-[500px] rounded-lg bg-accent" role="dialog" aria-modal="true">
+        </div>
+      </div>
+    </div>
+
+    <div class="modal micromodal-slide" id="package-option-modal" aria-hidden="true">
+      <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+        <div id="package-option-modal-container" class="modal__container w-[400px] rounded-lg bg-accent" role="dialog" aria-modal="true">
         </div>
       </div>
     </div>
 
     <%~ include('@components/header', cc) %>
 
-    <!-- Main content -->
-    <div id="store" class="cc__index___grid container">
-      <div class="cc__index___sidebar">
-        <div class="cc__index___sidebar__navigation">
+    <div id="store" class="container grid grid-cols-1 gap-8 lg:grid-cols-[0.45fr_1fr]">
+      <div class="flex flex-col gap-8">
+        <div class="bg-muted rounded-lg border overflow-hidden">
           <ul>
-            <li class="<%= cc.current_page === 'index' && 'active' %>">
-              <a href="<%= cc.dist_url %>/">
-                <i class="fa-solid fa-house"></i>
+            <li class="flex flex-col items-center relative border-b last:border-none">
+              <a href="<%= cc.dist_url %>/" 
+                 class="w-full p-6 flex items-center text-lg font-bold uppercase <%= cc.current_page === 'index' && 'bg-black/40' %>">
+                <i class="fa-solid fa-house text-primary mr-2"></i>
                 INÍCIO
               </a>
             </li>
-      
-            <% cc.categories.forEach((category) => { %>
-              <% if (category.sub_categories.length > 0) { %>
-                <li>
-                  <button href="<%= cc.dist_url %>/category/<%= category.slug %>" onclick="openSubcategoryMenu(this)">
-                    <i class="fa-solid fa-bars"></i>
-                    <%= category.name %>
-                    <i class="fa-solid fa-caret-right"></i>
-                  </button>
 
-                  <div class="cc__subcategories___list__wrapper">
-                    <ul class="cc__subcategories___list">
+            <% cc.categories.forEach((category) => { %>
+              <li class="flex flex-col items-center relative border-b last:border-none">
+                <% if (category.sub_categories.length > 0) { %>
+                  <button 
+                    onclick="openSubcategoryMenu(this)"
+                    class="w-full p-6 flex items-center text-lg font-bold uppercase bg-transparent"
+                  >
+                    <i class="fa-solid fa-bars text-primary mr-2"></i>
+                    <%= category.name %>
+                    <i class="fa-solid fa-caret-right text-gray-600 ml-auto transition-transform"></i>
+                  </button>
+                  
+                  <div class="subcategories-wrapper h-0 overflow-hidden w-full transition-all duration-300 ease-out">
+                    <ul class="bg-black/40 py-3">
                       <% category.sub_categories.forEach((sub_category) => { %>
-                        <li class="<%= cc.current_page === 'category/' + sub_category.slug && 'active' %>">
-                          <a href="<%= cc.dist_url %>/category/<%= sub_category.slug %>">
+                        <li class="border-none">
+                          <a href="<%= cc.dist_url %>/category/<%= sub_category.slug %>"
+                             class="px-4 py-2 flex font-bold uppercase text-base hover:text-primary <%= cc.current_page === 'category/' + sub_category.slug && 'bg-black/40' %>">
                             <%= sub_category.name %>
                           </a>
                         </li>
                       <% }) %>
                     </ul>
                   </div>
-                </li>
-              <% } else { %>
-                <li class="<%= cc.current_page === 'category/' + category.slug && 'active' %>">
-                  <a href="<%= cc.dist_url %>/category/<%= category.slug %>">
-                    <i class="fa-solid fa-bars"></i>
+                <% } else { %>
+                  <a href="<%= cc.dist_url %>/category/<%= category.slug %>"
+                     class="w-full p-6 flex items-center text-lg font-bold uppercase <%= cc.current_page === 'category/' + category.slug && 'bg-black/40' %>">
+                    <i class="fa-solid fa-bars text-primary mr-2"></i>
                     <%= category.name %>
-                    <i class="fa-solid fa-caret-right"></i>
+                    <i class="fa-solid fa-caret-right text-gray-600 ml-auto"></i>
                   </a>
-                </li>
-              <% } %>
+                <% } %>
+              </li>
             <% }) %>
           </ul>
         </div>
-    
-        <div class="cc__index___widgets">
+
+        <div class="flex flex-col gap-8">
           <% cc.widgets.forEach((widget) => { %>
-            
             <% if (widget.type === 'DISCORD') { %>
               <%~ include('@widgets/discord', {widget}) %>
             <% } %>
-
 
             <% if (widget.type === 'CONNECTION_BOARD') { %>
               <%~ include('@widgets/connection_board', {...cc, widget}) %>
@@ -133,29 +259,24 @@
             <% if (widget.type === 'PRODUCT_HIGHLIGHT' && widget.package !== null) { %>
               <%~ include('@widgets/product_highlight', {...cc, widget}) %>
             <% } %>
-            
           <% }) %>
         </div>
       </div>
 
-      <div class="cc__index___content">
-        <div class="cc__index___content__panel">
+      <div class="min-h-screen overflow-auto">
+        <div class="bg-muted rounded-lg border overflow-hidden">
           <%~ cc.body %>
         </div>
       </div>
     </div>
-    <!-- Main content -->
 
-    <!-- Footer -->
     <%~ include('@components/footer', cc) %>
-    <!-- Footer -->
   </body>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
 
   <script type="text/javascript">
     const dist_url = '<%= cc.dist_url %>'
   </script>
+  <script type="text/javascript" src="https://unpkg.com/micromodal/dist/micromodal.min.js"></script>
   <script src="<%= cc.cdn_url %>/public/assets/js/CentralCart.js?v=<%= Math.floor(Date.now() / 60_000) %>" type="module"></script>
   <script src="<%= cc.dist_url %>/assets/scripts.js"></script>
 

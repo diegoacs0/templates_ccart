@@ -1,88 +1,113 @@
 <% layout("@layouts/layout") %>
 
-<div class="cc__checkout___wrapper">
-  <div class="cc__checkout___header">
-    <h4>Carrinho</h4>
+<div class="bg-muted flex flex-col rounded-lg shadow-[1px_5px_22px_-2px_rgba(0,0,0,0.45)]">
+  <div class="p-6 border-b uppercase">
+    <h2 class="text-xl font-bold">CARRINHO</h2>
   </div>
 
-  <div class="cc__checkout___products">
-    <table>
-      <thead>
-        <tr>
-          <th>Produto</th>
-          <th>Opções</th>
-          <th>Preço</th>
-          <th>Quantidade</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% if (cc.cart.packages.length === 0) { %>
-          <tr class="cc__checkout___no_products" style="display: table-row">
-            <td colspan="5">
-              <p>
-                Nenhum produto foi adicionado ao carrinho.
-              </p>
-            </td>
+  <div class="p-6">
+    <div class="overflow-auto font-['Poppins']">
+      <table class="w-full font-poppins border-collapse">
+        <thead class="border-b">
+          <tr>
+            <th class="text-left p-4 font-bold text-sm">Produto</th>
+            <th class="text-left p-4 font-bold text-sm">Opções</th>
+            <th class="text-left p-4 font-bold text-sm">Preço</th>
+            <th class="text-left p-4 font-bold text-sm">Quantidade</th>
+            <th class="text-left p-4 font-bold text-sm"></th>
           </tr>
-        <% } %>
-
-        <% cc.cart.packages.forEach((package, index) => { %>
-          <tr class="display">
-            <td><%= package.meta.name %></td>
-            <td>
-              <ul>
-                <% if (package.options.length) { %>
+        </thead>
+        <tbody>
+          <% if (cc.cart.packages.length === 0) { %>
+            <tr class="text-center">
+              <td colspan="5" class="p-4">
+                <p class="text-sm">Nenhum produto foi adicionado ao carrinho.</p>
+              </td>
+            </tr>
+          <% } %>
+  
+          <% cc.cart.packages.forEach((package, index) => { %>
+            <tr class="even:bg-background">
+              <td class="p-4 text-sm font-semibold"><%= package.meta.name %></td>
+              <td class="p-4">
+                <ul>
+                  <% if (package.options.length) { %>
+                    <button 
+                      class="btn-primary" 
+                      data-func="open-selector" 
+                      data-slug="<%= package.meta.slug %>"
+                    >
+                      <i class="fa-solid fa-gear"></i>
+                    </button>
+                  <% } %>
+                </ul>
+              </td>
+              <td class="p-4 text-sm font-bold text-primary"><%= package.meta.price_display %></td>
+              <td class="cc__checkout___quantity_controller p-4">
+                <div class="flex items-center gap-2 transition-all duration-200">
                   <button 
-                    class="btn-primary" 
-                    data-func="open-selector" 
-                    data-slug="<%= package.meta.slug %>"
+                    cc-package-id="<%= package.meta.id %>" 
+                    class="cc__checkout___decrease w-8 h-8 rounded bg-red-600 text-white transition duration-300
+                    hover:bg-red-800 <%= package.meta.type !== 'MULTIPLE' && 'invisible' %>"
                   >
-                    <i class="fa-solid fa-gear"></i>
+                    <i class="fa-solid fa-minus"></i>
                   </button>
-                <% } %>
-              </ul>
-            </td>
-            <td class="cc__checkout___price"><%= package.meta.price_display %></td>
-            <td>
-              <div class="cc__checkout___quantity_controller">
-                <button cc-package-id="<%= package.meta.id %>" class="cc__checkout___decrease <%= package.meta.type !== 'MULTIPLE' && 'invisible' %>">
-                  <i class="fa-solid fa-minus"></i>
-                </button>
-                <input cc-package-id="<%= package.meta.id %>" name="quantity" autocomplete="off" class="cc__checkout___quantity_input" <%~ package.meta.type !== 'MULTIPLE' && `readonly style="cursor: not-allowed"` %> type="number" value="<%= package.quantity %>">
-                <button cc-package-id="<%= package.meta.id %>" class="cc__checkout___increase <%= package.meta.type !== 'MULTIPLE' && 'invisible' %>">
-                  <i class="fa-solid fa-plus"></i>
-                </button>
-              </div>
-            </td>
-            <td>
-              <button cc-package-id="<%= package.meta.id %>" class="cc__checkout___remove">
-                <i class="fa-solid fa-trash-can"></i>
-              </button>
-            </td>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
-    
-    <div class="cc__checkout___footer">
-      <div class="cc__checkout___separator">
-        <h5>Concluir compra</h5>
 
-        <div class="cc__checkout___coupon_container">
-          <div class="cc__checkout___coupon_form">
-            <input autocomplete="off" class="coupon-input" placeholder="CUPOM" value="<%= cc.cart.discount?.coupon || '' %>">
-            <button id="apply-coupon" class="btn-primary thin <%= cc.cart.discount?.coupon && 'red' %>">
+                  <input 
+                    cc-package-id="<%= package.meta.id %>" 
+                    name="quantity" 
+                    autocomplete="off" 
+                    class="cc__checkout___quantity_input w-9 h-9 text-center" 
+                    type="number" 
+                    value="<%= package.quantity %>"
+                    <%~ package.meta.type !== 'MULTIPLE' && `readonly style="cursor: not-allowed"` %>
+                  >
+
+                  <button 
+                    cc-package-id="<%= package.meta.id %>" 
+                    class="cc__checkout___increase w-8 h-8 rounded bg-green-600 text-white transition duration-300 
+                    hover:bg-green-800 <%= package.meta.type !== 'MULTIPLE' && 'invisible' %>"
+                  >
+                    <i class="fa-solid fa-plus"></i>
+                  </button>
+                </div>
+              </td>
+              <td class="p-4">
+                <button cc-package-id="<%= package.meta.id %>" class="cc__checkout___remove border border-transparent hover:border-white/10 w-9 h-9 text-muted-foreground bg-transparent transition rounded-full duration-300 hover:bg-white/5 hover:text-red-600">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="mt-6">
+      <div class="border-b pb-4 mb-4 flex justify-between items-end flex-wrap">
+        <h5 class="text-xl font-bold">Concluir compra</h5>
+
+        <div class="text-right flex flex-col items-end">
+          <div class="flex gap-3 items-center">
+            <input autocomplete="off" class="coupon-input h-9 text-center font-bold" placeholder="CUPOM" value="<%= cc.cart.discount?.coupon || '' %>">
+            <button 
+              id="apply-coupon" 
+              data-coupon="<%= cc.cart.discount?.coupon %>" 
+              class="btn-primary h-[34px] <%= cc.cart.discount?.coupon && 'bg-red-600 hover:bg-red-500' %>"
+            >
               <%= cc.cart.discount?.coupon ? 'Remover' : 'Aplicar' %>
             </button>
           </div>
-          <p class="coupon-error">Oops...</p>
+          <p class="text-[#fe293e] text-sm hidden coupon-error">Oops...</p>
         </div>
       </div>
-      <div class="cc__checkout___footer_finish">
-        <p>Total: <strong class="cc__checkout___total_price"><%= cc.cart.total_price_display %></strong></p>
-        <button class="btn-primary green thin" data-bs-toggle="modal" data-bs-target="#checkout-modal">
-          <i class="fa-solid fa-cart-shopping"></i>
+      <div class="flex justify-between items-center font-['Poppins']">
+        <div class="flex flex-col">
+          <p class="font-poppins">Total: <strong class="text-primary cc__checkout___total_price"><%= cc.cart.total_price_display %></strong></p>
+        </div>
+
+        <button class="btn-primary green thin" data-micromodal-trigger="checkout-modal">
+          <i class="fa-solid fa-cart-shopping mr-1"></i>
           Finalizar pedido
         </button>
       </div>
@@ -90,40 +115,38 @@
   </div>
 </div>
 
-<!-- Checkout modal -->
-<div
-  class="modal fade cc__checkout___modal"
-  id="checkout-modal"
-  tabindex="-1"
-  aria-labelledby="checkout-modal"
-  aria-hidden="true"
->
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="checkout-modal">Finalizar pedido</h5>
+<div class="modal micromodal-slide" id="checkout-modal" aria-hidden="true">
+  <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+    <div id="package-modal-container" class="modal__container w-[400px] rounded-lg bg-accent" role="dialog" aria-modal="true">
+      <div class="border-b p-4">
+        <h5 class="text-xl font-semibold">Finalizar pedido</h5>
         <button
           type="button"
-          class="btn-close btn-close-white"
-          data-bs-dismiss="modal"
+          class="absolute top-4 right-4 text-white opacity-70 hover:opacity-100 transition-opacity"
           aria-label="Fechar"
-        ></button>
+          data-micromodal-close
+        >
+          <i class="fa-solid fa-times text-xl"></i>
+        </button>
       </div>
-      <div class="modal-body">
-        <div class="cc__checkout___modal_alert_container">
-          <div class="cc__checkout___modal_alert">
+
+      <div class="p-4 font-['Poppins']">
+        <div class="cc__checkout___modal_alert_container mb-4 hidden">
+          <div class="text-sm flex items-center justify-between p-2 rounded bg-red-700">
             <div>
-              <h5>Oops...</h5>
+              <h5 class="font-bold">Oops...</h5>
               <p>Ocorreu um erro.</p>
             </div>
-            <i class="fa-solid fa-circle-exclamation"></i>
+            <i class="fa-solid fa-circle-exclamation text-2xl"></i>
           </div>
         </div>
-        <form>
+
+
+        <form class="space-y-4 text-sm">
           <% if (cc.cart.require_discord) { %>
-            <div class="cc__checkout___form_field">
+            <div class="cc__checkout___form_field flex flex-col space-y-1">
               <label for="discord">Discord</label>
-              <button class="btn-primary discord">
+              <button class="btn-primary text-white bg-[#5865f2] hover:bg-[#4c57d1] w-full discord">
                 <i class="fa-brands fa-discord me-1"></i>
                 Entrar com o Discord
               </button>
@@ -132,73 +155,80 @@
             </div>
           <% } %>
 
-          <div class="cc__checkout___form_field">
+          <div class="cc__checkout___form_field flex flex-col space-y-1">
             <label for="email">E-mail</label>
-            <input id="email" name="email" placeholder="seuemail@gmail.com">
+            <input id="email" name="email" placeholder="seuemail@gmail.com" class="h-10">
           </div>
 
 
           <% if (cc.checkout_variables.length) { %>
             <div id="checkout_variables">
               <% cc.checkout_variables.map((variable) => { %>
-                <div class="cc__checkout___form_field">
+                <div class="cc__checkout___form_field flex flex-col space-y-1">
                   <label for="<%= variable.name %>"><%= variable.description %></label>
         
                   <% if (variable.type === 'NUMBER') { %>
-                    <input id="<%= variable.name %>" class="number-only" />
+                    <input id="<%= variable.name %>" class="number-only h-10" />
                   <% } else { %>
-                    <input id="<%= variable.name %>" />
+                    <input id="<%= variable.name %>" class="h-10" />
                   <% } %>
                 </div>
               <% }) %>
             </div>
           <% } %>
 
-          <div class="cc__checkout___form_field">
+          <div class="cc__checkout___form_field flex flex-col space-y-1">
             <label for="name">Nome completo</label>
-            <input id="name" name="name" placeholder="Peter Parker">
+            <input id="name" name="name" placeholder="Peter Parker" class="h-10">
           </div>
 
           <% if (cc.store.require_phone) { %>
-            <div class="cc__checkout___form_field">
+            <div class="cc__checkout___form_field flex flex-col space-y-1">
               <label for="phone">WhatsApp</label>
-              <input id="phone" name="phone" value='+55'>
+              <input id="phone" name="phone" value='+55' class="h-10">
               <span class="cc__checkout___help_text">+Cód. país + (DDD) + nº. Exemplo: +55 (15) 99264-7447</span>
             </div>
           <% } %>
 
-          <div class="cc__checkout___form_field <%= cc.store.require_document ? 'd-flex' : 'd-none' %>" <%= cc.store.require_document ? 'data-required' : '' %>>
+          <div class="cc__checkout___form_field flex-col space-y-1 <%= cc.store.require_document ? 'flex' : 'hidden' %>" <%= cc.store.require_document ? 'data-required' : '' %>>
             <label for="document">CPF</label>
-            <input id="document" name="document" placeholder="123.456.789-09">
+            <input id="document" name="document" placeholder="123.456.789-09" class="h-10">
           </div>
 
-          <div class="cc__checkout___form_field">
+          <div class="cc__checkout___form_field flex flex-col space-y-1">
             <label>Forma de pagamento</label>
-            <div class="cc__checkout___gateways">
+            <div class="cc__checkout___gateways flex flex-wrap gap-2">
               <% cc.gateways.forEach((gateway, index) => { %>
-                <button type="button" value="<%= gateway.gateway %>" data-require-document="<%= gateway.require_document %>">
+                <button 
+                  type="button" 
+                  value="<%= gateway.gateway %>" 
+                  data-require-document="<%= gateway.require_document %>"
+                  class="btn-primary bg-transparent border text-foreground hover:bg-transparent 
+                  data-[active]:border-transparent data-[active]:bg-green-600"
+                >
                   <%= gateway.display %>
                 </button>
               <% }) %>
             </div>
           </div>
 
-
           <div class="cc__checkout___form_field checkbox">
             <input
               name="terms"
               type="checkbox"
               id="terms"
+              class="h-4"
             />
+
             <label for="terms">Eu aceito os 
-              <a id="terms-form" data-bs-toggle="modal" data-bs-target="#terms-modal">Termos de Pagamento
+              <a id="terms-form" data-micromodal-trigger="terms-modal" class="font-bold text-primary cursor-pointer">
+                Termos de Pagamento
               </a>
             </label>
-
           </div>
         </form>
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer border-t p-4 justify-end flex">
         <button id="checkout" type="button" class="btn-primary green thin">
           Comprar (<%= cc.cart.total_price_display %>)
         </button>
@@ -207,47 +237,69 @@
   </div>
 </div>
 
-<!-- PIX modal -->
-<div class="modal fade cc__checkout___pix_modal" id="pix-modal" tabindex="-1" aria-labelledby="pix-modal" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="pix-modal">Você está quase lá!</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
-      </div>
-      <div class="modal-body">
-        <h3 class="mb-3">Escaneie o QR CODE abaixo:</h3>
-        <img class="mb-3" width="200" height="200" src="data:image/jpeg;base64,placeholder">
-        <h4 class="mb-2">ou</h4>
-        <button class="btn-primary">
-          <span>Clique aqui para copiar</span>
-          <i class="fa-solid fa-copy"></i>
+<div class="modal micromodal-slide" id="pix-modal" aria-hidden="true">
+  <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+    <div id="package-modal-container" class="modal__container w-[400px] rounded-lg bg-accent" role="dialog" aria-modal="true">
+      <div class="border-b p-4">
+        <h5 class="text-xl font-semibold">Você está quase lá!</h5>
+        <button
+          type="button"
+          class="absolute top-4 right-4 text-white opacity-70 hover:opacity-100 transition-opacity"
+          aria-label="Fechar"
+          data-micromodal-close
+        >
+          <i class="fa-solid fa-times text-xl"></i>
         </button>
       </div>
-      <div class="modal-footer" data-bs-dismiss="modal">
-        <button type="button" class="btn-primary">Pronto!</button>
+
+      <div class="p-4 flex items-center flex-col">
+        <h3 class="mb-3 font-bold text-xl">Escaneie o QR CODE abaixo:</h3>
+        <img class="mb-3" width="200" height="200" src="data:image/jpeg;base64,placeholder">
+        <h4 class="mb-2">ou</h4>
+        <button id="copy-pix" class="btn-primary">
+          <span>Clique aqui para copiar</span>
+          <i class="fa-solid fa-copy ms-1"></i>
+        </button>
+      </div>
+
+      <div class="border-t p-4 flex justify-end">
+        <button type="button" class="btn-primary" data-micromodal-close>Pronto!</button>
       </div>
     </div>
   </div>
 </div>
-<!-- PIX modal -->
 
-<!-- Terms modal -->
-<div class="modal fade cc__checkout___terms_modal" id="terms-modal" tabindex="-1" aria-labelledby="terms-modal" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="terms-modal">Leia os termos</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+<div class="modal micromodal-slide" id="terms-modal" aria-hidden="true">
+  <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+    <div id="package-modal-container" class="modal__container w-[400px] rounded-lg bg-accent" role="dialog" aria-modal="true">
+      <div class="border-b p-4">
+        <h5 class="text-xl font-semibold">Leia os termos!</h5>
+        <button
+          type="button"
+          class="absolute top-4 right-4 text-white opacity-70 hover:opacity-100 transition-opacity"
+          aria-label="Fechar"
+          data-micromodal-close
+        >
+          <i class="fa-solid fa-times text-xl"></i>
+        </button>
       </div>
-      <div class="modal-body">
 
+      <button
+        type="button"
+        class="absolute top-4 right-4 text-white opacity-70 hover:opacity-100 transition-opacity"
+        aria-label="Fechar"
+        data-micromodal-close
+      >
+        <i class="fa-solid fa-times text-xl"></i>
+      </button>
+
+      <div class="p-4 centralcart-content">
         <%~ cc.theme.terms_content || '' %>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn-primary" data-bs-toggle="modal" data-bs-target="#checkout-modal">Voltar</button>
+
+      <div class="border-t p-4 flex justify-end">
+        <button type="button" class="btn-primary" data-micromodal-close data-custom-open="checkout-modal">Voltar!</button>
       </div>
     </div>
   </div>
 </div>
-<!-- Terms modal -->

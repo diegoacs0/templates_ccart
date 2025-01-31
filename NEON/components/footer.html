@@ -1,20 +1,20 @@
-<footer>
-  <div class="cc__footer___wrapper container">
-    <div class="cc__footer___left_element">
+<footer class="bg-black/20">
+  <div class="container flex items-center justify-between mt-16 py-6 font-['Poppins']">
+    <div class="flex items-center">
       <% if (cc.theme.logo) { %>
       <a href="/">
-        <img src="<%= cc.theme.logo %>" width="90px" />
+        <img src="<%= cc.theme.logo %>" class="mr-2 w-[90px]" />
       </a>
       <% } %>
 
       <div>
         <p><b><%= cc.store.name %></b> © <%= new Date().getFullYear() %></p>
         <% if (cc.store.type !== 'STANDALONE') { %>
-          <p>Não somos afiliados a <%= ['FIVEM', 'REDM'].includes(cc.store.type) ? 'Rockstar Games' : 'Mojang Studios' %>.</p>
+          <p>Não somos afiliados a <%= ['FIVEM', 'REDM', 'GTA-SA'].includes(cc.store.type) ? 'Rockstar Games' : 'Mojang Studios' %>.</p>
         <% } %>
       </div>
     </div>
 
-    <p>Com ❤️ por <a href="https://centralcart.com.br">CentralCart!</a></p>
+    <p>Com ❤️ por <a href="https://centralcart.com.br" class="hover:text-primary transition-colors">CentralCart!</a></p>
   </div>
 </footer>

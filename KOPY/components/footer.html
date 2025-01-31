@@ -1,0 +1,46 @@
+<div class="mt-auto relative">
+  <div class="absolute top-[-300px] left-0 w-full pointer-events-none">
+    <div class="footer-bg"></div>
+  </div>
+
+  <footer class="bg-background/80 backdrop-blur-md z-10 relative overflow-hidden">
+    <div class="py-6 border-t">
+      <div class="container mx-auto max-w-screen-xl flex justify-between items-center flex-wrap gap-4">
+        <div>
+          <a href="/" class="block w-fit">
+            <% if (cc.theme.logo) { %>
+              <img src="<%= cc.theme.logo %>" class="w-[50px] h-[50px] object-contain" />
+            <% } else { %>
+              <h1 class="text-lg font-bold text-white">
+                <%= cc.store.name %>
+              </h1>
+            <% } %>
+          </a>
+      
+          <p class="text-muted-foreground text-sm flex items-center gap-1.5">
+            Desenvolvido com 
+            <a href="https://centralcart.com.br" target="_blank" class="text-primary inline-flex">
+              <img class="h-4" src="<%= cc.cdn('public/assets/templates/KOPY/centralcart-logo-white.png') %>" />
+            </a>
+          </p>
+        </div>
+    
+        <% const socials = Object.keys(cc.theme.socials).filter((key) => cc.theme.socials[key] !== null) %>
+        <div class="flex gap-3">
+          <% socials.forEach((social) => { %>
+            <a class="rounded-full w-10 h-10 flex justify-center items-center bg-secondary/10 ring-2 ring-secondary/80 ring-secondary hover:bg-secondary/20" href="<%= cc.theme.socials[social] %>" target="_blank">
+              <i class="fa-brands fa-<%= social %>"></i>
+            </a>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+  
+    <div class="py-6 border-t">
+      <div class="container mx-auto max-w-screen-xl flex justify-between items-center text-sm text-muted-foreground">
+        <p>Copyright © <%= new Date().getFullYear() %> - <%= cc.store.name %>.</p>
+        <a href="/terms" class="hover:underline">Termos e condições</a>
+      </div>
+    </div>
+  </footer>
+</div>

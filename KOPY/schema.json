@@ -1,0 +1,72 @@
+{
+  "name": "KOPY",
+  "author": "CentralCart",
+  "version": "1.0.0",
+  "settings": [
+    {
+      "title": "Tema",
+      "fields": [
+        {
+          "key": "primary-color",
+          "label": "Cor primária",
+          "description": "A cor principal que aparece na loja.",
+          "type": "color-picker",
+          "default": "#00a843"
+        },
+        {
+          "key": "secondary-color",
+          "label": "Cor secundária",
+          "description": "A cor secundária aparece com menos frequência na loja.",
+          "type": "color-picker",
+          "default": "#9205f5"
+        },
+        {
+          "key": "headline",
+          "label": "Headline",
+          "description": "Texto do topo da página.",
+          "type": "text",
+          "default": "A [loja líder] em venda de produtos digitais!"
+        },
+        {
+          "key": "sub-headline",
+          "label": "Sub-headline",
+          "description": "Complemento do headline da página.",
+          "type": "textarea",
+          "default": "A nossa loja se destaca como a referência no mercado, oferecendo uma ampla variedade de produtos digitais com preços competitivos e qualidade incomparável."
+        },
+        {
+          "key": "contact-link",
+          "label": "Link de contato",
+          "description": "Link de contato da sua loja.",
+          "type": "url",
+          "default": ""
+        },
+        {
+          "key": "visual-discount",
+          "label": "Desconto visual (%)",
+          "description": "Apresenta um desconto fictício na precificação dos produtos. 0 para desativar.",
+          "type": "number",
+          "default": 10
+        },
+        {
+          "key": "top-announce",
+          "label": "Anúncio",
+          "description": "Mensagem exibida no topo da página. Use [] para destacar partes da mensagem.",
+          "type": "textarea",
+          "default": ""
+        },
+        {
+          "key": "show-sales",
+          "label": "Mostrar vendas",
+          "description": "Exibe a quantidade de vendas na página do produto.",
+          "type": "select",
+          "default": false,
+          "options": [
+            true,
+            false
+          ]
+        }
+      ]
+    }
+  ]
+}

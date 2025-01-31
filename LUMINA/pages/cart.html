@@ -226,7 +226,7 @@
 </main>
 
 <div id="checkout-drawer" class="hidden fixed h-screen w-screen top-0 z-[1000] place-items-end">
-  <div id="drawer-content" class="slide-in bg-muted w-[400px] h-full text-white">
+  <div id="drawer-content" class="slide-in bg-muted w-full sm:w-[400px] h-full text-white">
     <div class="p-4 border-b flex justify-between items-center">
       <h3 class="font-semibold text-lg">Checkout</h3>
 
@@ -235,7 +235,7 @@
       </button>
     </div>
 
-    <form id="checkout-form" class="p-4 gap-4 flex flex-col h-[calc(100vh-61px)] overflow-y-auto" tabindex="-1">
+    <form id="checkout-form" class="p-4 gap-4 flex flex-col h-[calc(100dvh-61px)] overflow-y-auto" tabindex="-1">
       <% if (cc.cart.require_discord) { %>
         <div>
           <input id="discord" name="discord" type="hidden">

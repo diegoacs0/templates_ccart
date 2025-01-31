@@ -1,32 +1,27 @@
-<div>
-  <div class="cc__widget___donators">
-    <h1>
-      DOADORES DO MÊS
-    </h1>
+<div class="p-6 bg-muted flex flex-col rounded-lg border">
+  <h2 class="text-xl font-bold">DOADORES DO MÊS</h2>
 
-    <p class="muted">Veja quem mais contribuiu.</p>
+  <p class="text-muted-foreground">Veja quem mais contribuiu.</p>
 
-    <div class="box">
-      <% if (cc.widget.top_donators.length) { %>
-        <ul>
-          <% cc.widget.top_donators.forEach((donator, index) => { %>
-            <li>
-              <% if (cc.store.type === 'MINECRAFT') { %>
-                <img src="https://mc-heads.net/avatar/<%= donator.username %>/32.png" />
-              <% } else { %>
-                <img src="<%= cc.cdn_url %>/public/assets/images/medal-<%= index + 1%>.png" width="24" />
-              <% } %>
-              <p><%= donator.username %></p>
-              <% if (cc.widget.data.show_amount) { %>
-                <p class="ms-auto spent"><%= donator.spent %></p>
-              <% } %>
-            </li>
-          <% }) %>
-        </ul>
-      <% } else { %>
-        <p style="font-size: 14px;">Nenhum jogador até o momento. Seja o primeiro!</p>  
-      <% } %>
-    </div>
-
+  <div class="mt-2 bg-black/40 p-2 rounded">
+    <% if (cc.widget.top_donators.length) { %>
+      <ul class="flex flex-col gap-3">
+        <% cc.widget.top_donators.forEach((donator, index) => { %>
+          <li class="flex gap-2 items-center text-lg font-semibold">
+            <% if (cc.store.type === 'MINECRAFT') { %>
+              <img src="https://mc-heads.net/avatar/<%= donator.username %>/32.png" />
+            <% } else { %>
+              <img src="<%= cc.cdn_url %>/public/assets/images/medal-<%= index + 1%>.png" width="24" />
+            <% } %>
+            <p><%= donator.username %></p>
+            <% if (cc.widget.data.show_amount) { %>
+              <p class="ml-auto text-primary"><%= donator.spent %></p>
+            <% } %>
+          </li>
+        <% }) %>
+      </ul>
+    <% } else { %>
+      <p class="text-sm">Nenhum jogador até o momento. Seja o primeiro!</p>  
+    <% } %>
   </div>
 </div>

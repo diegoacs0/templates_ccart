@@ -1,0 +1,42 @@
+.toastify {
+  box-shadow: none;
+
+  max-width: 520px;
+  width: fit-content;
+  font-family: 'Poppins', sans-serif;
+  background: hsl(var(--primary));
+  border: 1px solid hsl(var(--primary));
+  
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toastify.error {
+  background-color: rgb(200, 0, 0);
+  border: 1px solid rgb(200, 0, 0);
+}
+
+.toastify::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: black;
+  z-index: -1;
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.cc__checkout___form_field label::after {
+  content: '*';
+  color: red;
+  margin-left: 4px;
+}
+
+.post-shadow {
+  background: linear-gradient(0deg, hsl(var(--background)) 20%, transparent 100%);
+}

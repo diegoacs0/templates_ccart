@@ -2,38 +2,38 @@
 
 <div>
   <% if (cc.theme.index_content === null && !cc.posts.data.length) { %>
-    <div style="padding: 48px;"></div>
+    <div class="py-12"></div>
   <% } %>
 
   <% if (cc.theme.index_content) { %>
-    <div class="cc__index___custom_content CentralDraft">
+    <div class="p-6 bg-muted rounded-lg centralcart-content">
       <%~ cc.theme.index_content %>
     </div>
   <% } %>
 
   <% if (cc.posts.data.length) { %>
-    <div class="cc__index___posts">
+    <div class="flex flex-col gap-6">
       <% cc.posts.data.forEach((post, index) => { %>
-        <div class="cc__index___posts__post">
-          <div class="cc__index___posts__post_header">
+        <div class="p-6 rounded-lg">
+          <div class="flex justify-between items-center gap-2">
             <div>
-              <p class="cc__post_subtitle">DESTAQUE</p>
-              <h1 class="cc__post_title"><%= post.title %></h1>
-              <p style="font-family: 'Poppins';"><%= post.published_at%></p>
+              <p class="text-lg font-semibold text-primary">DESTAQUE</p>
+              <h1 class="text-2xl font-bold"><%= post.title %></h1>
+              <p class="text-muted-foreground"><%= post.published_at%></p>
             </div>
-            <div class="cc__post_info">
+            <div class="bg-primary/20 border border-primary px-2 py-1 rounded font-medium">
               <p>Postado por: <%= post.author %></p>
             </div>
           </div>
       
-          <div class="cc__post_container">
+          <div class="post-preview min-h-[260px] border mt-4 bg-background p-4 rounded-lg relative overflow-hidden">
             <%~ post.brief %>
+
+            <div class="post-shadow absolute bottom-0 left-0 h-14 w-full"></div>
       
-            <div class="cc__post_footer">
-              <a class="cc__post_footer__read_more" href="<%= post.path %>">
-                LER MAIS
-              </a>
-            </div>
+            <a href="<%= post.path %>" class="btn-primary hover:bg-primary absolute bottom-2 left-1/2 -translate-x-1/2">
+              LER MAIS
+            </a>
           </div>
         </div>
       <% }) %>
@@ -41,29 +41,24 @@
   <% } %>
 
   <% if (cc.posts.data.length) { %>
-    <div class="cc__index___posts_paginator">
-      <% if (cc.posts.meta.previous_page_url !== null) { %>
-        <a href="<%= cc.dist_url %><%= cc.posts.meta.previous_page_url %>">
-          <i class="fa-solid fa-chevron-left"></i>
-        </a>
-      <% } else { %>
-        <a class="disabled">
-          <i class="fa-solid fa-chevron-left"></i>
-        </a>
-      <% } %>
+    <div class="flex items-center justify-between gap-4 p-6 pt-0">
+      <a 
+        href="<%= cc.posts.meta.previous_page_url || '#' %>" 
+        class="w-8 h-8 flex items-center justify-center rounded bg-primary"
+      >
+        <i class="fa-solid fa-chevron-left"></i>
+      </a>
     
-      <a href=""><%= cc.posts.meta.current_page %></a>
+      <a class="w-8 h-8 rounded flex items-center justify-center font-medium bg-primary cursor-pointer">
+        <%= cc.posts.meta.current_page %>
+      </a>
     
-      <% if (cc.posts.meta.next_page_url !== null) { %>
-        <a href="<%= cc.dist_url %><%= cc.posts.meta.next_page_url %>">
-          <i class="fa-solid fa-chevron-right"></i>
-        </a>
-      <% } else { %>
-        <a class="disabled">
-          <i class="fa-solid fa-chevron-right"></i>
-        </a>
-      <% } %>
+      <a 
+        href="<%= cc.posts.meta.next_page_url || '#' %>"
+        class="w-8 h-8 flex items-center justify-center rounded bg-primary"
+      >
+        <i class="fa-solid fa-chevron-right"></i>
+      </a>
     </div>
   <% } %>
-
 </div>

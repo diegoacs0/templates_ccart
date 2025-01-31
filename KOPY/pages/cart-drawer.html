@@ -1,0 +1,46 @@
+<div class="p-4 h-dvh flex flex-col overflow-auto">
+  <div class="flex justify-between items-center">
+    <h4 class="text-base font-medium">Carrinho</h4>
+    <button onclick="drawerClose()"><i data-lucide="x" class="w-4 h-4 text-muted-foreground"></i></button>
+  </div>
+
+  <div class="mt-12 space-y-4">
+    <% cc.cart.packages.forEach((package) => { %>
+      <div class="flex flex-wrap gap-4 items-center justify-between text-sm">
+        <div class="flex gap-4 items-center">
+          <img class="object-cover w-16 h-16 rounded-md" src="<%= package.meta.image ?? cc.cdn('public/assets/templates/KOPY/no-image.png') %>" />
+          <div class="w-[150px]">
+            <h5 class="leading-4 font-semibold line-clamp-2" title="<%= package.meta.name %>"><%= package.meta.name %></h5>
+            <p class="text-lg font-medium tracking-tight text-muted-foreground"><%= package.meta.price_display %></p>
+          </div>
+        </div>
+
+        <div id="cart-actions-<%= package.meta.id %>" class="flex gap-2 items-center data-[loading]:opacity-60 data-[loading]:pointer-events-none">
+          <button id="<%= package.meta.id %>" onclick="cartAction(this, 'decrease')" class="border rounded-md w-8 h-8 flex items-center justify-center">
+            <i data-lucide="minus" class="w-4 h-4"></i>
+          </button>
+
+          <input id="<%= package.meta.id %>" oninput="cartAction(this, 'input')" autocomplete="off" value="<%= package.quantity %>" class="w-10 h-8 text-center px-0" />
+
+          <button id="<%= package.meta.id %>" onclick="cartAction(this, 'increase')" class="border rounded-md w-8 h-8 flex items-center justify-center">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+          </button>
+
+          <button id="<%= package.meta.id %>" onclick="cartAction(this, 'remove')" class="border rounded-md w-8 h-8 flex items-center justify-center bg-red-500">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>  
+    <% }) %>
+  </div>
+
+  <div class="mt-auto">
+    <a href="/checkout" class="block w-full py-2 text-center font-semibold bg-green-600 rounded-md">
+      Ir para o checkout
+    </a>
+  </div>
+</div>
+
+<script>
+  lucide.createIcons();
+</script>

@@ -1,64 +1,66 @@
 <% layout("@layouts/layout") %>
 
-<div class="cc__category___panel">
-  <div class="cc__category___products">
-    <div class="cc__category___products_header">
-      <h1><%= cc.category.name %></h1>
+<div class="w-full">
+  <!-- Header -->
+  <div class="p-6 border-b">
+    <h1 class="text-2xl font-bold uppercase"><%= cc.category.name %></h1>
+  </div>
+
+  <% if (cc.packages.data.length > 0) { %>
+    <!-- Products Grid -->
+    <div class="grid grid-cols-1 gap-2 p-6 lg:grid-cols-3">
+      <% cc.packages.data.forEach((package, index) => { %>
+        <%~ include('@components/package', {package, ...cc}) %>
+      <% }) %>
     </div>
 
-    <% if (cc.packages.data.length > 0) { %>
-      <div class="cc__category___products_grid">
-        <% cc.packages.data.forEach((package, index) => { %>
-          <%~ include('@components/package', {package, ...cc}) %>
-        <% }) %>
-      </div>
-  
-      <div class="cc_category___pagination">
-        <% const meta = cc.packages.meta %>
-        <% const items = [1] %>
-        <% let r = 2 %>
-        <% let r1 = meta.current_page - r %>
-        <% let r2 = meta.current_page + r %>
-        <% for (let i = r1 > 2 ? r1 : 2; i <= Math.min(meta.last_page, r2); i++) items.push(i) %>
-        <% if (r2 + 1 < meta.last_page) items.push('…') %>
-        <% if (r2 < meta.last_page) items.push(meta.last_page) %>
-      
+    <!-- Pagination -->
+    <div class="flex justify-center items-center p-6 select-none">
+      <% const meta = cc.packages.meta %>
+      <% const items = [1] %>
+      <% let r = 2 %>
+      <% let r1 = meta.current_page - r %>
+      <% let r2 = meta.current_page + r %>
+      <% for (let i = r1 > 2 ? r1 : 2; i <= Math.min(meta.last_page, r2); i++) items.push(i) %>
+      <% if (r2 + 1 < meta.last_page) items.push('…') %>
+      <% if (r2 < meta.last_page) items.push(meta.last_page) %>
+    
+      <!-- Previous Page Button -->
+      <a 
+        class="h-8 w-8 flex items-center justify-center border border-white/15 rounded-l-md data-[disabled=true]:cursor-not-allowed data-[disabled=true]:pointer-events-none"
+        href="<%= `/category/${cc.category.slug}` + meta.previous_page_url %>"
+        data-disabled="<%= !meta.previous_page_url ? 'true' : 'false' %>"
+      >
+        <i class="fa-solid fa-chevron-left"></i>
+      </a>
+    
+      <!-- Page Numbers -->
+      <% items.forEach((page) => { %>
         <a 
-          class="base_button" 
-          style="border-top-right-radius: 0; border-bottom-right-radius: 0;"
-          href="<%= cc.dist_url + `/category/${cc.category.slug}` + meta.previous_page_url %>"
-          data-disabled="<%= !meta.previous_page_url ? 'true' : 'false' %>"
+          class="h-8 w-8 flex items-center justify-center border-y border-white/15 data-[current=true]:bg-primary data-[current=true]:text-white data-[disabled=true]:pointer-events-none"
+          href="<%= cc.dist_url + `/category/${cc.category.slug}/?page=${page}` %>"
+          data-current="<%= meta.current_page === page ? 'true' : 'false' %>"
+          data-disabled="<%= page === '…' %>"
         >
-          <i class="fa-solid fa-chevron-left"></i>
+          <%= page %>
         </a>
-      
-        <% items.forEach((page) => { %>
-          <a 
-            class="base_button"
-            href="<%= cc.dist_url + `/category/${cc.category.slug}/?page=${page}` %>"
-            style="border-left: none; border-top-left-radius: 0; border-bottom-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0;"
-            data-current="<%= meta.current_page === page ? 'true' : 'false' %>"
-          >
-            <%= page %>
-          </a>
-        <% }) %>
-      
-        <a 
-          class="base_button"
-          aria-disabled="true"
-          href="<%= cc.dist_url + `/category/${cc.category.slug}` + meta.next_page_url %>"
-          style="border-left: none; border-top-left-radius: 0; border-bottom-left-radius: 0;"
-          data-disabled="<%= !meta.next_page_url ? 'true' : 'false' %>"
-        >
-          <i class="fa-solid fa-chevron-right"></i>
-        </a>
+      <% }) %>
+    
+      <!-- Next Page Button -->
+      <a 
+        class="h-8 w-8 flex items-center justify-center border border-white/15 rounded-r-md data-[disabled=true]:cursor-not-allowed data-[disabled=true]:pointer-events-none"
+        href="<%= cc.dist_url + `/category/${cc.category.slug}` + meta.next_page_url %>"
+        data-disabled="<%= !meta.next_page_url ? 'true' : 'false' %>"
+      >
+        <i class="fa-solid fa-chevron-right"></i>
+      </a>
+    </div>
+  <% } else { %>
+    <!-- Empty State -->
+    <div class="p-6">
+      <div class="p-2 border border-gray-800 rounded">
+        <p class="text-gray-400">Nenhum pacote encontrado nesta categoria.</p>
       </div>
-    <% } else { %>
-      <div class="cc__category___empty">
-        <div class="cc__category___empty_box">
-          <p>Nenhum pacote encontrado nesta categoria.</p>
-        </div>
-      </div>  
-    <% } %>
-  </div>
+    </div>  
+  <% } %>
 </div>

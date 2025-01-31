@@ -1,0 +1,52 @@
+@keyframes fade_in {
+  from {
+    background-color: rgba(0,0,0,0);
+  }
+  to {
+    background-color: rgba(0,0,0,0.8);
+  }
+}
+
+@keyframes fade_out {
+  from {
+    background-color: rgba(0,0,0,0.8);
+  }
+  to {
+    background-color: rgba(0,0,0,0);
+  }
+}
+
+@keyframes slide_in {
+  from {
+    transform: translateX(500px);
+  }
+  to {
+    transform: translateX(0px);
+  }
+}
+
+@keyframes slide_out {
+  from {
+    transform: translateX(0px);
+  }
+  to {
+    transform: translateX(500px);
+  }
+}
+
+#drawer {
+  animation: fade_in 0.4s forwards;
+}
+
+#drawer.fade-out {
+  animation: fade_out 0.4s forwards;
+}
+
+
+.slide-in {
+  animation: slide_in 0.4s forwards;
+}
+
+.slide-out {
+  animation: slide_out 0.4s forwards;
+}

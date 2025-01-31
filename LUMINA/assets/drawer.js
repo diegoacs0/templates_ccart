@@ -51,12 +51,12 @@ function checkoutDrawerOpen() {
 
   $(document.body).css('overflow', 'hidden').css('padding-right', '17px')
 
-  $('#drawer-content').on('click', (e) => e.stopPropagation())
+  $('#drawer-content').on('mousedown', (e) => e.stopPropagation())
 
   // Trap focus
   $('#drawer-content').find(focusableElements).first().trigger('focus')
 
-  $('#checkout-drawer').on('click', (el) => {
+  $('#checkout-drawer').on('mousedown', (el) => {
     checkoutDrawerClose()
   })
 }

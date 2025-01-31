@@ -1,17 +1,25 @@
-<div class="cc__product___wrapper">
-  <% if (cc.package.image) { %>
-    <img src="<%= cc.package.image %>" width="165" />
-  <% } else { %>
-    <img src="<%= cc.cdn_url %>/public/no-picture.png" width="150px" />
+<div 
+  class="flex flex-col items-center justify-end h-full whitespace-nowrap overflow-hidden 
+  <%= cc.highlight ? 'border rounded-lg bg-muted' : '' %>"
+>
+  <% if (cc.highlight) { %>
+    <p class="text-xl font-bold pt-6 uppercase">PRODUTO EM DESTAQUE</p>
   <% } %>
 
-  <div class="cc__product___info">
-    <h1 title="<%= cc.package.name %>"><%= cc.package.name %></h1>
-    <p class="package-price"><%= cc.package.price_display %></h1>
+  <% if (cc.package.image) { %>
+    <img src="<%= cc.package.image %>" class="w-[165px] z-10" />
+  <% } else { %>
+    <img src="<%= cc.cdn_url %>/public/no-picture.png" class="w-[150px] z-10" />
+  <% } %>
 
-    <div class="cc__product___action">
+  <div class="w-full rounded-lg font-['Poppins'] -mt-16 p-6 pt-16 <%= !cc.highlight ? 'bg-gradient-to-t from-[#1c212c] to-[#13161e]' : '' %>">
+    <h1 class="mt-4 text-lg truncate font-semibold" title="<%= cc.package.name %>">
+      <%= cc.package.name %>
+    </h1>
+    <p class="font-bold text-primary"><%= cc.package.price_display %></p>
+
+    <div class="mt-4 grid grid-cols-[3fr_1fr] gap-4">
       <% if (cc.package.inventory_amount === null || cc.package.inventory_amount > 0) { %>
-
         <% const current_cart_item = cc.cart.packages.find((package) => package.meta.id === cc.package.id) %>
         <% const has_variables = cc.package.variables.length %>
         
@@ -22,7 +30,7 @@
           data-slug="<%= cc.package.slug %>"
           class="btn-primary"
         >
-          <i class="me-2 fa-solid fa-basket-shopping"></i>
+          <i class="fa-solid fa-basket-shopping me-2"></i>
           <%= current_cart_item ? 'Ver carrinho' : 'Comprar' %>
         </button>
         
@@ -33,7 +41,7 @@
       <% } %>
 
       <button class="btn-secondary" onclick="showPackage(`<%= cc.package.slug %>`)">
-        <i class="fa-regular fa-circle-question" style="font-size: 18px;"></i>
+        <i class="fa-regular fa-circle-question text-[18px]"></i>
       </button>
     </div>
   </div>

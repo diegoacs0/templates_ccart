@@ -1,0 +1,25 @@
+<% const has_stock = cc.package.inventory_amount === null || cc.package.inventory_amount > 0 %>
+
+<a href="/package/<%= cc.package.slug %>" class="flex flex-col package group rounded-md hover:ring-2 ring-primary transition ring-offset-4 ring-offset-background">
+  <div class="rounded-md overflow-hidden relative">
+    <% if (!has_stock) { %>
+      <p class="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 z-10 font-bold text-sm lg:text-xl text-white whitespace-nowrap">ESTOQUE ESGOTADO</p>
+    <% } %>
+    <img class="group-hover:scale-105 transition <%= has_stock !== true ? 'blur-sm opacity-80' : '' %> <%= cc.store.type === 'STANDALONE' ? 'aspect-[256/152]' : ''  %> object-cover w-full" src="<%= cc.package.image ?? cc.cdn('public/assets/templates/KOPY/no-image.png') %>" />
+  </div>
+
+  <p class="font-medium mt-3"><%= cc.package.name %></p>
+  <% if (cc.config('visual-discount')) { %>
+    <p class="text-sm text-muted-foreground line-through"><%= cc.currency(cc.package.price + (cc.package.price * (cc.config('visual-discount') / 100))) %></p>
+  <% } %>
+  <p class="text-lg font-bold leading-5"><%= cc.package.price_display %></p>
+  
+  <% const current_cart_item = cc.cart.packages.find((package) => package.meta.id === cc.package.id) %>
+  <% const has_variables = cc.package.variables.length %>
+  
+  <div class="flex items-center gap-2 mt-auto">
+    <button class="md:py-2 py-1.5 px-3 bg-primary w-full rounded-md font-semibold text-sm mt-4">
+      Comprar agora
+    </button>
+  </div>
+</a>

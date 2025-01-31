@@ -1,0 +1,232 @@
+<% layout('@layouts/platform') %>
+
+<main class="grid grid-cols-1 md:grid-cols-2 container px-0 mx-auto max-w-screen-lg min-h-screen">
+  <section class="flex-1 mx-auto container ms-auto py-12">
+    <div>
+      <a href="/">
+        <% if (cc.theme.logo) { %>
+          <img src="<%= cc.theme.logo %>" class="w-[50px] h-[50px] object-contain" />
+        <% } else { %>
+          <h1 class="text-xl font-bold text-white">
+            <%= cc.store.name %>
+          </h1>
+        <% } %>
+      </a>
+
+      <nav aria-label="Breadcrumb" class="text-sm mt-4">
+        <ol id="breadcrumb" class="flex space-x-1.5 items-center">
+          <li>
+            <a href="/" class="hover:underline">Início</a>
+          </li>
+          <i class="icon-chevron-right text-muted-foreground"></i>
+          <li>
+            <a href="#" class="hover:underline font-semibold">Checkout</a>
+          </li>
+        </ol>
+      </nav>
+    </div>
+
+    <div id="checkout-error" class="mt-8 p-4 bg-red-500/10 border border-red-900 rounded-md hidden text-sm">
+      <div class="flex gap-2 items-start">
+        <i class="icon-circle-alert text-red-600 text-2xl leading-[normal]"></i>
+        <div>
+          <p>Erro ao processar o pedido.</p>
+          <p id="checkout-error-message" class="font-medium">Ocorreu um erro.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="pix-display" class="mt-12 space-y-6 hidden">
+      <div class="relative">
+        <p class="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 px-2 bg-background font-medium">Concluir pagamento</p>
+        
+        <div class="border p-4 rounded-md pb-6">
+          <h3 class="text-center max-w-56 mx-auto leading-5 text-muted-foreground text-sm">Use a câmera do seu celular para escanear o QR Code.</h3>
+          <img id="pix-qr" class="mx-auto mt-2 size-[200px]" />
+        </div>
+      </div>
+
+      <div>
+        <p>Ou copie e cole o código abaixo:</p>
+        <div class="flex gap-3 mt-1">
+          <input id="pix-cp" class="w-full flex-1 select-all" value="" readonly />
+          <button id="copy-pix" class="bg-primary px-4 h-9 text-sm rounded-md flex items-center gap-1.5 font-medium disabled:opacity-80">
+            <div class="icon-copy"></div>
+            <span>Copiar</span>
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <p class="text-sm text-muted-foreground">Após realizar o pagamento clique em confimar pagamento para prosseguir.</p>
+        <a id="return-to" class="flex w-full gap-1.5 font-semibold bg-primary h-12 items-center justify-center rounded-md">
+          <div class="icon-circle-check text-xl font-medium"></div> 
+          Confirmar pagamento
+        </a>
+      </div>
+    </div>
+
+    <form id="checkout-form" class="mt-12 space-y-12">
+      <div class="relative">
+        <p class="text-sm sm:text-base absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 px-2 bg-background font-medium whitespace-nowrap">Forma de pagamento</p>
+        
+        <div class="border p-4 rounded-md">
+          <div class="grid grid-cols-1 sm:grid-cols-2 auto-rows-fr lg:flex gap-2">
+            <% cc.gateways.forEach((method) => { %>
+              <% const use_dark = ['MERCADOPAGO'].includes(method.gateway) %>
+              <button
+                type="button"
+                data-gateway="<%= method.gateway %>"
+                data-require-document="<%= method.require_document %>"
+                class="bg-muted border p-4 rounded-md flex justify-center items-center w-full max-h-[90px] lg:w-fit lg:max-w-[90px]
+                flex-1 data-[selected]:ring-primary data-[selected]:ring-2 hover:ring-2
+                hover:ring-foreground/10 focus-visible:ring-2 focus-visible:outline-none transition"
+              >
+                <img class="w-16" src="<%= cc.cdn(`public/gateway-icons/${method.gateway.toLowerCase()}${use_dark ? '-dark' : ''}.svg`) %>" />
+              </button>
+            <% }) %>
+          </div>
+        </div>  
+      </div>
+
+      <div>
+        <h3 class="font-bold text-lg">Informações de contato</h3>
+
+        <div class="flex flex-col gap-2 mt-6">
+          <% if (cc.cart.require_discord) { %>
+            <input id="discord" name="discord" type="hidden">
+            <button 
+              id="discord-login" 
+              class="bg-[#5865F2] w-full h-9 rounded-md flex justify-center items-center font-medium gap-1.5 text-sm"
+              type="button"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M19.27 5.33C17.94 4.71 16.5 4.26 15 4a.1.1 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.1 16.1 
+                0 0 0-4.8 0c-.14-.34-.35-.76-.54-1.09c-.01-.02-.04-.03-.07-.03c-1.5.26-2.93.71-4.27 1.33c-.01 0-.02.01-.03.02c-2.72 
+                4.07-3.47 8.03-3.1 11.95c0 .02.01.04.03.05c1.8 1.32 3.53 2.12 5.24 2.65c.03.01.06 0 .07-.02c.4-.55.76-1.13 
+                1.07-1.74c.02-.04 0-.08-.04-.09c-.57-.22-1.11-.48-1.64-.78c-.04-.02-.04-.08-.01-.11c.11-.08.22-.17.33-.25c.02-.02.05-.02.07-.01c3.44
+                1.57 7.15 1.57 10.55 0c.02-.01.05-.01.07.01c.11.09.22.17.33.26c.04.03.04.09-.01.11c-.52.31-1.07.56-1.64.78c-.04.01-.05.06-.04.09c.32.61.68
+                1.19 1.07 1.74c.03.01.06.02.09.01c1.72-.53 3.45-1.33 5.25-2.65c.02-.01.03-.03.03-.05c.44-4.53-.73-8.46-3.1-11.95c-.01-.01-.02-.02-.04-.02M8.52
+                14.91c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.84 2.12-1.89 2.12m6.97 
+                0c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.83 2.12-1.89 2.12" />
+              </svg>
+
+              Login com Discord
+            </button>
+          <% } %>
+
+          <div class="flex gap-2 mt-4">
+            <input id="name" placeholder="Nome" class="w-full" />
+            <input id="surname" placeholder="Sobrenome" class="w-full" />
+          </div>
+  
+          <input id="email" placeholder="Email" class="w-full" />
+
+          <% if (cc.checkout_variables.length) { %>
+            <div id="checkout-variables" class="grid grid-cols-2 mt-4">
+              <% cc.checkout_variables.forEach((checkout_variable) => { %>
+                <input 
+                  id="<%= checkout_variable.name %>" 
+                  placeholder="<%= checkout_variable.description %>" 
+                  class="w-full <%= checkout_variable.type === 'NUMBER' ? 'number-only' : '' %>" 
+                />
+              <% }) %>
+            </div>
+          <% } %>
+
+          <div class="flex gap-2 mt-4">
+            <input
+              id="cpf"
+              placeholder="CPF" 
+              class="cpf w-full hidden data-[required=true]:block" 
+              data-required="<%= cc.store.require_document ? 'true' : 'false' %>"
+              data-mask="000.000.000-00"
+            />
+
+            <input 
+              id="tel"
+              placeholder="Telefone" 
+              class="w-full hidden data-[required=true]:block" 
+              data-required="<%= cc.store.require_phone ? 'true' : 'false' %>"
+            />
+          </div>
+        </div>
+
+        <div class="mt-8 flex items-center gap-1 text-sm">
+          <input id="terms" type="checkbox" class="accent-primary appearance-auto" />
+          <label for="terms" class="text-muted-foreground">
+            Eu aceito os 
+            <a href="/terms" target="_blank" class="cursor-pointer text-foreground font-medium hover:underline">termos e condições</a>
+            desta compra. 
+          </label>
+        </div>
+
+        <button id="checkout-button" class="bg-primary w-full h-12 font-semibold rounded-md">
+          Pagar <span class="price-total"><%= cc.cart.total_price_display %></span>
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <section class="flex-1 mx-auto bg-muted border-s container me-auto py-12">
+    <div class="space-y-2">
+      <% cc.cart.packages.forEach((package) => { %>
+        <div class="flex gap-3 items-center">
+          <div class="relative size-16">
+            <% const image = package.meta.image ?? cc.cdn('public/assets/templates/KOPY/no-image.png') %>
+            <img class="size-full bg-background border flex items-center justify-center rounded-md object-cover" src="<%= image %>" />
+            <span class="translate-x-1/4 -translate-y-1/4 absolute top-0 right-0 bg-white text-black font-semibold flex items-center justify-center w-6 h-6 rounded-full text-xs"><%= package.quantity %></span>
+          </div>
+  
+          <div class="flex-1">
+            <p class="text-sm font-medium"><%= package.meta.name %></p>
+            <% 
+              const flatten = cc.categories.flatMap(category => [
+                category,
+                ...(category.sub_categories || [])
+              ]);
+              const category = flatten.find((category) => category.id === package.meta.category_id) 
+            %>
+            <p class="text-muted-foreground text-xs">Categoria: <%= category?.name %></p>
+          </div>
+  
+          <p class="font-medium"><%= package.meta.price_display %></p>
+        </div>
+      <% }) %>
+    </div>
+
+    <div class="w-full h-[1px] bg-foreground/10 my-4"></div>
+
+    <div id="discount-wrapper">
+      <div class="flex gap-4">
+        <input placeholder="Cupom" class="w-full" value="<%= cc.cart.discount?.coupon ?? '' %>" autocomplete="off" />
+        <button 
+          type="button"
+          id="handle-discount" 
+          data-action="<%= cc.cart.discount ? 'remove' : 'apply' %>" 
+          class="bg-primary px-6 rounded-md h-9 text-sm font-medium flex gap-1 items-center justify-center disabled:opacity-80"
+        >
+          <i class="icon-ticket text-xl font-normal"></i>
+          <span><%= cc.cart.discount ? 'Remover' : 'Aplicar' %></span>
+        </button>
+      </div>
+      <p id="discount-error-message" class="text-sm text-red-500"></p>
+
+      <div class="w-full h-[1px] bg-foreground/10 my-4"></div>
+    </div>
+
+    <div class="flex justify-between">
+      <p>Subtotal</p>
+      <p class="font-medium"><%= cc.cart.subtotal_display %></p>
+    </div>
+
+    <p class="text-muted-foreground text-sm">*Valor total sem dedução de descontos</p>
+
+    <div class="w-full h-[1px] bg-foreground/10 my-4"></div>
+
+    <div class="flex justify-between">
+      <p>Total</p>
+      <p class="font-bold price-total"><%= cc.cart.total_price_display %></p>
+    </div>
+  </section>
+</main>

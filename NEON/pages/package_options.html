@@ -1,24 +1,26 @@
-<div class="modal-header">
-  <h5 class="modal-title"><%= cc.package.name %></h5>
+<div class="border-b p-4">
+  <h5 class="text-xl font-semibold"><%= cc.package.name %></h5>
   <button
     type="button"
-    class="btn-close btn-close-white"
-    data-bs-dismiss="modal"
+    class="absolute top-4 right-4 text-white opacity-70 hover:opacity-100 transition-opacity"
     aria-label="Fechar"
-  ></button>
+    data-micromodal-close
+  >
+    <i class="fa-solid fa-times text-xl"></i>
+  </button>
 </div>
 
-<div class="modal-body">
-  <div id="option_wrapper" class="cc__package___options">
+<div class="p-4">
+  <div id="option_wrapper" class="flex flex-col space-y-2">
     <% cc.package.variables.forEach((variable, index) => { %>
       <% const cart_package = cc.cart.packages.find((cp) => cp.package_id === cc.package.id) %>
       <% const selected_option = cart_package?.options.find((option) => option.variable.id === variable.id) %>
 
-      <div>
+      <div class="space-y-1">
         <label for="<%= variable.name %>"><%= variable.description %>:</label>
 
         <% if (variable.type === 'SELECT') { %>
-          <select id="<%= variable.name %>">
+          <select id="<%= variable.name %>" class="h-10 w-full">
             <% variable.options.forEach((option, index) => { %>
               <option 
                 value="<%= option.id %>" 
@@ -36,8 +38,8 @@
   </div>
 </div>
 
-<div class="modal-footer">
-  <button style="margin-top: 18px;" class="btn-outline" data-bs-dismiss="modal">
+<div class="p-4 border-t flex justify-end gap-4">
+  <button class="btn-outline" data-micromodal-close>
     Cancelar
   </button>
 
@@ -45,7 +47,6 @@
   <button id="<%= cc.package.id %>"
     data-func="<%= current_cart_item ? 'update-options' : 'add-to-cart' %>"
     data-slug="<%= cc.package.slug %>"
-    style="margin-top: 18px;"
     class="btn-primary"
   >
     <i class="me-2 fa-solid fa-basket-shopping"></i>

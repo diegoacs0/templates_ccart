@@ -1,0 +1,96 @@
+@keyframes anim {
+  0% {
+    transform:translateY(-202px)
+  }
+  33%,
+  to {
+    transform:translateY(202px)
+  }
+}
+
+.hero-bg-wrapper {
+  pointer-events: none;
+  position: absolute;
+  width: 100%;
+  overflow: hidden;
+  height: 287px;
+  top: 0;
+}
+
+.hero-bg {
+  left: calc(50vw - 624px);
+  pointer-events: none;
+  position: absolute;
+  top: 50px;
+  width: 1248px;
+  overflow: hidden;
+}
+
+.bg-top {
+  background-image: url('https://cdn.centralcart.com.br/public/assets/templates/KOPY/bg-top.png');
+  height: 202px;
+  margin-bottom: 85px;
+  width: 100%;
+  background-repeat: no-repeat;
+  background-size: contain;
+  position: relative;
+}
+
+.bg-mask {
+  mask-image: url('https://cdn.centralcart.com.br/public/assets/templates/KOPY/bg-mask.png');
+
+  transition: 1s cubic-bezier(.6,.6,0,1) opacity;
+
+  left: 0;
+  -webkit-mask-size: cover;
+  mask-size: cover;
+  top: 0;
+  width: 100%;
+
+  z-index: 9;
+
+  mask-repeat: no-repeat;
+  height: 100%;
+  position: absolute;
+}
+
+.bg-mask > div {
+  animation: anim 6s infinite cubic-bezier(.35,.35,.3,.7);
+  background: linear-gradient(180deg, hsl(var(--primary) / 0.5) 0%, hsl(var(--primary)) 100%, hsl(var(--primary)) 100%, hsl(var(--primary) / 0.5) 0%);
+  height: 200px;
+  position: relative;
+  top: 0;
+  z-index: 88888;
+  width: 100%;
+}
+
+.hero-lights {
+  background: 
+    radial-gradient(27.12% 31.25% at 50% 0%, hsl(var(--primary) / 0.22), transparent),
+    radial-gradient(28.64% 15.23% at 50% 64.17%, hsl(var(--primary) / 0.14), transparent);
+  content: "";
+  height: 1327px;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 50%; /* Centraliza horizontalmente */
+  transform: translateX(-50%); /* Ajusta o ponto de ancoragem para o centro */
+  width: 1640px; /* Mantém o tamanho fixo */
+}
+
+.footer-bg {
+  z-index: 1;
+  height: 300px;
+  background-color: hsl(var(--primary) / 0.2);
+  -webkit-mask-image: url('https://cdn.centralcart.com.br/public/assets/templates/KOPY/footer-bg.png'); 
+  mask-image: url('https://cdn.centralcart.com.br/public/assets/templates/KOPY/footer-bg.png');
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: cover;
+  mask-size: cover;
+  position: relative;
+}
+
+.custom-bg-mask {
+  mask-image: linear-gradient(hsl(var(--background)), rgba(0, 0, 0, 0.3), rgb(0, 0, 0, 0));
+}

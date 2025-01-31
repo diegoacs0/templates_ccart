@@ -1,0 +1,70 @@
+<% layout('@layouts/layout') %>
+
+<div class="space-y-6 py-12 overflow-hidden">
+  <div class="hero-bg-wrapper">
+    <div class="hero-bg">
+      <div class="bg-top">
+        <div class="bg-mask">
+          <div style="transform: translateY(-202px);"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="container mx-auto max-w-screen-xl py-12 sm:py-24 pb-6 flex items-center justify-center">
+    <div class="flex flex-col gap-4 items-center text-center">
+      <h1 class="text-4xl sm:text-6xl lg:max-w-2xl font-bold mb-3">
+        <% const headline = cc.config('headline').replace(/\[(.*?)\]/g, '<span class="text-primary">$1</span>') %>
+        <%~ headline %>
+      </h1>
+      <p class="max-w-[600px] text-muted-foreground"><%= cc.config('sub-headline') %></p>
+
+      <div class="flex gap-4 items-center text-sm">
+        <a href="#store" class="bg-primary px-3 py-2 rounded-md font-semibold">Ver produtos</a>
+        <a href="<%= cc.config('contact-link') %>" target="_blank" class="border px-3 py-2 rounded-md font-semibold">Contato</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="store" class="container mx-auto max-w-screen-xl py-12">
+    <h2 class="font-bold text-xl text-center">Produtos</h2>
+    <p class="text-muted-foreground text-center">Confira abaixo todos os nossos produtos e ofertas.</p>
+
+    <div id="categories-container" class="mt-24 relative">
+      <div class="md:absolute top-0 right-0 flex gap-2">
+        <input autocomplete="off" id="package-search" placeholder="Buscar produto" class="h-9" />
+  
+        <div class="grid grid-cols-1">
+          <select id="category-select" autocomplete="off" class="row-start-1 col-start-1 pe-8 h-9">
+            <option value="null" selected>Todas as categorias</option>
+            <% cc.categories.forEach((category) => { %>
+              <% if (category.packages_count > 0) { %>
+                <option value="<%= category.slug %>"><%= category.name %></option>
+              <% } %>
+
+              <% category.sub_categories.forEach((sub_category) => { %>
+                <% if (sub_category.packages_count > 0) { %>
+                  <option value="<%= sub_category.slug %>"><%= sub_category.name %></option>
+                <% } %>
+              <% }) %>
+            <% }) %>
+          </select>
+
+          <i data-lucide="chevron-down" class="w-4 h-4 right-2 relative col-start-1 row-start-1 self-center justify-self-end"></i>
+        </div>
+      </div>
+
+      <div id="search-results" class="mt-8"></div>
+
+      <div class="space-y-24">
+        <% cc.categories.forEach((category) => { %>
+          <div class="category-loader min-h-[300px]" data-slug="<%= category.slug %>"></div>
+  
+          <% category.sub_categories.forEach((sub_category) => { %>
+            <div class="category-loader min-h-[300px]" data-slug="<%= sub_category.slug %>"></div>
+          <% }) %>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+</div>

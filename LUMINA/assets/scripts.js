@@ -96,7 +96,9 @@ function handleCopyIpToClipboard(ip = '') {
     if (btn.tagName === 'BUTTON') {
       btn.disabled = true
     } else {
-      btn.innerHTML = store_type === 'MINECRAFT' ? 'IP copiado' : 'Redirecionando...'
+      btn.innerHTML = ['MINECRAFT', 'GTA-SA'].includes(store_type)
+        ? 'IP copiado'
+        : 'Redirecionando...'
     }
   })
 

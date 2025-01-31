@@ -1,0 +1,169 @@
+<% 
+function hexToHSL(hex) {
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    r = parseInt(result[1], 16);
+    g = parseInt(result[2], 16);
+    b = parseInt(result[3], 16);
+    r /= 255, g /= 255, b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+    if(max == min){
+      h = s = 0; // achromatic
+    }else{
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch(max){
+        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+        case g: h = (b - r) / d + 2; break;
+        case b: h = (r - g) / d + 4; break;
+      }
+      h /= 6;
+    }
+
+  h = Math.round(h * 360);
+  s = Math.round(s * 100);
+  l = Math.round(l * 100);
+
+  cssString = `${h} ${s}% ${l}%`;
+
+  return cssString;
+}
+%>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <style>
+    :root {
+      --primary: <%= hexToHSL(cc.config('primary-color')) %>;
+      --secondary: <%= hexToHSL(cc.config('secondary-color')) %>;
+
+      --background: 240 10% 4%;
+      --foreground: 0 0% 98%;
+
+      --border: 0 0% 13%;
+
+      --muted: 240 11% 9%;
+      --muted-foreground: 240 5% 65%;
+
+      --radius: 1rem;
+    }
+
+    html {
+      background-color: hsl(var(--background));
+    }
+
+    body {
+      font-family: 'Geist', sans-serif;
+    }
+  </style>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="robots" content="noindex, nofollow" />
+
+  <link
+    rel="icon"
+    type="image/x-icon"
+    href="<%= cc.theme.favicon || cc.cdn('public/36x36.png') %>"
+  />
+
+  <title><%= cc.page_title %></title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js" integrity="sha512-pHVGpX7F/27yZ0ISY+VVjyULApbDlD0/X0rgGbTqCE7WFW5MezNTWG/dnhtbBuICzsd0WQPgpE4REBLv+UqChw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="<%= cc.cdn('public/assets/css/centralcart.css') %>" />
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: 'hsl(var(--primary))',
+            secondary: 'hsl(var(--secondary))',
+
+            background: 'hsl(var(--background))',
+            foreground: 'hsl(var(--foreground))',
+
+            border: 'hsl(var(--border))',
+            muted: 'hsl(var(--muted))',
+            'muted-foreground': 'hsl(var(--muted-foreground))'
+          }
+        },
+        container: {
+          padding: {
+            DEFAULT: '1rem',
+            sm: '2rem',
+          },
+        },
+      },
+    }
+  </script>
+
+  <style type="text/tailwindcss">
+    @layer base {
+      * {
+        @apply border-border;
+      }
+
+      body {
+        @apply bg-background text-foreground;
+      }
+
+      input, select {
+        @apply appearance-none bg-background border rounded-md font-medium text-foreground px-2 h-9 text-sm;
+      }
+
+      input:focus-visible, select:focus-visible {
+        outline: none;
+        @apply ring-2 ring-primary;
+      }
+
+      .bg-primary {
+        color: lch(from hsl(var(--primary)) calc((49.44 - l) * infinity) 0 0);
+      }
+
+      .bg-background {
+        color: lch(from hsl(var(--background)) calc((49.44 - l) * infinity) 0 0);
+      }
+    }
+  </style>
+  <style>
+    @import url('https://unpkg.com/lucide-static@0.462.0/font/lucide.css');
+  </style>
+</head>
+<body class="antialiased">
+  <%~ cc.body %>
+
+  <script src="<%= cc.cdn(`public/assets/js/CentralCart.js?v=${Math.floor(Date.now() / 60_000)}`) %>" type="module"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <script src="<%= cc.asset('checkout.js') %>"></script>
+
+  <script>
+    $('.number-only').on('keypress', function (event) {
+      if (isNaN(event.key)) event.preventDefault()
+    })
+    
+    $('.number-only').on('paste', function (event) {
+      var clipboardData = event.originalEvent.clipboardData || window.clipboardData
+      var pastedData = clipboardData.getData('text')
+    
+      if (isNaN(pastedData)) {
+        event.preventDefault()
+      }
+    })
+    
+    $(document).ready(function(){
+      $.applyDataMask();
+    });
+  </script>
+</body>
+</html>

@@ -13,7 +13,7 @@
   %>
 
   <div class="bg-zinc-100 border-b border-b-zinc-200 dark:bg-zinc-900 dark:border-b-neutral-800">
-    <div class="container mx-auto px-28 py-6">
+    <div class="container mx-auto px-4 sm:px-28 py-6">
       <h1 class="text-2xl font-extrabold text-sky-950 dark:text-neutral-400">Informações do pedido</h1>
       <div class="flex justify-between">
         <p class="text-gray-500 dark:text-neutral-500">Feito em <%= created_at %></p>
@@ -22,7 +22,7 @@
     </div>
   </div>
 
-  <div class="mt-8 container mx-auto px-28 grid grid-cols-[306px_1fr] gap-6">
+  <div class="mt-8 container mx-auto px-4 sm:px-28 grid xl:grid-cols-[306px_1fr] gap-6">
     <div>
       <a class="flex items-center gap-2" href="<%= cc.dist_url %>">
         <div class="flex items-center justify-center w-8 h-8 bg-slate-100 text-sky-950 rounded dark:bg-neutral-800 dark:text-neutral-300">
@@ -65,7 +65,7 @@
               <p>Detalhes do pedido:</p>
             </div>
 
-            <div class="mt-2 grid grid-cols-2">
+            <div class="mt-2 grid xl:grid-cols-2">
               <div class="flex flex-col gap-4">
                 <% const client_identifier = cc.order.variables.find((variable) => variable.name === 'client_identifier')?.value %>
                 <% if (client_identifier) { %>
@@ -115,7 +115,7 @@
 
             <div class="mt-2 flex flex-col p-4 border rounded-md dark:border-neutral-800">
               <% cc.order.packages.forEach((package, index) => { %>
-                <span class="flex gap-1.5">
+                <span class="flex gap-1.5 flex-wrap">
                   <%= package.quantity %>x
                   <a class="font-medium">
                     <%= package.name %>

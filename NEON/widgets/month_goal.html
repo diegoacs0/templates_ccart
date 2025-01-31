@@ -1,16 +1,26 @@
-<div>
-  <div class="cc__widget___goal">
-    <h1>
-      META DO MÊS
-    </h1>
+<div class="p-6 bg-muted flex flex-col rounded-lg border">
+  <h2 class="text-xl font-bold">META DO MÊS</h2>
 
-    <p class="muted">Ajude-nos a continuar online.</p>
+  <p class="text-muted-foreground">Ajude-nos a continuar online.</p>
 
-    <div class="cc__widget___goal_bar" style="--goal_percent: <%=  cc.widget.percent %>%">
-      <% if (cc.widget.data.show) { %>
-        <span><%= cc.widget.goal_display %></span>
-      <% } %>
+  <div class="relative mt-2 w-full h-[18px] rounded-full bg-black/40 overflow-hidden" style="--goal_percent: <%= cc.widget.percent %>%">
+    <% if (cc.widget.data.show) { %>
+      <span class="absolute z-10 right-0 text-sm font-semibold pr-[5px] top-1/2 -translate-y-1/2">
+        <%= cc.widget.goal_display %>
+      </span>
+    <% } %>
+    
+    <!-- Progress bar with gradient and shadow -->
+    <div 
+      class="absolute h-[18px] bg-primary"
+      style="width: var(--goal_percent); 
+             background-image: linear-gradient(-45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 75%, transparent 75%, transparent);
+             box-shadow: inset 0 2px 1px rgba(255,255,255,0.3), inset 0 -2px 6px rgba(0,0,0,0.4);"
+      >
     </div>
-    <h3 class="cc__widget___goal_text"><%= cc.widget.percent %>% completo</h3>
   </div>
+
+  <h3 class="text-base font-semibold mt-2 text-right text-primary">
+    <%= cc.widget.percent %>% completo
+  </h3>
 </div>

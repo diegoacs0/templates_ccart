@@ -1,0 +1,9 @@
+<div>
+  <h3 class="bg-primary/20 border-2 border-primary w-fit py-2 px-4 rounded-md font-semibold">Buscando por: <%= cc.query.q %></h3>
+
+  <div class="grid grid-cols-4 gap-6 mt-8">
+    <% cc.packages.data.forEach((package) => { %>
+      <%~ include('@components/package', { package, ...cc }) %>
+    <% }) %>
+  </div>
+</div>

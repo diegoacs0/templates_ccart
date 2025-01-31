@@ -1,89 +1,164 @@
 <% layout("@layouts/layout") %>
 
-<div class="cc__order___wrapper">
+<div class="m-6 font-['Poppins']">
   <% if (cc.order) { %>
-  <div class="cc__order___info">
-    <div class="cc__order___status">
-      <% if (cc.order.status === 'APPROVED') { %>
-      <i class="fa-solid fa-circle-check" style="color: #00dc82"></i>
-      <p>Pedido pago com sucesso!</p>
-      <% } %>
 
-      <% if (cc.order.status === 'PENDING') { %>
-      <i class="fa-solid fa-circle-exclamation" style="color: #ffa600"></i>
-      <p>Pagamento pendente.</p>
-      <% } %>
+    <%
+    const status_data = {
+      PENDING: {
+        color: 'orange-400',
+        label: 'Pagamento pendente',
+        icon: 'fa-circle-exclamation'
+      },
+      APPROVED: {
+        color: 'green-500',
+        label: 'Pagamento aprovado!',
+        icon: 'fa-circle-check'
+      },
+      REJECTED: {
+        color: 'red-500',
+        label: 'Pagamento rejeitado',
+        icon: 'fa-circle-xmark'
+      },
+      CANCELED: {
+        color: 'red-500',
+        label: 'Pagamento cancelado',
+        icon: 'fa-circle-xmark'
+      },
+      REFUNDED: {
+        color: 'yellow-500',
+        label: 'Pagamento reembolsado',
+        icon: 'fa-hand-holding-dollar'
+      },
+      CHARGEDBACK: {
+        color: 'purple-500',
+        label: 'Pagamento contestado',
+        icon: 'fa-hand-holding-dollar'
+      },
+    }
 
-      <% if (cc.order.status === 'CANCELED' || cc.order.status === 'RECUSED') { %>
-      <i class="fa-solid fa-circle-xmark" style="color: #dc0000"></i>
-      <p>Pagamento cancelado ou recusado.</p>
-      <% } %>
+    const status = status_data[cc.order.status]
+  %>
 
-      <% if (cc.order.status === 'CHARGEDBACK' || cc.order.status === 'REFUNDED') { %>
-      <i class="fa-solid fa-hand-holding-dollar" style="color: #ffa600"></i>
-      <p>Pagamento devolvido ou em disputa.</p>
-      <% } %>
+  <div class="flex flex-col items-center">
+    <div class="flex flex-col justify-center items-center w-full">
+      <i class="fa-solid <%= status.icon %> text-[64px] text-<%= status.color %>"></i>
+      <p class="text-lg font-semibold"><%= status.label %></p>
     </div>
 
-    <div class="cc__order___details">
-      <div>
-        <h5><%= ['FIVEM', 'REDM'].includes(cc.store.type) ? 'ID na cidade' : 'Nickname' %>:</h5>
-        <p>#<%= cc.order.client_identifier %></p>
+    <div class="mt-12 grid md:grid-cols-2 gap-6 border p-4 rounded-lg w-full md:w-[520px]">
+      <div class="space-y-1">
+        <h5>
+          <%= ['FIVEM', 'REDM', 'GTA-SA'].includes(cc.store.type) ? 'ID na cidade' : 'Nickname' %>:
+        </h5>
+        <p class="px-2 py-1.5 bg-background border rounded font-medium">#<%= cc.order.client_identifier %></p>
       </div>
 
-      <div>
+      <div class="space-y-1 overflow-auto">
         <h5>E-mail:</h5>
-        <p><%= cc.order.client_email %></p>
+        <p class="px-2 py-1.5 bg-background border rounded font-medium truncate"><%= cc.order.client_email %></p>
       </div>
 
-      <div>
+      <div class="space-y-1">
         <h5>Situação do pagamento:</h5>
-        <p><%= cc.order.status_display %></p>
+        <p class="px-2 py-1.5 bg-background border rounded font-medium"><%= cc.order.status_display %></p>
       </div>
 
-      <div>
+      <div class="space-y-1">
         <h5>Valor total:</h5>
-        <p><%= cc.order.price_display %></p>
+        <p class="px-2 py-1.5 bg-background border rounded font-medium"><%= cc.order.price_display %></p>
       </div>
 
-      <div>
-        <h5>Produtos:</h5>
-        <ul>
+      <div class="md:col-span-2 bg-background border p-2 rounded">
+        <h5>Produtos</h5>
+        <div class="mt-2 space-y-1">
           <% cc.order.packages.map((package, index) => { %>
-            <li>
-              <p>x<%= package.quantity %> <%= package.name %></p>
-              <p
-                class="cc__order___badge"
-                style="background-color: <%= cc.order.status === 'APPROVED' ? '#00dc82' : '#ffa600' %>"
-              >
-                <% const content = cc.order.queued_commands.filter((cmd) => cmd.order_package_id === package.id && cmd.command.startsWith("sendKey")) %>
-                <% if (cc.store.type === 'STANDALONE' && content.length) { %>
-                  <% content.map((command) => { %>
-                    <% const key = command.command.split('"').at(1) %>
-                    <%= key %> 
+            <div class="flex justify-between items-center">
+              <p class="font-medium">x<%= package.quantity %> <%= package.name %></p>
 
-                    <button style="background-color: transparent;" onclick="(() => {
-                      navigator.clipboard.writeText(`<%= key %>`);
+              <% if (cc.store.type !== 'STANDALONE') { %>
+                <div 
+                  class="bg-green-500/15 text-green-500 border border-green-500 px-2 py-1 text-xs rounded font-medium"
+                >
+                  Entregue in-game
+                </div>
+              <% } %>
 
-                      showToast('Pronto!', 'Valor copiado!')
-                    })()">
-                      <i class="fa-solid fa-copy" style="opacity: 0.7;"></i>
-                    </button>
-                  <% }) %>
-                <% } else { %>
-                  <%= cc.order.status === 'APPROVED' ? 'Concluído' : 'Aguardando' %>
-                <% } %>
-              </p>
-            </li>
+              <% const deliveries = cc.order.deliveries.filter((delivery) => delivery.order_package_id === package.id) %>
+              <% if (cc.store.type === 'STANDALONE' && deliveries.length) { %>
+                <button 
+                  class="bg-primary px-4 h-8 text-sm rounded-md font-medium"
+                  data-micromodal-trigger="redeem-<%= package.id %>" 
+                >
+                  Resgatar
+                </button>
+
+                <div class="modal micromodal-slide absolute" id="redeem-<%= package.id %>" aria-hidden="true">
+                  <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+                    <div id="package-modal-container" class="modal__container w-full md:w-[600px] rounded-lg bg-accent font-['Roboto_Condensed']" role="dialog" aria-modal="true">
+                      <div class="border-b p-4">
+                        <h5 class="text-xl font-semibold"><%= package.name %></h5>
+                        <button
+                          type="button"
+                          class="absolute top-4 right-4 text-white opacity-70 hover:opacity-100 transition-opacity"
+                          aria-label="Fechar"
+                          data-micromodal-close
+                        >
+                          <i class="fa-solid fa-times text-xl"></i>
+                        </button>
+                      </div>
+
+                      <div class="p-4">
+                        <div class="space-y-3">
+                          <% deliveries.map((delivery) => { %>
+                            <% const { value, type, render } = delivery %>
+                            
+                            <% if (type === 'LICENSE_KEY') { %>
+                              <div class="py-1 px-2 bg-primary/10 text-primary rounded border border-primary flex justify-between gap-1">
+                                <span class="font-medium"><%= value %></span>
+            
+                                <button class="text-right h-fit copy" value="<%= value %>">
+                                  <i class="fa-solid fa-copy"></i>
+                                </button>
+                              </div>
+                            <% } %>
+      
+                            <% if (type === 'CONTENT') { %>
+                              <div class="<%= render ? 'centralcart-email-viewer' : 'centralcart-content p-4 bg-background border rounded' %>">
+                                <%~ value %>
+                              </div>
+                            <% } %>
+                          <% }) %>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% } %>
+            </div>
           <% }) %>
-        </ul>
+        </div>
       </div>
     </div>
   </div>
+
+  <script>
+    $(document).on('click', '.copy', function () {
+      $(this).attr('disabled', '1')
+      $(this).find('i').removeClass('fa-copy').addClass('fa-check')
+
+      setTimeout(() => {
+        $(this).removeAttr('disabled')
+        $(this).find('i').addClass('fa-copy').removeClass('fa-check')
+      }, 3000)
+
+      navigator.clipboard.writeText($(this).val())
+    })
+  </script>
   <% } else { %>
-    <h1>404</h1>
-    <p>Pedido não encontrado.</p>
-    <div class="cc__order___not_found">
-  </div>
+    <div class="flex flex-col items-center">
+      <h1>404</h1>
+      <p>Pedido não encontrado.</p>
+    </div>
   <% } %>
 </div>

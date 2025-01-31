@@ -1,0 +1,360 @@
+<% layout('@layouts/platform') %>
+
+<% if (cc.order) { %>
+  <% 
+    const date = new Date(cc.order.created_at);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    const created_at = `${day}/${month}/${year} às ${hours}:${minutes}`;
+  %>
+
+  <%
+    const status_data = {
+      PENDING: {
+        color: 'orange-400',
+        label: 'Pagamento pendente',
+        icon: 'clock'
+      },
+      APPROVED: {
+        color: 'green-500',
+        label: 'Pagamento aprovado!',
+        icon: 'circle-check'
+      },
+      REJECTED: {
+        color: 'red-500',
+        label: 'Pagamento rejeitado',
+        icon: 'circle-x'
+      },
+      CANCELED: {
+        color: 'red-500',
+        label: 'Pagamento cancelado',
+        icon: 'circle-x'
+      },
+      REFUNDED: {
+        color: 'yellow-500',
+        label: 'Pagamento reembolsado',
+        icon: 'rotate-ccw'
+      },
+      CHARGEDBACK: {
+        color: 'purple-500',
+        label: 'Pagamento contestado',
+        icon: 'rotate-ccw'
+      },
+    }
+
+    const status = status_data[cc.order.status]
+  %>
+
+  <main class="grid grid-cols-1 md:grid-cols-2 container px-0 mx-auto max-w-screen-lg min-h-screen">
+    <section class="flex-1 mx-auto container ms-auto py-12 flex flex-col">
+      <div>
+        <a href="/">
+          <% if (cc.theme.logo) { %>
+            <img src="<%= cc.theme.logo %>" class="w-[50px] h-[50px] object-contain" />
+          <% } else { %>
+            <h1 class="text-xl font-bold text-white">
+              <%= cc.store.name %>
+            </h1>
+          <% } %>
+        </a>
+
+        <nav aria-label="Breadcrumb" class="text-sm mt-4">
+          <ol id="breadcrumb" class="flex space-x-1.5 items-center">
+            <li>
+              <a href="/" class="hover:underline">Início</a>
+            </li>
+            <i class="icon-chevron-right text-muted-foreground"></i>
+            <li>
+              <a href="#" class="hover:underline font-semibold">Detalhes do pedido</a>
+            </li>
+          </ol>
+        </nav>
+      </div>
+
+      <div class="mt-12 space-y-6">
+        <h2 class="text-lg font-medium">Itens do pedido</h2>
+
+        <div class="space-y-4">
+          <% cc.order.packages.forEach((package) => { %>
+            <div class="flex gap-3 items-center">
+              <div class="relative size-16">
+                <% const image = package.meta.image ?? cc.cdn('public/assets/templates/KOPY/no-image.png') %>
+                <img class="size-full bg-background border flex items-center justify-center rounded-md object-cover" src="<%= image %>" />
+                <span class="translate-x-1/4 -translate-y-1/4 absolute top-0 right-0 bg-white text-black font-semibold flex items-center justify-center w-6 h-6 rounded-full text-xs"><%= package.quantity %></span>
+              </div>
+      
+              <div class="flex-1">
+                <p class="text-sm font-medium line-clamp-2"><%= package.meta.name %></p>
+                <% const category = cc.categories.find((category) => category.id === package.meta.category_id) %>
+                <p class="text-muted-foreground text-xs"><%= cc.currency(package.price) %></p>
+              </div>
+
+              <% if (cc.store.type !== 'STANDALONE') { %>
+                <div 
+                  class="bg-green-500/15 text-green-500 border border-green-500 px-2 py-1 text-xs rounded-md font-medium"
+                >
+                  Entregue in-game
+                </div>
+              <% } %>
+      
+              <% const deliveries = cc.order.deliveries.filter((delivery) => delivery.order_package_id === package.id) %>
+              <% if (cc.store.type === 'STANDALONE' && deliveries.length) { %>
+                <button 
+                  data-modal-id="redeem-<%= package.id %>"
+                  data-modal-title="<%= package.name %>"
+                  class="bg-primary px-4 h-8 text-sm rounded-md font-medium open-modal"
+                >
+                  Resgatar
+                </button>
+
+                <div id="redeem-<%= package.id %>" class="hidden">
+                  <div class="space-y-3">
+                    <% deliveries.map((delivery) => { %>
+                      <% const { value, type, render } = delivery %>
+                      
+                      <% if (type === 'LICENSE_KEY') { %>
+                        <div class="py-1 px-2 bg-primary/10 text-primary rounded border border-primary flex justify-between gap-1">
+                          <span class="font-medium"><%= value %></span>
+      
+                          <button class="text-right h-fit copy" value="<%= value %>">
+                            <i class="icon-copy font-normal"></i>
+                          </button>
+                        </div>
+                      <% } %>
+
+                      <% if (type === 'CONTENT') { %>
+                        <div class="<%= render ? 'centralcart-email-viewer' : 'centralcart-content p-4 bg-muted border rounded' %>">
+                          <%~ value %>
+                        </div>
+                      <% } %>
+                    <% }) %>
+                  </div>
+                </div>
+              <% } %>
+            </div>
+          <% }) %>
+        </div>
+
+        <div class="w-full h-[1px] bg-foreground/10 my-4"></div>
+
+        <p class="text-muted-foreground text-sm">
+          <%= cc.store.type === 'STANDALONE' ? 
+          '*Clique em resgatar para obter os itens do pedido.' : 
+          '*Entregaremos os itens do seu pedido automaticamente in-game.' 
+          %>
+        </p>
+      </div>
+
+      <a href="/" class="mt-auto flex items-center justify-center bg-primary gap-1 h-9 rounded-md font-medium">
+        <i class="icon-house text-lg"></i> 
+        Voltar ao início
+      </a>
+    </section>
+
+    <section class="flex-1 mx-auto bg-muted border-s container me-auto py-12 flex flex-col">
+      <p class="text-lg font-medium">Detalhes do pedido</p>
+
+      <div class="mt-12 border py-4 rounded-md border-foreground/10 flex flex-col gap-2">
+        <div class="px-4">
+          <div class="flex items-center gap-1.5">
+            <i class="icon-<%= status.icon %> text-xl text-<%= status.color %>"></i>
+            <h2 class="font-semibold"><%= status.label %></h2>
+          </div>
+
+          <p class="text-sm text-muted-foreground">Atualizado em <%= created_at %></p>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <div class="w-4 h-8 rounded-[0px_999px_999px_0px] border-foreground/10 border-r border-t border-b bg-muted -ml-[1px]"></div>
+          <div class="detail-dash"></div>
+          <div class="w-4 h-8 rounded-[999px_0px_0px_999px] border-foreground/10 border-l border-t border-b bg-muted -mr-[1px]"></div>
+        </div>
+
+        <div class="px-4 space-y-4">
+          <div class="space-y-1">
+            <label class="">Nome</label>
+            <input class="w-full h-10" readonly value="<%= cc.order.client_name %>" />
+          </div>
+
+          <div class="space-y-1">
+            <label class="">Email</label>
+            <input class="w-full h-10" readonly value="<%= cc.order.client_email %>" />
+          </div>
+
+          <% const client_identifier = cc.order.variables.find((variable) => variable.name === 'client_identifier')?.value %>
+          <% if (client_identifier) { %>
+            <div class="space-y-1">
+              <label class=""><%= cc.store.type === 'MINECRAFT' ? 'Nickname' : 'ID na cidade' %></label>
+              <input class="w-full h-10" readonly value="<%= client_identifier %>" />
+            </div>
+          <% } %>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <div class="w-4 h-8 rounded-[0px_999px_999px_0px] border-foreground/10 border-r border-t border-b bg-muted -ml-[1px]"></div>
+          <div class="detail-dash"></div>
+          <div class="w-4 h-8 rounded-[999px_0px_0px_999px] border-foreground/10 border-l border-t border-b bg-muted -mr-[1px]"></div>
+        </div>
+
+        <div class="px-4 space-y-4">
+          <div class="space-y-1">
+            <label class="">Nº do pedido</label>
+            <input class="w-full h-10" readonly value="<%= cc.order.internal_id %>" />
+          </div>
+
+          <% if (cc.order.promo_code) { %>
+            <div class="space-y-1">
+              <label class="">Cupom</label>
+              <input class="w-full h-10" readonly value="<%= cc.order.promo_code %>" />
+            </div>
+          <% } %>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <div class="w-4 h-8 rounded-[0px_999px_999px_0px] border-foreground/10 border-r border-t border-b bg-muted -ml-[1px]"></div>
+          <div class="detail-dash"></div>
+          <div class="w-4 h-8 rounded-[999px_0px_0px_999px] border-foreground/10 border-l border-t border-b bg-muted -mr-[1px]"></div>
+        </div>
+
+        <div class="px-4 flex justify-between items-center">
+          <div>
+            <label>Pago com</label>
+            <p class="font-semibold"><%= cc.order.gateway_display %></p>
+          </div>
+
+          <div class="text-right">
+            <label>Valor total</label>
+            <p class="font-semibold"><%= cc.order.price_display %></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-auto text-sm text-muted-foreground">
+        <p class="mt-2">Copyright © <%= new Date().getFullYear() %> - <%= cc.store.name %>.</p>
+      </div>
+    </section>
+  </main>
+
+
+  <div id="modal" class="fixed inset-0 hidden backdrop-transition backdrop-blur-0 bg-opacity-0 bg-black flex items-center justify-center">
+    <div class="bg-background border rounded-md shadow-lg w-full md:w-1/3 transform scale-90 opacity-0 transition-all duration-300">
+      <div class="p-6 max-h-screen overflow-auto">
+        <h2 id="modal-title" class="text-xl font-bold mb-4"></h2>
+        <p id="modal-content" class="mb-6"></p>
+        <div class="flex justify-end">
+          <button id="close-modal" class="bg-primary px-4 h-9 text-sm rounded-md font-medium">
+            Fechar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .backdrop-transition {
+      transition: backdrop-filter 0.3s ease, background-color 0.3s ease;
+    }
+
+    .detail-dash {
+      background-image: linear-gradient(to right, hsl(var(--muted)) 50%, hsl(var(--foreground) / 0.1) 0%);
+      background-position: center bottom;
+      background-size: 16px;
+      background-repeat: repeat-x;
+      width: 100%;
+      height: 1px;
+    }
+  </style>
+
+  <script>
+    $(document).ready(function () {
+      const $modal = $("#modal");
+      const $modalContent = $modal.find("div");
+
+      $(".open-modal").click(function () {
+        const modal_id = $(this).attr('data-modal-id')
+        const modal_title = $(this).attr('data-modal-title')
+
+        $('#modal-content').html($(`#${modal_id}`).html())
+        $(`#modal-content #${modal_id}`).removeClass('hidden')
+        $('#modal-title').text(modal_title)
+
+        $modal.removeClass("hidden");
+        
+        setTimeout(() => {
+          $modal.addClass("backdrop-blur-sm bg-opacity-50");
+        }, 10);
+
+        setTimeout(() => {
+          $modalContent.removeClass("scale-90 opacity-0").addClass("scale-100 opacity-100");
+          trapFocus()
+        }, 100);
+      });
+
+      $("#close-modal, #modal").click(function (e) {
+        if (e.target === this) {
+          $modalContent.removeClass("scale-100 opacity-100").addClass("scale-90 opacity-0");
+          
+          setTimeout(() => {
+            $modal.removeClass("backdrop-blur-sm bg-opacity-50");
+          }, 200);
+
+          setTimeout(() => {
+            $modal.addClass("hidden");
+          }, 300);
+        }
+      });
+
+      function trapFocus() {
+        const focusableElements = $modal.find('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])').toArray();
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+  
+        $(document).on("keydown.modal", function (e) {
+          if (e.key === "Tab") {
+            if (e.shiftKey) {
+              if (document.activeElement === firstElement) {
+                e.preventDefault();
+                lastElement.focus();
+              }
+            } else {
+              if (document.activeElement === lastElement) {
+                e.preventDefault();
+                firstElement.focus();
+              }
+            }
+          }
+        });
+  
+        if (firstElement) {
+          firstElement.focus();
+        }
+      }
+  
+      function releaseFocusTrap() {
+        $(document).off("keydown.modal");
+      }
+  
+      $("#close-modal, #modal").click(function () {
+        releaseFocusTrap();
+      });
+    });
+
+    $(document).on('click', '.copy', function () {
+      $(this).attr('disabled', '1')
+      $(this).find('i').removeClass('icon-copy').addClass('icon-check')
+
+      setTimeout(() => {
+        $(this).removeAttr('disabled')
+        $(this).find('i').addClass('icon-copy').removeClass('icon-check')
+      }, 3000)
+
+      navigator.clipboard.writeText($(this).val())
+    })
+  </script>
+<% } else { %>
+  <meta http-equiv="refresh" content="0; url=/" />
+<% } %>

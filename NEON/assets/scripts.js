@@ -1,5 +1,11 @@
 const base_url = window.location.protocol + '//' + window.location.host + dist_url
 
+MicroModal.init({
+  awaitOpenAnimation: true,
+  awaitCloseAnimation: true,
+  disableScroll: true,
+})
+
 function sendMessage(message) {
   console.log(`%c[CENTRALCART]: %c${message}`, 'color: #00dc82;', '')
 }
@@ -19,7 +25,7 @@ function showToast(title, content, type = null) {
     className: type,
     escapeMarkup: false,
     text: text,
-    duration: 3000,
+    duration: 30000,
     close: true,
     gravity: 'bottom',
     position: 'center',
@@ -85,7 +91,7 @@ function showCouponError(message) {
 $('#apply-coupon').on('click', function () {
   const coupon = $(this).prev().val()
 
-  const already_applied = $(this).hasClass('red')
+  const already_applied = $(this).data('coupon') !== 'undefined'
 
   if (!coupon && !already_applied) {
     return showCouponError('Informe o cupom que deseja aplicar.')
@@ -96,8 +102,9 @@ $('#apply-coupon').on('click', function () {
       .then((res) => {
         showToast('Pronto!', 'Cupom aplicado com sucesso!')
         updateTotalPrice(res.data.total_price_display)
-        $(this).addClass('red')
+        $(this).addClass('bg-red-600 hover:bg-red-500')
         $(this).text('Remover')
+        $(this).data('coupon', coupon)
       })
       .catch((err) => {
         showToast('Oops...', err.data.errors[0].message, 'error')
@@ -107,9 +114,10 @@ $('#apply-coupon').on('click', function () {
       .then((res) => {
         showToast('Pronto!', 'Cupom removido do carrinho!')
         updateTotalPrice(res.data.total_price_display)
-        $(this).removeClass('red')
+        $(this).removeClass('bg-red-600 hover:bg-red-500')
         $(this).text('Aplicar')
         $(this).prev().val('')
+        $(this).data('coupon', 'undefined')
       })
       .catch((err) => {
         showToast('Oops...', err.data.errors[0].message, 'error')
@@ -153,13 +161,12 @@ $(document).on('click', "[data-func='open-selector']", async function () {
 
   const html = await fetch(url).then(async (res) => await res.text())
 
-  $('#package-modal-container .modal-dialog').css('max-width', '400px')
-  $('#package-modal-container .modal-content').get()[0].innerHTML = html
+  $('#package-option-modal-container').get()[0].innerHTML = html
 
-  $('#package-modal-container').modal('show')
-
-  $('#package-modal-container').on('hidden.bs.modal', function (e) {
-    $('#package-modal-container .modal-dialog').css('max-width', '')
+  MicroModal.show('package-option-modal', {
+    awaitOpenAnimation: true,
+    awaitCloseAnimation: true,
+    disableScroll: true,
   })
 })
 
@@ -199,7 +206,7 @@ $(document).on('click', "[data-func='update-options']", function () {
       showToast('Oops...', err.data.errors[0].message, 'error')
     })
 
-  $(`#package-modal-container`).modal('hide')
+  MicroModal.close('package-option-modal')
 })
 /**
  * End categories page controllers
@@ -308,17 +315,22 @@ $('.btn-primary.discord').on('click', function (e) {
 })
 
 function showPixModal(pix_code, qr_code, return_url) {
-  $('#checkout-modal').modal('hide')
-  $('#pix-modal').modal('show')
+  MicroModal.close('checkout-modal')
 
-  $('#pix-modal').on('hidden.bs.modal', () => {
-    location.href = return_url
+  MicroModal.show('pix-modal', {
+    awaitOpenAnimation: true,
+    awaitCloseAnimation: true,
+    onClose: () => {
+      setTimeout(() => {
+        window.location.href = return_url
+      })
+    },
   })
 
-  $('#pix-modal .modal-body img').attr('src', `data:image/jpeg;base64,${qr_code}`)
+  $('#pix-modal img').attr('src', `data:image/jpeg;base64,${qr_code}`)
 
   let timeout
-  $('#pix-modal .modal-body button').on('click', function () {
+  $('#pix-modal button#copy-pix').on('click', function () {
     if (timeout) return
 
     const default_text = $(this).children('span').text()
@@ -333,18 +345,14 @@ function showPixModal(pix_code, qr_code, return_url) {
       timeout = undefined
     }, 3000)
   })
-
-  $('#pix-modal .modal-footer button').on('click', function () {
-    location.href = return_url
-  })
 }
 
 $('.cc__checkout___gateways button').on('click', function () {
   $('.cc__checkout___gateways button').each(function () {
-    $(this).removeClass('active')
+    $(this).removeAttr('data-active')
   })
 
-  $(this).addClass('active')
+  $(this).attr('data-active', true)
 
   const document_group = $('label[for=document]').parent()
 
@@ -370,7 +378,7 @@ $('#checkout').on('click', function () {
   $(this).attr('disabled', '')
 
   let data = {}
-  data.gateway = $('.cc__checkout___gateways button.active').val()
+  data.gateway = $('.cc__checkout___gateways button[data-active]').val()
   data.client_email = $('.cc__checkout___form_field input[name=email]').val()
   data.client_name = $('.cc__checkout___form_field input[name=name]').val()
   data.client_phone = $('.cc__checkout___form_field input[name=phone]').val()?.replace(/\D/g, '')
@@ -432,11 +440,12 @@ async function showPackage(slug) {
 
   const html = await fetch(url).then(async (res) => await res.text())
 
-  $('#package-modal-container').modal('show')
-
-  var newElement = document.createElement('div')
-  newElement.innerHTML = html
-  $('#package-modal-container .modal-content').get()[0].replaceChildren(newElement)
+  MicroModal.show('package-modal', {
+    awaitOpenAnimation: true,
+    awaitCloseAnimation: true,
+    disableScroll: true,
+  })
+  $('#package-modal-container').get()[0].innerHTML = html
 }
 
 function copyIp(element) {
@@ -447,7 +456,7 @@ function copyIp(element) {
 }
 
 function openSubcategoryMenu(element) {
-  const subCategoryWrapper = $(element).next('.cc__subcategories___list__wrapper')
+  const subCategoryWrapper = $(element).next('.subcategories-wrapper')
   const buttonCaret = $(element).children('.fa-solid.fa-caret-right')
 
   const height = subCategoryWrapper.children().outerHeight()

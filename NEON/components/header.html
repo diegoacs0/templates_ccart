@@ -1,26 +1,50 @@
 <header>
-  <nav>
+  <nav class="py-8 bg-black/20 border-b-2 border-white/10">
     <div class="container">
       <ul>
-        <li>
-          <div class="cc__nav_links">
-            <a class="animate <%= cc.current_page === 'index' && 'active' %>" href="<%= cc.dist_url %>/"><i class="fa-solid fa-house"></i> INÍCIO</a>
+        <li class="flex items-center justify-between flex-wrap">
+          <div class="flex gap-7 flex-wrap justify-between items-inherit">
+            <a class="text-lg font-bold relative hover:after:w-full after:content-[''] after:transition-all after:duration-300 after:w-0 after:h-[3px] after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:bg-white <%= cc.current_page === 'index' && 'text-primary' %>" 
+               href="<%= cc.dist_url %>/">
+              <i class="fa-solid fa-house"></i> INÍCIO
+            </a>
 
-            <% if (cc.theme.socials.discord !== null) { %> <a class="animate" href="<%= cc.theme.socials.discord %>"><i class="fa-brands fa-discord"></i></a> <% } %>
-            <% if (cc.theme.socials.twitter !== null) { %> <a class="animate" href="<%= cc.theme.socials.twitter %>"><i class="fa-brands fa-twitter"></i></a> <% } %>
-            <% if (cc.theme.socials.instagram !== null) { %> <a class="animate" href="<%= cc.theme.socials.instagram %>"><i class="fa-brands fa-instagram"></i></a> <% } %>
-            <% if (cc.theme.socials.youtube !== null) { %> <a class="animate" href="<%= cc.theme.socials.youtube %>"><i class="fa-brands fa-youtube"></i></a> <% } %>
-            <% if (cc.theme.socials.facebook !== null) { %> <a class="animate" href="<%= cc.theme.socials.facebook %>"><i class="fa-brands fa-facebook"></i></a> <% } %>
-            <% if (cc.theme.socials.tiktok !== null) { %> <a class="animate" href="<%= cc.theme.socials.tiktok %>"><i class="fa-brands fa-tiktok"></i></a> <% } %>
+            <% if (cc.theme.socials.discord !== null) { %> 
+              <a class="text-lg font-bold relative hover:after:w-full after:content-[''] after:transition-all after:duration-300 after:w-0 after:h-[3px] after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:bg-white"
+                 href="<%= cc.theme.socials.discord %>" target="_blank">
+                <i class="fa-brands fa-discord"></i>
+              </a> 
+            <% } %>
+            <% if (cc.theme.socials.twitter !== null) { %> <a class="text-lg font-bold relative hover:after:w-full after:content-[''] after:transition-all after:duration-300 after:w-0 after:h-[3px] after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:bg-white"
+                 href="<%= cc.theme.socials.twitter %>" target="_blank">
+                <i class="fa-brands fa-twitter"></i>
+              </a> <% } %>
+            <% if (cc.theme.socials.instagram !== null) { %> <a class="text-lg font-bold relative hover:after:w-full after:content-[''] after:transition-all after:duration-300 after:w-0 after:h-[3px] after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:bg-white"
+                 href="<%= cc.theme.socials.instagram %>" target="_blank">
+                <i class="fa-brands fa-instagram"></i>
+              </a> <% } %>
+            <% if (cc.theme.socials.youtube !== null) { %> <a class="text-lg font-bold relative hover:after:w-full after:content-[''] after:transition-all after:duration-300 after:w-0 after:h-[3px] after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:bg-white"
+                 href="<%= cc.theme.socials.youtube %>" target="_blank">
+                <i class="fa-brands fa-youtube"></i>
+              </a> <% } %>
+            <% if (cc.theme.socials.facebook !== null) { %> <a class="text-lg font-bold relative hover:after:w-full after:content-[''] after:transition-all after:duration-300 after:w-0 after:h-[3px] after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:bg-white"
+                 href="<%= cc.theme.socials.facebook %>" target="_blank">
+                <i class="fa-brands fa-facebook"></i>
+              </a> <% } %>
+            <% if (cc.theme.socials.tiktok !== null) { %> <a class="text-lg font-bold relative hover:after:w-full after:content-[''] after:transition-all after:duration-300 after:w-0 after:h-[3px] after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:bg-white"
+                 href="<%= cc.theme.socials.tiktok %>" target="_blank">
+                <i class="fa-brands fa-tiktok"></i>
+              </a> <% } %>
           </div>
 
-          <div class="cc__nav_buttons">
-            <a href="#store" class="cc__header___store_btn">LOJA</a>
+          <div class="flex gap-6 justify-between items-center">
+            <a href="#store" 
+               class="bg-primary px-6 py-2.5 rounded-full text-white transition-colors duration-200 hover:bg-primary-dark font-bold">
+              LOJA
+            </a>
 
-            <a
-              href="<%= cc.dist_url %>/cart"
-              class="animate <%= cc.current_page === 'cart' ? 'active' : ''%>"
-            >
+            <a href="<%= cc.dist_url %>/cart"
+               class="h-fit text-lg font-bold relative hover:after:w-full after:content-[''] after:transition-all after:duration-300 after:w-0 after:h-[3px] after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:bg-white <%= cc.current_page === 'cart' ? 'text-primary' : ''%>">
               <i class="fa-solid fa-cart-shopping"></i>
               CARRINHO
             </a>
@@ -30,68 +54,69 @@
     </div>
   </nav>
 
-  <div class="cc__header___hero container" style="<%= cc.theme.background && '--bg-img: url(' + cc.theme.background + ')'%>">
-    <div class="cc__header___hero__wrapper">
-      <div class="cc__header___hero__widget <%= cc.store.type === 'STANDALONE' ? 'invisible' : '' %>">
-        <i class="fa-solid fa-fire-flame-curved"></i>
-        <% const widget = cc.widgets.find((widget) => widget.type === 'CONNECTION_BOARD') %>
-        <% if (['FIVEM', 'REDM'].includes(cc.store.type)) { %>
-          <a href="<%= widget && widget?.data ? cc.store.type.toLowerCase() + '://connect/' + widget?.data.address : '#' %>" data-ip="<%= widget?.data.address ?? '' %>"> 
-            <h1>CONECTE-SE JÁ!</h1>
-            <p>
-              <% if (widget?.data.address) { %>
-                <span>
-                  <span class="online-players" data-ip="<%= widget?.data.address ?? '' %>">...</span> online •
-                </span>
-              <% } %>
-              
-              Clique para jogar
-            </p>
-          </a>
-        <% } else { %>
-          <button style="background: none; text-align: start;" data-ip="<%= widget?.data.address ?? '' %>" onclick="copyIp(this)">
-            <h1>CONECTE-SE JÁ!</h1>
-            <p>
-              <% if (widget?.data.address) { %>
-                <span>
-                  <span class="online-players" data-ip="<%= widget?.data.address ?? '' %>">...</span> online •
-                </span>
-              <% } %>
-    
-              Clique para jogar
-            </p>
-          </button>
-        <% } %>
-      </div>
-      
+  <div class="min-h-64 before:content-[''] before:absolute before:right-0 before:min-h-64 before:opacity-10 before:blur-sm before:bg-no-repeat before:min-w-full before:bg-center before:bg-[length:100%] <%= cc.theme.background ? `before:bg-[url(${cc.theme.background})]` : '' %>">
+    <div class="min-h-64 flex items-center justify-around container">
+      <div class="flex items-center justify-around w-full z-10">
+        <!-- Connection Widget -->
+        <div class="items-center cursor-pointer transition-transform duration-200 hover:scale-110 hidden lg:flex <%= cc.store.type === 'STANDALONE' ? 'invisible' : '' %>">
+          <i class="fa-solid fa-fire-flame-curved text-4xl text-primary px-4"></i>
+          <% const widget = cc.widgets.find((widget) => widget.type === 'CONNECTION_BOARD') %>
 
-      <div
-        class="cc__header___hero__logo 
-        <%= cc.theme.logo_position === 'START' ? 
-        'left' : cc.theme.logo_position === 'END' ? 
-        'right' : ''%>"
-      >
-        <a href="<%= cc.dist_url %>/">
-          <% if (cc.theme.logo) { %>
-            <img src="<%= cc.theme.logo %>" />
+          <% if (['FIVEM', 'REDM'].includes(cc.store.type)) { %>
+            <a href="<%= widget && widget?.data ? cc.store.type.toLowerCase() + '://connect/' + widget?.data.address : '#' %>" 
+               data-ip="<%= widget?.data.address ?? '' %>">
+              <h1 class="text-2xl font-semibold text-white">CONECTE-SE JÁ!</h1>
+              <p class="font-semibold text-gray-500 font-['Poppins']">
+                <% if (widget?.data.address) { %>
+                  <span>
+                    <span class="online-players" data-ip="<%= widget?.data.address ?? '' %>">...</span> online •
+                  </span>
+                <% } %>
+                Clique para jogar
+              </p>
+            </a>
           <% } else { %>
-            <h1><%= cc.store.name %></h1>
+            <button class="text-start" data-ip="<%= widget?.data.address ?? '' %>" onclick="copyIp(this)">
+              <h1 class="text-2xl font-semibold text-white">CONECTE-SE JÁ!</h1>
+              <p class="font-semibold text-gray-500 font-['Poppins']">
+                <% if (cc.store.type !== 'GTA-SA' && widget?.data.address) { %>
+                  <span>
+                    <span class="online-players" data-ip="<%= widget?.data.address ?? '' %>">...</span> online •
+                  </span>
+                <% } %>
+      
+                Clique para jogar
+              </p>
+            </button>
           <% } %>
-        </a>
-      </div>
+        </div>
 
-      <div class="cc__header___hero__widget <%= cc.store.type === 'STANDALONE' ? 'invisible' : '' %>">
-        
-        <% if (cc.theme.socials.discord) { %>
-          <a href="<%= cc.theme.socials.discord %>">
-        <% } else { %>
-          <a>
-        <% } %>
-          <h1>ENTRAR NO DISCORD</h1>
-          <p>Participe da comunidade</p>
-        </a>
+        <!-- Logo Section -->
+        <div 
+          class="
+            transition-transform duration-200 hover:scale-120 cursor-pointer hover:scale-110
+            <%= cc.theme.logo_position === 'START' ? 'order-first' : 
+            cc.theme.logo_position === 'END' ? 'order-last' : ''%>
+          ">
+          <a href="<%= cc.dist_url %>/">
+            <% if (cc.theme.logo) { %>
+              <img src="<%= cc.theme.logo %>" class="max-w-[256px]" />
+            <% } else { %>
+              <h1 class="text-5xl font-bold font-['Orbitron'] text-center uppercase drop-shadow-[2px_2px_0_hsl(var(--primary))]">
+                <%= cc.store.name %>
+              </h1>
+            <% } %>
+          </a>
+        </div>
 
-        <i class="fa-brands fa-discord right"></i>
+        <!-- Discord Widget -->
+        <div class="items-center cursor-pointer transition-transform duration-200 hover:scale-110 hidden lg:flex <%= cc.store.type === 'STANDALONE' ? 'invisible' : '' %>">
+            <a href="<%= cc.theme.socials.discord ? cc.theme.socials.discord : '#' %>" target="_blank" class="text-white">
+              <h1 class="text-2xl font-semibold">ENTRAR NO DISCORD</h1>
+              <p class="font-semibold text-gray-500 font-['Poppins']">Participe da comunidade</p>
+            </a>
+          <i class="fa-brands fa-discord text-4xl text-primary px-4"></i>
+        </div>
       </div>
     </div>
   </div>
