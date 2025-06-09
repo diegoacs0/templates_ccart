@@ -1,0 +1,146 @@
+<%
+  var config = {};
+  try {
+    config.name = cc.store.name;
+  } catch (e) {
+    config.name = null;
+  }
+  try {
+    config.description = cc.theme.description;
+  } catch (e) {
+    config.description = null;
+  }
+  try {
+    config.logo = cc.theme.logo;
+  } catch (e) {
+    config.logo = null;
+  }
+
+  var categories = [];
+  try {
+    categories = cc.categories.map(function(cat) {
+      var active = true;
+      if (typeof cat.is_active !== 'undefined') {
+        active = cat.is_active;
+      } else if (typeof cat.isActive !== 'undefined') {
+        active = cat.isActive;
+      }
+      return {
+        id: String(cat.id),
+        name: cat.name,
+        slug: cat.slug,
+        isActive: active
+      };
+    });
+  } catch (e) {}
+
+  var subcategories = [];
+  try {
+    subcategories = cc.categories.reduce(function(arr, cat) {
+      var subs = cat.sub_categories || [];
+      subs.forEach(function(sub) {
+        var active = true;
+        if (typeof sub.is_active !== 'undefined') {
+          active = sub.is_active;
+        } else if (typeof sub.isActive !== 'undefined') {
+          active = sub.isActive;
+        }
+        arr.push({
+          id: String(sub.id),
+          name: sub.name,
+          slug: sub.slug,
+          categoryId: String(cat.id),
+          isActive: active,
+          color: sub.color
+        });
+      });
+      return arr;
+    }, []);
+  } catch (e) {}
+
+  var listings = [];
+  try {
+    var packageSource = [];
+    if (cc.packages && cc.packages.data) {
+      packageSource = cc.packages.data;
+    } else if (cc.package) {
+      packageSource = [cc.package];
+    } else if (cc.packages_home && cc.packages_home.data) {
+      packageSource = cc.packages_home.data;
+    }
+
+    listings = packageSource.map(function(pkg) {
+      var type = pkg.type;
+      if (!type) {
+        if (pkg.dynamic) {
+          type = 'DYNAMIC';
+        } else {
+          type = 'STATIC';
+        }
+      }
+      var active = true;
+      if (typeof pkg.is_active !== 'undefined') {
+        active = pkg.is_active;
+      }
+      return {
+        id: String(pkg.id),
+        title: pkg.name,
+        description: pkg.description,
+        type: type,
+        slug: pkg.slug,
+        isActive: active,
+        createdAt: pkg.created_at,
+        subcategoryId: String(pkg.sub_category_id),
+        images: [pkg.image].filter(Boolean),
+        products: (pkg.variations || []).map(function(v) {
+          return {
+            id: String(v.id),
+            name: v.name,
+            value: v.price,
+            discountPercentage: v.discount_percentage,
+            createdAt: v.created_at,
+            listingId: String(pkg.id),
+            inStock: v.inventory_amount
+          };
+        })
+      };
+    });
+  } catch (e) {}
+
+  var users = [];
+  try {
+    users = cc.users.map(function(u) {
+      return {
+        id: String(u.id),
+        fullname: u.name || u.fullname,
+        email: u.email,
+        picture: u.avatar || u.picture,
+        cpf: u.cpf,
+        birthDate: u.birth_date,
+        createdAt: u.created_at
+      };
+    });
+  } catch (e) {}
+
+  var carousel = [];
+  try {
+    if (typeof cc.config === 'function') {
+      carousel = cc.config('carousel');
+    }
+  } catch (e) {}
+
+  var data = {
+    config: config,
+    categories: categories,
+    subcategories: subcategories,
+    listings: listings,
+    users: users,
+    carousel: carousel,
+    searchUrl: '/search',
+    customFunctions: {
+      openCart: '<function openCart>',
+      addToCartAndOpen: '<function addToCartAndOpen>'
+    }
+  };
+%>
+<%~ JSON.stringify(data, null, 2) %>
