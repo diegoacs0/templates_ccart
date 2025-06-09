@@ -1,10 +1,74 @@
-<% if (cc.packages.data.length) { %>
-  <div>
-    <h3 class="bg-primary/20 border-2 border-primary w-fit py-2 px-4 rounded-md font-semibold"><%= cc.category.name %></h3>
+<% if (cc.query.embed === 'true') { %>
+  <%
+    const current_package = cc.query.current_package === 'null' ? null : cc.query.current_package
+    const is_similar_preview = current_package !== null
+    const similar_packages = cc.packages.data.filter((pkg) => String(pkg.id) !== current_package)
+  %>
 
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8">
-      <% cc.packages.data.forEach((package) => { %>
-        <%~ include('@components/package', { package, ...cc }) %>
+  <% if (cc.packages.data.length) { %>
+    <div>
+      <% if (!is_similar_preview) { %>
+        <h3 class="bg-primary/20 border-2 border-primary w-fit py-2 
+          px-4 rounded-lg text-sm sm:text-base font-semibold backdrop-blur-sm"
+        >
+          <%= cc.category.name %>
+        </h3>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-6 mt-4 sm:mt-8">
+          <% cc.packages.data.forEach((package, index) => { %>
+            <div class="package-reveal" style="--delay: <%= index % 4 * 0.15 %>s;">
+              <%~ include('@components/package', { package, ...cc }) %>
+            </div>
+          <% }) %>
+        </div>
+      <% } else if (similar_packages.length) { %>
+        <section class="container mx-auto max-w-screen-xl mt-12">
+          <div class="flex items-center justify-between">
+            <h4 class="text-lg font-semibold leading-5">Produtos similares</h4>
+
+            <div class="flex items-center gap-2 <%= similar_packages.length <= 4 ? 'hidden' : '' %>">
+              <button id="similar-slider-prev" class="active:scale-90 w-8 h-8 flex items-center justify-center rounded-lg border bg-background hover:bg-muted transition">
+                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+              </button>
+              <button id="similar-slider-next" class="active:scale-90 w-8 h-8 flex items-center justify-center rounded-lg border bg-background hover:bg-muted transition">
+                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <div id="similar-packages-slider" class="mt-4 keen-slider rounded-lg">
+            <% similar_packages.forEach((package, index) => { %>
+              <div class="keen-slider__slide">
+                <%~ include('@components/package', { package, is_similar_preview: true, ...cc }) %>
+              </div>
+            <% }) %>
+          </div>
+        </section>
+      <% } %>
+    </div>
+  <% } %>
+<% } else { %>
+  <% layout('@layouts/layout') %>
+
+  <div class="container mx-auto max-w-screen-xl py-12">
+    <div class="flex flex-col gap-4">
+      <div class="flex items-center gap-4">
+        <a href="/" class="w-9 h-9 flex items-center justify-center rounded-lg border bg-background hover:bg-muted transition">
+          <i data-lucide="chevron-left" class="w-5 h-5"></i>
+        </a>
+        <h3 class="text-2xl font-bold"><%= cc.category.name %></h3>
+      </div>
+
+      <% if (cc.category.banner) { %>
+        <img src="<%= cc.category.banner %>" class="w-full h-full object-cover rounded-lg aspect-[6/2] md:aspect-[14/3]" />
+      <% } %>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-6 mt-10">
+      <% cc.packages.data.forEach((package, index) => { %>
+        <div class="package-reveal" style="--delay: <%= index % 4 * 0.15 %>s;">
+          <%~ include('@components/package', { package, ...cc }) %>
+        </div>
       <% }) %>
     </div>
   </div>

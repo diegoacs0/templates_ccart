@@ -17,10 +17,11 @@
       <% const has_stock = cc.package.inventory_amount === null || cc.package.inventory_amount > 0 %>
       <% const current_cart_item = cc.cart?.packages.find((package) => package.meta.id === cc.package.id) %>
       <% const has_variables = cc.package.variables.length %>
+      <% const has_variations = cc.package.variations.length %>
 
       <button 
         id="<%= cc.package.id %>"
-        data-func="<%= !has_stock ? 'none' : current_cart_item ? 'goto-cart' : has_variables ? 'open-selector' : 'add-to-cart' %>" 
+        data-func="<%= !has_stock ? 'none' : current_cart_item ? 'goto-cart' : has_variations ? 'show-package' : has_variables ? 'open-selector' : 'add-to-cart' %>" 
         data-slug="<%= cc.package.slug %>"
         class="px-3 py-2 rounded-md flex-1 text-white font-semibold <%= !has_stock ? 'bg-red-500' : 'bg-[#29e66e]' %>"
       >

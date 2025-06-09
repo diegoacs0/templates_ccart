@@ -66,6 +66,26 @@ function debounce(func, delay) {
   }
 }
 
+function initRevealObserver() {
+  const revealObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible')
+          observer.unobserve(entry.target)
+        }
+      })
+    },
+    {
+      threshold: 0.1,
+    }
+  )
+
+  document.querySelectorAll('.package-reveal').forEach((el) => {
+    revealObserver.observe(el)
+  })
+}
+
 let selected_category
 
 $('#category-select').on('change', function () {
@@ -90,17 +110,45 @@ $('#category-select').on('change', function () {
 })
 
 $(() => {
+  initRevealObserver()
+
   const lazyLoadCategories = async (entries, observer) => {
     entries.forEach(async (entry) => {
       if (entry.isIntersecting) {
         const obj = entry.target
         const slug = obj.dataset.slug
+        const current_package = obj.dataset.currentPackage || null
 
-        const html = await fetch(`${base_url}/category/${slug}`).then((res) => res.text())
+        const html = await fetch(
+          `${base_url}/category/${slug}?embed=true&current_package=${current_package}`
+        ).then((res) => res.text())
         obj.innerHTML = html
         obj.classList.remove('min-h-[300px]')
+        obj.classList.add('visible')
 
         if (window.lucide) lucide.createIcons()
+
+        if (current_package) {
+          var slider = new KeenSlider('#similar-packages-slider', {
+            slides: {
+              perView: 4,
+              spacing: 8,
+            },
+            breakpoints: {
+              '(max-width: 1024px)': {
+                slides: {
+                  perView: 2,
+                  spacing: 4,
+                },
+              },
+            },
+          })
+
+          $('#similar-slider-prev').on('click', () => slider.prev())
+          $('#similar-slider-next').on('click', () => slider.next())
+        }
+
+        initRevealObserver()
 
         observer.unobserve(obj)
       }
@@ -108,7 +156,7 @@ $(() => {
   }
 
   const observer = new IntersectionObserver(lazyLoadCategories, {
-    rootMargin: '0px 0px 200px 0px',
+    rootMargin: '0px 0px 0px 0px',
     threshold: 0.1,
   })
 
@@ -147,7 +195,6 @@ $(() => {
       const html = await response.text()
       $results_container.html(html)
     } catch (error) {
-      console.error(error)
       $results_container.html(`<p class='text-red-500'>Ocorreu um erro ao buscar os produtos.</p>`)
     }
   }
@@ -156,4 +203,62 @@ $(() => {
     const query = $search_input.val()
     searchDebounce(() => searchProducts(query), 600)
   })
+})
+
+$(() => {
+  let debounceTimer
+  let loading = false
+
+  function handleSearch(inputSelector, resultSelector) {
+    $(inputSelector).on('input', function () {
+      clearTimeout(debounceTimer)
+
+      let query = $(this).val().trim()
+
+      if (query.length > 0) {
+        if (!loading) {
+          $(resultSelector)
+            .html(
+              `
+            <div class="flex items-center justify-center p-8">
+              <span class="animate-spin mingcute--loading-line size-12"></span>
+            </div>
+            `
+            )
+            .removeClass('hidden')
+
+          loading = true
+        }
+
+        debounceTimer = setTimeout(() => {
+          $.get(`/search?q=${encodeURIComponent(query)}&bar=true`, function (data) {
+            $(resultSelector).html(data).removeClass('hidden')
+          })
+            .fail(function () {
+              $(resultSelector)
+                .html('<div class="p-2 text-red-500">Erro ao buscar</div>')
+                .removeClass('hidden')
+            })
+            .done(() => {
+              loading = false
+            })
+        }, 300)
+      } else {
+        $(resultSelector).addClass('hidden').empty()
+      }
+    })
+
+    $(inputSelector).on('click', function () {
+      if ($(resultSelector).children().length) $(resultSelector).removeClass('hidden')
+    })
+
+    $(document).on('click', function (e) {
+      if (!$(e.target).closest(`${inputSelector}, ${resultSelector}`).length) {
+        $(resultSelector).addClass('hidden')
+      }
+    })
+  }
+
+  handleSearch('#search-bar', '#search-result')
+  handleSearch('#search-bar-mobile', '#search-result-mobile')
 })

@@ -2,6 +2,8 @@ function updatePackageButtons(cart_packages) {
   $('[data-action]').each(function () {
     const id = $(this).attr('id')
 
+    if ($(this).attr('data-action') === 'add-to-cart-redirect') return
+
     const exists = cart_packages?.find((cart_pkg) => cart_pkg.package_id === parseInt(id))
 
     if (exists) {
@@ -33,6 +35,24 @@ function getSelectedOptions(query) {
   return options
 }
 
+$(document).on('click', "[data-action='add-to-cart-redirect']", function () {
+  const package_id = $(this).attr('id')
+
+  const options = getSelectedOptions('#options-container > div')
+
+  CentralCart.cartAdd(package_id, Object.keys(options).length ? options : null)
+    .then(() => {
+      window.location.href = '/checkout'
+    })
+    .catch((err) => {
+      toast({
+        title: 'Oops...',
+        content: err.data.errors[0].message,
+        status: 'error',
+      })
+    })
+})
+
 $(document).on('click', "[data-action='add-to-cart']", function () {
   const package_id = $(this).attr('id')
 
@@ -44,7 +64,6 @@ $(document).on('click', "[data-action='add-to-cart']", function () {
       updatePackageButtons(res.data.packages)
     })
     .catch((err) => {
-      console.error(err)
       toast({
         title: 'Oops...',
         content: err.data.errors[0].message,
@@ -64,6 +83,7 @@ function cartAction(element, action) {
 
   const package_id = $element.attr('id')
   const current_quantity = parseInt($input.val())
+  const min_amount = parseInt($element.closest('[data-min-amount]').attr('data-min-amount')) || 0
 
   if (action === 'increase') {
     $input.val(current_quantity + 1)
@@ -71,14 +91,25 @@ function cartAction(element, action) {
   }
 
   if (action === 'decrease') {
-    if (current_quantity > 0) {
-      $input.val(current_quantity - 1)
+    const new_quantity = current_quantity - 1
+    if (new_quantity >= min_amount) {
+      $input.val(new_quantity)
       cart_changes[package_id] = (cart_changes[package_id] || current_quantity) - 1
     }
   }
 
   if (action === 'remove') {
     cart_changes[package_id] = 0
+  }
+
+  if (action === 'input') {
+    const input_quantity = parseInt($element.val())
+    if (input_quantity >= min_amount) {
+      cart_changes[package_id] = input_quantity
+    } else {
+      $element.val(min_amount)
+      cart_changes[package_id] = min_amount
+    }
   }
 
   debouncedSyncCart(package_id)

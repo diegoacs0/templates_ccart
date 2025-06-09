@@ -1,5 +1,18 @@
+<% const first_available = cc.categories.find((category) => category.hide_category !== true)
+
+if (!first_available?.hide_subcategory) {
+  first_category_slug = first_available?.slug
+} else first_category_slug = first_available.sub_categories[0]?.slug %>
+
+<% const top_announce = cc.config('top-announce').replace(/\[(.*?)\]/g, '<span class="font-semibold bg-background px-1.5 py-0.5 rounded">$1</span>') %>
+<% if (top_announce) { %>
+  <a class="w-full bg-primary p-2 flex items-center justify-center gap-3 relative z-10">
+    <p class="font-medium"><%~ top_announce %></p>
+  </a>
+<% } %>
+
 <header>
-  <nav class="py-8 bg-black/20 border-b-2 border-white/10">
+  <nav class="py-6 bg-black/20 border-b-2 border-white/10">
     <div class="container">
       <ul>
         <li class="flex items-center justify-between flex-wrap">
@@ -15,38 +28,59 @@
                 <i class="fa-brands fa-discord"></i>
               </a> 
             <% } %>
+
             <% if (cc.theme.socials.twitter !== null) { %> <a class="text-lg font-bold relative hover:after:w-full after:content-[''] after:transition-all after:duration-300 after:w-0 after:h-[3px] after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:bg-white"
                  href="<%= cc.theme.socials.twitter %>" target="_blank">
                 <i class="fa-brands fa-twitter"></i>
-              </a> <% } %>
+              </a>
+            <% } %>
+
             <% if (cc.theme.socials.instagram !== null) { %> <a class="text-lg font-bold relative hover:after:w-full after:content-[''] after:transition-all after:duration-300 after:w-0 after:h-[3px] after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:bg-white"
                  href="<%= cc.theme.socials.instagram %>" target="_blank">
                 <i class="fa-brands fa-instagram"></i>
-              </a> <% } %>
+              </a>
+             <% } %>
+
             <% if (cc.theme.socials.youtube !== null) { %> <a class="text-lg font-bold relative hover:after:w-full after:content-[''] after:transition-all after:duration-300 after:w-0 after:h-[3px] after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:bg-white"
                  href="<%= cc.theme.socials.youtube %>" target="_blank">
                 <i class="fa-brands fa-youtube"></i>
-              </a> <% } %>
+              </a> 
+            <% } %>
+
             <% if (cc.theme.socials.facebook !== null) { %> <a class="text-lg font-bold relative hover:after:w-full after:content-[''] after:transition-all after:duration-300 after:w-0 after:h-[3px] after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:bg-white"
                  href="<%= cc.theme.socials.facebook %>" target="_blank">
                 <i class="fa-brands fa-facebook"></i>
-              </a> <% } %>
+              </a> 
+            <% } %>
+
             <% if (cc.theme.socials.tiktok !== null) { %> <a class="text-lg font-bold relative hover:after:w-full after:content-[''] after:transition-all after:duration-300 after:w-0 after:h-[3px] after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:bg-white"
                  href="<%= cc.theme.socials.tiktok %>" target="_blank">
                 <i class="fa-brands fa-tiktok"></i>
-              </a> <% } %>
+              </a> 
+            <% } %>
+
+            <% if (cc.theme.socials.whatsapp !== null) { %> <a class="text-lg font-bold relative hover:after:w-full after:content-[''] after:transition-all after:duration-300 after:w-0 after:h-[3px] after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:bg-white"
+                 href="<%= cc.theme.socials.whatsapp %>" target="_blank">
+                <i class="fa-brands fa-whatsapp"></i>
+              </a> 
+            <% } %>
           </div>
 
           <div class="flex gap-6 justify-between items-center">
-            <a href="#store" 
-               class="bg-primary px-6 py-2.5 rounded-full text-white transition-colors duration-200 hover:bg-primary-dark font-bold">
-              LOJA
+            <a 
+              href="<%= cc.dist_url %>/cart"
+              class="h-fit text-lg font-bold relative hover:after:w-full after:content-[''] after:transition-all after:duration-300 after:w-0 after:h-[3px] after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:bg-white <%= cc.current_page === 'cart' ? 'text-primary' : ''%>"
+            >
+              <i class="fa-solid fa-cart-shopping me-0.5"></i>
+              CARRINHO
             </a>
 
-            <a href="<%= cc.dist_url %>/cart"
-               class="h-fit text-lg font-bold relative hover:after:w-full after:content-[''] after:transition-all after:duration-300 after:w-0 after:h-[3px] after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:bg-white <%= cc.current_page === 'cart' ? 'text-primary' : ''%>">
-              <i class="fa-solid fa-cart-shopping"></i>
-              CARRINHO
+            <a 
+              href="<%= first_category_slug ? `/category/${first_category_slug}` : '#store' %>" 
+              class="btn-primary text-base bg-gradient-to-r from-primary to-primary-hue/30 font-['Roboto_Condensed'] font-extrabold"
+            >
+              <i class="fa-solid fa-store me-1.5"></i>
+              LOJA
             </a>
           </div>
         </li>

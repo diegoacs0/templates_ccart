@@ -1,5 +1,34 @@
 {
   "name": "SOURCE",
   "author": "CentralCart",
-  "version": "2.1.0"
+  "version": "2.1.0",
+  "settings": [
+    {
+      "title": "Tema",
+      "fields": [
+        {
+          "key": "primary-color",
+          "label": "Cor primária",
+          "description": "A cor principal que aparece na loja.",
+          "type": "color-picker",
+          "default": "#7b61ff"
+        },
+        {
+          "key": "secondary-color",
+          "label": "Cor secundária",
+          "description": "A cor secundária aparece com menos frequência na loja.",
+          "type": "color-picker",
+          "default": "#ff8a0f"
+        },
+        {
+          "key": "top-announce",
+          "label": "Anúncio",
+          "description": "Mensagem exibida no topo da página. Use [] para destacar partes da mensagem.",
+          "type": "textarea",
+          "default": ""
+        }
+      ]
+    }
+  ],
+  "widgets": ["DISCORD","CONNECTION_BOARD","PRODUCT_HIGHLIGHT","MONTH_GOAL","TOP_DONATORS"]
 }

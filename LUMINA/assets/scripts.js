@@ -159,3 +159,19 @@ async function showPackage(slug) {
 
   triggerModal({ html })
 }
+
+function redeemOrder(id) {
+  const html = $(`#modal-${id}`).html()
+
+  triggerModal({ html })
+}
+
+function selectVariation(button) {
+  const variationSlug = button.getAttribute('data-variation-slug')
+
+  fetch(`/package/${variationSlug}?modal=true`)
+    .then((response) => response.text())
+    .then((html) => {
+      triggerModal({ html })
+    })
+}

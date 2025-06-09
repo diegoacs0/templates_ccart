@@ -1,25 +1,52 @@
-<% const has_stock = cc.package.inventory_amount === null || cc.package.inventory_amount > 0 %>
+<%
+function getDiscount(price) {
+  return cc.currency(price + (price * (cc.config('visual-discount') / 100)))
+}
+const has_stock = cc.package.inventory_amount === null || cc.package.inventory_amount > 0
+const variations = cc.package.variations
+const visual_discount = variations.length ? 
+  `${getDiscount(variations.at(0)?.price)} a ${getDiscount(variations.at(-1)?.price)}` : 
+  getDiscount(cc.package.price)
+%>
 
-<a href="/package/<%= cc.package.slug %>" class="flex flex-col package group rounded-md hover:ring-2 ring-primary transition ring-offset-4 ring-offset-background">
-  <div class="rounded-md overflow-hidden relative">
+<a 
+  href="/package/<%= cc.package.slug %>" 
+  class="h-full flex flex-col package group rounded-lg overflow-hidden
+  ring-offset-4 ring-offset-background border-2 border-white/10 hover:border-primary transition-all 
+  <%= cc.is_similar_preview ? 'hover:scale-[98%]' : 'hover:scale-[102%]' %>"
+>
+  <div class="overflow-hidden relative border-b border-white/10">
     <% if (!has_stock) { %>
       <p class="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 z-10 font-bold text-sm lg:text-xl text-white whitespace-nowrap">ESTOQUE ESGOTADO</p>
     <% } %>
-    <img class="group-hover:scale-105 transition <%= has_stock !== true ? 'blur-sm opacity-80' : '' %> <%= cc.store.type === 'STANDALONE' ? 'aspect-[256/152]' : ''  %> object-cover w-full" src="<%= cc.package.image ?? cc.cdn('public/assets/templates/KOPY/no-image.png') %>" />
+    <img 
+      class="transition <%= !cc.is_similar_preview ? 'group-hover:scale-105' : '' %> <%= has_stock !== true ? 'blur-sm opacity-80' : '' %> object-cover w-full" 
+      src="<%= cc.package.image ?? cc.cdn('public/assets/templates/KOPY/no-image.png') %>" 
+      alt="<%= cc.package.name %>"
+    />
   </div>
 
-  <p class="font-medium mt-3"><%= cc.package.name %></p>
-  <% if (cc.config('visual-discount')) { %>
-    <p class="text-sm text-muted-foreground line-through"><%= cc.currency(cc.package.price + (cc.package.price * (cc.config('visual-discount') / 100))) %></p>
-  <% } %>
-  <p class="text-lg font-bold leading-5"><%= cc.package.price_display %></p>
-  
-  <% const current_cart_item = cc.cart.packages.find((package) => package.meta.id === cc.package.id) %>
-  <% const has_variables = cc.package.variables.length %>
-  
-  <div class="flex items-center gap-2 mt-auto">
-    <button class="md:py-2 py-1.5 px-3 bg-primary w-full rounded-md font-semibold text-sm mt-4">
-      Comprar agora
-    </button>
+  <div class="p-2 sm:p-3 flex flex-col h-full flex-1 gap-3">
+    <p class="text-xs sm:text-base font-medium line-clamp-2 leading-none"><%= cc.package.name %></p>
+
+    <div>
+      <% if (cc.config('visual-discount')) { %>
+        <p class="text-xs sm:text-sm text-muted-foreground line-through">
+          <%= visual_discount %>
+        </p>
+      <% } %>
+      <p class="text-xs sm:text-lg font-bold leading-5">
+        <%= cc.package.price_display %>
+      </p>
+    </div>
+    
+    <div class="flex items-center gap-2 mt-auto">
+      <button class="text-xs sm:text-sm h-8 sm:h-10 px-3 bg-primary w-full rounded sm:rounded-md font-semibold 
+        flex gap-2 items-center justify-center hover:bg-primary/80 transition whitespace-nowrap"
+      >
+        <i data-lucide="shopping-basket" class="w-5 h-5"></i>
+        Comprar agora
+      </button>
+    </div>
   </div>
 </a>

@@ -1,0 +1,83 @@
+<% const is_variation = cc.package.parent_id !== null %>
+<% const variations = cc.package.parent?.variations ?? [] %>
+
+<% if (variations.length > 0) { %>
+  <div class="my-6">
+    <div class="mb-2">
+      <h4 class="font-semibold">Variações</h4>
+      <p class="text-sm text-muted-foreground">Selecione o produto desejado abaixo.</p>
+    </div>
+
+    <div class="mt-4 text-sm">
+      <div class="relative">
+        <button 
+          id="variation-dropdown-btn"
+          type="button"
+          class="w-full bg-background border rounded-md px-4 py-2 text-left flex items-center justify-between"
+          onclick="toggleDropdown()"
+        >
+          <span id="selected-variation" class="flex items-center gap-2">
+            <% const selected = variations.find(v => v.id === cc.package.id) %>
+            <div class="flex items-center gap-4">
+              <div class="w-2 h-2 rounded-full bg-primary flex-shrink-0"></div>
+              <div class="flex flex-col">
+                <span class="line-clamp-1 font-medium">
+                  <%= selected.name %>
+                </span>
+
+                <span class="text-xs bg-primary/20 text-primary px-1.5 py-0.5 rounded w-fit">
+                  Disponível (<%= selected.inventory_amount === null ? '100+' : selected.inventory_amount %>)
+                </span>
+              </div>
+            </div>
+          </span>
+          <i data-lucide="chevron-down" class="w-4 h-4 flex-shrink-0"></i>
+        </button>
+
+        <div 
+          id="variation-dropdown"
+          class="absolute z-10 w-full mt-1 bg-background border rounded-md hidden overflow-hidden max-h-[300px] overflow-y-auto divide-y"
+        >
+          <% variations.forEach((variation) => { %>
+            <% const is_selected = variation.id === cc.package.id %>
+            <a 
+              href="/package/<%= variation.slug %>" 
+              class="flex justify-between items-center p-3 gap-4
+              <%= is_selected ? 'bg-primary/10' : 'hover:bg-muted/50' %>"
+            >
+              <div class="flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full flex-shrink-0 <%= is_selected ? 'bg-primary' : 'bg-muted-foreground' %>"></div>
+                <div class="flex flex-col">
+                  <span class="line-clamp-1 <%= is_selected ? 'font-medium' : '' %>">
+                    <%= variation.name %>
+                  </span>
+
+                  <span class="text-xs bg-primary/20 text-primary px-1.5 py-0.5 rounded w-fit">
+                    <%= variation.inventory_amount === null ? '100+' : variation.inventory_amount %> em estoque
+                  </span>
+                </div>
+              </div>
+              <span class="font-medium"><%= variation.price_display %></span>
+            </a>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function toggleDropdown() {
+        const dropdown = document.getElementById('variation-dropdown');
+        dropdown.classList.toggle('hidden');
+      }
+
+      document.addEventListener('click', (e) => {
+        const dropdown = document.getElementById('variation-dropdown');
+        const btn = document.getElementById('variation-dropdown-btn');
+        if (!btn.contains(e.target)) {
+          dropdown.classList.add('hidden');
+        }
+      });
+    </script>
+
+  </div>
+<% } %>

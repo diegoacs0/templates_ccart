@@ -1,0 +1,28 @@
+<%
+const categories_wi = cc.categories.filter((category) => category.image)
+%>
+
+<% if (categories_wi.length) { %>
+  <section class="container mx-auto max-w-screen-xl pt-6">
+    <h2 class="mb-4 font-bold text-2xl">Categorias populares</h2>
+
+    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-6 gap-3 mt-4">
+      <% categories_wi.forEach((category) => { %>
+        <a 
+          href="/category/<%= category.slug %>" 
+          class="bg-background border hover:bg-secondary/80 rounded-lg aspect-[187/250] flex items-end justify-center py-8 px-2 relative 
+          overflow-hidden cursor-pointer ring-offset-secondary hover:ring-2 ring-secondary transition-all group"
+        >
+          <img 
+            src="<%= category.image %>" 
+            class="absolute top-0 left-0 w-full h-full select-none object-cover group-hover:scale-105 transition-all ease-in-out" 
+            style="mask-image: linear-gradient(rgb(0, 0, 0) 5%, transparent 95%)"
+          >
+          <span class="text-sm sm:text-lg font-semibold text-center z-10">
+            <%= category.name %>
+          </span>
+        </a>
+      <% }) %>
+    </div>
+  </section>
+<% } %>

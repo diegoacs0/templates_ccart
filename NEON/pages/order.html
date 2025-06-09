@@ -47,12 +47,14 @@
     </div>
 
     <div class="mt-12 grid md:grid-cols-2 gap-6 border p-4 rounded-lg w-full md:w-[520px]">
-      <div class="space-y-1">
-        <h5>
-          <%= ['FIVEM', 'REDM', 'GTA-SA'].includes(cc.store.type) ? 'ID na cidade' : 'Nickname' %>:
-        </h5>
-        <p class="px-2 py-1.5 bg-background border rounded font-medium">#<%= cc.order.client_identifier %></p>
-      </div>
+      <% if (cc.store.type !== 'STANDALONE') { %>
+        <div class="space-y-1">
+          <h5>
+            <%= ['FIVEM', 'REDM', 'GTA-SA'].includes(cc.store.type) ? 'ID na cidade' : 'Nickname' %>:
+          </h5>
+          <p class="px-2 py-1.5 bg-background border rounded font-medium">#<%= cc.order.client_identifier %></p>
+        </div>
+      <% } %>
 
       <div class="space-y-1 overflow-auto">
         <h5>E-mail:</h5>
@@ -95,7 +97,7 @@
 
                 <div class="modal micromodal-slide absolute" id="redeem-<%= package.id %>" aria-hidden="true">
                   <div class="modal__overlay" tabindex="-1" data-micromodal-close>
-                    <div id="package-modal-container" class="modal__container w-full md:w-[600px] rounded-lg bg-accent font-['Roboto_Condensed']" role="dialog" aria-modal="true">
+                    <div class="modal__container w-full md:w-[600px] rounded-lg bg-accent font-['Roboto_Condensed']" role="dialog" aria-modal="true">
                       <div class="border-b p-4">
                         <h5 class="text-xl font-semibold"><%= package.name %></h5>
                         <button
@@ -126,6 +128,17 @@
                             <% if (type === 'CONTENT') { %>
                               <div class="<%= render ? 'centralcart-email-viewer' : 'centralcart-content p-4 bg-background border rounded' %>">
                                 <%~ value %>
+                              </div>
+                            <% } %>
+
+                            <% if (type === 'DOWNLOAD') { %>
+                              <div class="p-4 bg-background border rounded flex justify-between items-center">
+                                <div>
+                                  <p class="font-bold"><%= value.name %></p>
+                                  <p class="text-sm text-muted-foreground">Tamanho: <span class="font-semibold text-foreground"><%= value.size %></span></p>
+                                </div>
+      
+                                <a href="<%= value.download_url %>" class="bg-primary flex items-center px-4 h-8 text-sm rounded-md font-medium">Baixar</a>
                               </div>
                             <% } %>
                           <% }) %>

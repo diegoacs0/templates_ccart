@@ -5,86 +5,109 @@
 <% const current_cart_item = cc.cart.packages.find((package) => package.meta.id === cc.package.id) %>
 <% const has_variables = cc.package.variables.length %>
 
-<div class="space-y-6 py-12">
+<div class="py-12">
   <section class="container mx-auto max-w-screen-xl">
     <div class="grid grid-cols-1 md:grid-cols-[2.5fr_1fr] gap-6">
-      <div class="flex gap-6 border p-4 rounded-md h-full bg-background flex-wrap">
-        <div class="">
-          <img class="rounded-md object-contain md:max-w-sm" src="<%= cc.package.image ?? cc.cdn('public/assets/templates/KOPY/no-image.png') %>">
+      <div class="flex flex-col gap-6">
+        <div class="flex gap-6 border p-4 rounded-md h-fit bg-background flex-wrap">
+          <div class="">
+            <img class="rounded-md object-contain md:min-w-[384px] md:max-w-sm" src="<%= cc.package.image ?? cc.cdn('public/assets/templates/KOPY/no-image.png') %>">
+          </div>
+  
+          <div class="flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center">
+                <p class="text-sm text-muted-foreground"><%= stock === null ? '100+ em estoque' : `${stock} em estoque`  %></p>
+  
+                <% if (cc.config('show-sales') === true && cc.package.sales) { %>
+                  <p class="border-s ms-2 ps-2 text-sm text-muted-foreground">+<%= cc.package.sales %> vendas</p>
+                <% } %>
+              </div>
+  
+              <h3 title="<%= cc.package.name %>" class="text-xl font-semibold mt-6 line-clamp-2"><%= cc.package.name %></h3>
+  
+              <div class="w-full h-[1px] bg-muted my-1"></div>
+  
+              <% if (cc.config('visual-discount')) { %>
+                <p class="text-sm font-medium line-through text-muted-foreground">
+                  <%= cc.currency(cc.package.price + (cc.package.price * (cc.config('visual-discount') / 100))) %>
+                </p>
+              <% } %>
+              <h4 class="text-xl font-bold leading-6">
+                <%= cc.package.price_display %> 
+              </h4>
+            </div>
+  
+            <%~ include('@components/variation-dropdown', cc) %>
+  
+            <% if (cc.package.variables.length) { %>
+              <div id="options-container" class="my-6 space-y-4">
+                <% cc.package.variables.forEach((variable) => { %>
+                  <% const cart_package = cc.cart.packages.find((cp) => cp.package_id === cc.package.id) %>
+                  <% const selected_option = cart_package?.options.find((option) => option.variable.id === variable.id) %>
+  
+                  <div class="flex flex-col">
+                    <label for="<%= variable.name %>" class="mb-1 text-sm"><%= variable.description %>:</label>
+  
+                    <% if (variable.type === 'SELECT') { %>
+                      <div class="grid grid-cols-1">
+                        <select class="row-start-1 col-start-1 pe-8" id="<%= variable.name %>" name="<%= variable.name %>">
+                          <% variable.options.forEach((option, index) => { %>
+                            <option 
+                              value="<%= option.id %>" 
+                              <%= selected_option?.variable_option_id === option.id ? 'selected': '' %>
+                            >
+                              <%= option.name %> <%= option.price ? `(${option.price_display})` : '' %>
+                            </option>
+                          <% }) %> 
+                        </select>
+                        
+                        <i data-lucide="chevron-down" class="w-4 h-4 right-2 relative col-start-1 row-start-1 self-center justify-self-end"></i>
+                      </div>
+                    <% } else { %>
+                      <input 
+                        id="<%= variable.name %>"
+                        name="<%= variable.name %>" 
+                        type="<% variable.type === 'TEXT' ? 'text' : 'number' %>" 
+                        value="<%= selected_option?.value || '' %>"
+                      />
+                    <% } %>
+                  </div>
+                <% }) %>   
+              </div>
+            <% } %>
+  
+            <div class="mt-auto w-full">
+              <button 
+                id="<%= cc.package.id %>"
+                class="w-full py-2 px-4 bg-primary hover:bg-primary/80 transition rounded-md mt-4 font-semibold flex justify-center items-center add-to-cart"
+                data-slug="<%= cc.package.slug %>"
+                data-action="<%= !has_stock ? 'none' : 'add-to-cart-redirect' %>"
+              >
+                <i data-lucide="shopping-cart" class="me-1.5 w-5 h-5"></i>
+                <%= !has_stock ? 'Sem estoque' : 'Comprar agora' %>
+              </button>
+
+              <button 
+                id="<%= cc.package.id %>"
+                class="w-full py-2 px-4 bg-background hover:bg-foreground/5 transition border rounded-md mt-3 font-semibold flex justify-center items-center add-to-cart"
+                data-slug="<%= cc.package.slug %>"
+                data-action="<%= !has_stock ? 'none' : current_cart_item ? 'go-to-cart' : 'add-to-cart' %>"
+              >
+                <i data-lucide="plus" class="me-1.5 w-5 h-5"></i>
+                <%= !has_stock ? 'Sem estoque' : 'Adicionar ao carrinho' %>
+              </button>
+            </div>
+          </div>
         </div>
 
-        <div class="flex-1 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center">
-              <p class="text-sm text-muted-foreground"><%= stock === null ? '100+ em estoque' : `${stock} em estoque`  %></p>
-
-              <% if (cc.config('show-sales') === true && cc.package.sales) { %>
-                <p class="border-s ms-2 ps-2 text-sm text-muted-foreground">+<%= cc.package.sales %> vendas</p>
-              <% } %>
-            </div>
-
-            <h3 class="text-xl font-semibold mt-6"><%= cc.package.name %></h3>
-
-            <div class="w-full h-[1px] bg-muted my-1"></div>
-
-            <% if (cc.config('visual-discount')) { %>
-              <p class="text-sm font-medium line-through text-muted-foreground">
-                <%= cc.currency(cc.package.price + (cc.package.price * (cc.config('visual-discount') / 100))) %>
-              </p>
-            <% } %>
-            <h4 class="text-xl font-bold leading-6">
-              <%= cc.package.price_display %> 
-            </h4>
-          </div>
-
-          <% if (cc.package.variables.length) { %>
-            <div id="options-container" class="my-6 space-y-4">
-              <% cc.package.variables.forEach((variable) => { %>
-                <% const cart_package = cc.cart.packages.find((cp) => cp.package_id === cc.package.id) %>
-                <% const selected_option = cart_package?.options.find((option) => option.variable.id === variable.id) %>
-
-                <div class="flex flex-col">
-                  <label for="<%= variable.name %>" class="mb-1 text-sm"><%= variable.description %>:</label>
-
-                  <% if (variable.type === 'SELECT') { %>
-                    <div class="grid grid-cols-1">
-                      <select class="row-start-1 col-start-1 pe-8" id="<%= variable.name %>" name="<%= variable.name %>">
-                        <% variable.options.forEach((option, index) => { %>
-                          <option 
-                            value="<%= option.id %>" 
-                            <%= selected_option?.variable_option_id === option.id ? 'selected': '' %>
-                          >
-                            <%= option.name %> <%= option.price ? `(${option.price_display})` : '' %>
-                          </option>
-                        <% }) %> 
-                      </select>
-                      
-                      <i data-lucide="chevron-down" class="w-4 h-4 right-2 relative col-start-1 row-start-1 self-center justify-self-end"></i>
-                    </div>
-                  <% } else { %>
-                    <input 
-                      id="<%= variable.name %>"
-                      name="<%= variable.name %>" 
-                      type="<% variable.type === 'TEXT' ? 'text' : 'number' %>" 
-                      value="<%= selected_option?.value || '' %>"
-                    />
-                  <% } %>
-                </div>
-              <% }) %>   
+        <div class="h-full p-4 bg-muted w-full left-0 rounded-md border order-1 sm:order-2">
+          <h4 class="text-lg font-semibold leading-5"><%= cc.package.description ? 'Descrição' : 'Sem descrição' %></h4>
+          <% if (cc.package.description) { %>
+            <div class="centralcart-content mt-4">
+              <%~ cc.package.description %>
             </div>
           <% } %>
-
-          <div class="mt-auto w-full">
-            <button 
-              id="<%= cc.package.id %>"
-              class="w-full py-2 px-4 bg-primary rounded-md mt-4 font-semibold flex justify-center items-center"
-              data-slug="<%= cc.package.slug %>"
-              data-action="<%= !has_stock ? 'none' : current_cart_item ? 'go-to-cart' : 'add-to-cart' %>"
-            >
-              <i data-lucide="shopping-cart" class="me-1.5 w-5 h-5"></i>
-              <%= !has_stock ? 'Sem estoque' : 'Comprar agora' %>
-            </button>
-          </div>
         </div>
       </div>
 
@@ -111,7 +134,7 @@
 
         <div class="p-4 bg-muted border rounded-md">
           <div class="flex gap-1.5">
-            <i data-lucide="shield-check" class="text-secondary"></i>
+            <i data-lucide="credit-card" class="text-secondary"></i>
             <p class="font-medium">Formas de pagamento</p>
           </div>
           <p class="text-sm text-muted-foreground mt-2">
@@ -124,15 +147,13 @@
           </div>
         </div>
       </div>
-
-      <div class="p-4 bg-muted w-full left-0 rounded-md border order-1 sm:order-2">
-        <h4 class="text-lg font-semibold leading-5"><%= cc.package.description ? 'Descrição' : 'Sem descrição' %></h4>
-        <% if (cc.package.description) { %>
-          <div class="centralcart-content mt-4">
-            <%~ cc.package.description %>
-          </div>
-        <% } %>
-      </div>
     </div>
   </section>
+
+  <div 
+    class="category-loader"
+    data-immediate="true"
+    data-current-package="<%= cc.package.parent_id ?? cc.package.id %>"
+    data-slug="<%= cc.package.category.slug %>">
+  </div>
 </div>

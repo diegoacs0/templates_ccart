@@ -134,10 +134,25 @@ function hexToHSL(hex) {
       .bg-background {
         color: lch(from hsl(var(--background)) calc((49.44 - l) * infinity) 0 0);
       }
+
+      .btn-primary {
+        @apply bg-primary flex items-center justify-center px-2 h-8 rounded-md text-sm font-medium 
+        hover:bg-primary/70 transition-all disabled:opacity-50;
+      }
+
+      .btn-secondary {
+        @apply bg-secondary flex items-center justify-center px-2 h-8 rounded-md text-sm font-medium 
+        hover:bg-secondary/70 transition-all disabled:opacity-50;
+      }
+
+      .btn-outline {
+        @apply bg-background border border-border flex items-center justify-center px-2 h-8 rounded-md text-sm font-medium 
+        hover:bg-foreground/10 transition-all disabled:opacity-50;
+      }
     }
   </style>
   <style>
-    @import url('https://unpkg.com/lucide-static@0.462.0/font/lucide.css');
+    @import url('https://cdn.jsdelivr.net/npm/lucide-static@latest/font/lucide.css');
   </style>
 </head>
 <body class="antialiased">

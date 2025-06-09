@@ -40,10 +40,11 @@
       <% const current_cart_item = cc.cart.packages.find((package) => package.meta.id === cc.package.id) %>
       <% const has_variables = cc.package.variables.length %>
       <% const has_stock = cc.package.inventory_amount === null || cc.package.inventory_amount > 0 %>
+      <% const has_variations = cc.package.variations.length %>
       <button class="h-14 flex items-center justify-center gap-2 font-medium text-lg w-[175px] whitespace-nowrap rounded-r-lg disabled:cursor-not-allowed
         transition hover:shadow-center <%= cc.highlighted ? 'bg-white/20 hover:bg-white/30' : 'bg-brand hover:brightness-110' %>"
         id="<%= cc.package.id %>"
-        data-func="<%= current_cart_item ? 'goto-cart' : has_variables ? 'select-options' : 'add-to-cart' %>" 
+        data-func="<%= current_cart_item ? 'goto-cart' : has_variations ? 'show-package' : has_variables ? 'select-options' : 'add-to-cart' %>" 
         data-slug="<%= cc.package.slug %>"
         <%= !has_stock ? 'disabled' : '' %>
       >

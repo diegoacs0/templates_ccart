@@ -93,9 +93,6 @@ function hexToHSL(hex) {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="<%= cc.cdn('public/assets/fontawesome/all.css') %>" />
-  <link rel="stylesheet" href="<%= cc.cdn('public/assets/css/centralcart.css') %>" />
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
   <link rel="stylesheet" type="text/css" href="<%= cc.style('drawer.css') %>">
   <link rel="stylesheet" type="text/css" href="<%= cc.style('core.css') %>">
 
@@ -182,14 +179,21 @@ function hexToHSL(hex) {
     </div>
   </div>
 
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
   <script>
     lucide.createIcons();
   </script>
-  <script src="<%= cc.cdn(`public/assets/js/CentralCartDev.js?v=${Math.floor(Date.now() / 60_000)}`) %>" type="module"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   <script src="<%= cc.asset('main.js') %>"></script>
   <script src="<%= cc.asset('store.js') %>"></script>
   <script src="<%= cc.asset('drawer.js') %>"></script>
+  <script src="https://cdn.jsdelivr.net/npm/keen-slider@latest/keen-slider.min.js"></script>]
+  <script src="<%= cc.cdn(`public/assets/js/CentralCart.js?v=${Math.floor(Date.now() / 60_000)}`) %>" type="module"></script>
+
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/keen-slider@latest/keen-slider.min.css" />
+
+  <link rel="stylesheet" href="<%= cc.cdn('public/assets/fontawesome/all.css') %>" />
+  <link rel="stylesheet" href="<%= cc.cdn('public/assets/css/centralcart.css') %>" />
 </body>
 </html>

@@ -58,6 +58,11 @@ function getCheckoutVariables(query) {
   return options
 }
 
+$(document).on('click', "[data-func='show-package']", function () {
+  const slug = $(this).attr('data-slug')
+  showPackage(slug)
+})
+
 $(document).on('click', "[data-func='add-to-cart']", function () {
   const package_id = $(this).attr('id')
 

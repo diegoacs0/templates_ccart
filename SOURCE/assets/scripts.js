@@ -188,6 +188,12 @@ $(document).on('click', "[data-func='update-options']", function () {
   closeModal()
 })
 
+$(document).on('click', "[data-func='show-package']", function () {
+  const slug = $(this).attr('data-slug')
+
+  showPackage(slug)
+})
+
 $(document).on('click', "[data-func='goto-cart']", function () {
   window.location.href = `${dist_url}/cart`
 })
@@ -537,3 +543,19 @@ $('.number-only').on('paste', function (event) {
     event.preventDefault()
   }
 })
+
+function redeemOrder(id) {
+  const html = $(`#modal-${id}`).html()
+
+  triggerModal({ html })
+}
+
+function selectVariation(button) {
+  const variationSlug = button.getAttribute('data-variation-slug')
+
+  fetch(`/package/${variationSlug}?modal=true`)
+    .then((response) => response.text())
+    .then((html) => {
+      triggerModal({ html })
+    })
+}

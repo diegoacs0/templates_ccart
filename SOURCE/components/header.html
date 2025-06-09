@@ -1,3 +1,10 @@
+<% const top_announce = cc.config('top-announce').replace(/\[(.*?)\]/g, '<span class="font-bold text-brand bg-white px-1.5 py-0.5">$1</span>') %>
+<% if (top_announce) { %>
+  <a class="w-full bg-brand p-3 flex items-center justify-center gap-3 relative z-10 text-white">
+    <p class="font-semibold"><%~ top_announce %></p>
+  </a>
+<% } %>
+
 <div>
   <div class="block md:hidden container mx-auto px-4">
     <div id="navbar" class="py-4 flex items-center justify-between gap-4 text-sky-950 whitespace-nowrap">

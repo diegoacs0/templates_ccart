@@ -76,9 +76,7 @@ function getCheckoutVariables(query) {
   return options
 }
 
-function handlePix(pix_code, qr_code, return_url) {
-  console.log({ pix_code, qr_code, return_url })
-
+function handlePix(pix_code, qr_code, return_url, order_id) {
   $('#pix-qr').attr('src', `data:image/jpeg;base64,${qr_code}`)
   $('#pix-cp').val(pix_code)
   $('#return-to').attr('href', return_url)
@@ -100,6 +98,14 @@ function handlePix(pix_code, qr_code, return_url) {
       $(this).find('span').text(default_text)
     }, 3000)
   })
+
+  setInterval(() => {
+    CentralCart.getOrderStatus(order_id).then((res) => {
+      if (res.data.status !== 'PENDING') {
+        location.href = return_url
+      }
+    })
+  }, 5000)
 }
 
 $('#checkout-form').on('submit', function (e) {
@@ -132,11 +138,11 @@ $('#checkout-form').on('submit', function (e) {
 
   CentralCart.checkout(data)
     .then((res) => {
-      const { checkout_url, pix_code, qr_code, return_url } = res.data
+      const { checkout_url, pix_code, qr_code, return_url, order_id } = res.data
 
       if (checkout_url) return (location.href = checkout_url)
 
-      if (pix_code) return handlePix(pix_code, qr_code, return_url)
+      if (pix_code) return handlePix(pix_code, qr_code, return_url, order_id)
 
       if (return_url) return (location.href = return_url)
     })

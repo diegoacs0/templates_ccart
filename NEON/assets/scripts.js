@@ -25,7 +25,7 @@ function showToast(title, content, type = null) {
     className: type,
     escapeMarkup: false,
     text: text,
-    duration: 30000,
+    duration: 3000,
     close: true,
     gravity: 'bottom',
     position: 'center',
@@ -150,6 +150,11 @@ function updateButtons(cart_packages) {
   })
 }
 
+$(document).on('click', "[data-func='show-package']", function () {
+  const slug = $(this).attr('data-slug')
+  showPackage(slug)
+})
+
 $(document).on('click', "[data-func='goto-cart']", function () {
   window.location.href = `${dist_url}/cart`
 })
@@ -162,6 +167,10 @@ $(document).on('click', "[data-func='open-selector']", async function () {
   const html = await fetch(url).then(async (res) => await res.text())
 
   $('#package-option-modal-container').get()[0].innerHTML = html
+
+  try {
+    MicroModal.close('package-modal')
+  } catch {}
 
   MicroModal.show('package-option-modal', {
     awaitOpenAnimation: true,
@@ -482,3 +491,14 @@ $('.number-only').on('paste', function (event) {
     event.preventDefault()
   }
 })
+
+function selectVariation(button) {
+  const variationSlug = button.getAttribute('data-variation-slug')
+
+  fetch(`/package/${variationSlug}?modal=true`)
+    .then((response) => response.text())
+    .then((html) => {
+      const modalContent = document.querySelector('.modal__container')
+      modalContent.innerHTML = html
+    })
+}

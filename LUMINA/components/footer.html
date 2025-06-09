@@ -33,6 +33,7 @@
         || cc.theme.socials.youtube 
         || cc.theme.socials.facebook
         || cc.theme.socials.twitter 
+        || cc.theme.socials.whatsapp
       %>
 
       <div class="text-sm <%= !show_social ? 'hidden' : '' %>">
@@ -60,6 +61,10 @@
 
           <% if (cc.theme.socials.twitter) { %>
             <li><a href="<%= cc.theme.socials.twitter %>" class="text-muted-foreground hover:underline hover:text-brand">Twitter</a></li>
+          <% } %>
+
+          <% if (cc.theme.socials.whatsapp) { %>
+            <li><a href="<%= cc.theme.socials.whatsapp %>" class="text-muted-foreground hover:underline hover:text-brand">WhatsApp</a></li>
           <% } %>
         </ul>
       </div>

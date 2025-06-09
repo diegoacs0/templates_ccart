@@ -1,9 +1,40 @@
-<div>
-  <h3 class="bg-primary/20 border-2 border-primary w-fit py-2 px-4 rounded-md font-semibold">Buscando por: <%= cc.query.q %></h3>
-
-  <div class="grid grid-cols-4 gap-6 mt-8">
-    <% cc.packages.data.forEach((package) => { %>
-      <%~ include('@components/package', { package, ...cc }) %>
-    <% }) %>
+<% if (cc.query.bar === 'true') { %>
+  <%
+  const flatten_categories = cc.categories.flatMap(category => [
+    category,
+    ...(category.sub_categories || [])
+  ]);
+  %>
+  
+  <% if (!cc.packages.data.length) { %>
+    <p class="p-4">Nenhum produto encontrado.</p>
+  <% } else { %>
+    <div class="divide-y divide-white/10">
+      <% cc.packages.data.forEach((pkg) => { %>
+        <% const category = flatten_categories.find((cat) => cat.id === pkg.category_id) %>
+  
+        <a href="/package/<%= pkg.slug %>" class="p-4 flex justify-between items-center transition-all hover:bg-white/10">
+          <div class="flex gap-2 items-center">
+            <img src="<%= pkg.image ?? cc.cdn('public/assets/templates/KOPY/no-image.png') %>" class="size-16 object-cover rounded-lg" />
+            <div>
+              <p class="font-semibold line-clamp-1"><%= pkg.name %></p>
+              <p class="line-clamp-1 bg-primary/20 border border-primary w-fit px-1 py-0.5 rounded uppercase text-xs"><%= category.name %></p>
+            </div>
+          </div>
+  
+          <p class="text-green-400 font-bold"><%= pkg.price_display %></p>
+        </a>
+      <% }) %>
+    </div>
+  <% } %>
+<% } else { %>
+  <div>
+    <h3 class="bg-primary/20 border-2 border-primary w-fit py-2 px-4 rounded-md font-semibold">Buscando por: <%= cc.query.q %></h3>
+  
+    <div class="grid grid-cols-4 gap-6 mt-8">
+      <% cc.packages.data.forEach((package) => { %>
+        <%~ include('@components/package', { package, ...cc }) %>
+      <% }) %>
+    </div>
   </div>
-</div>
+<% } %>

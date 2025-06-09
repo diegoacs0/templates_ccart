@@ -37,7 +37,7 @@
       <!-- Page Numbers -->
       <% items.forEach((page) => { %>
         <a 
-          class="h-8 w-8 flex items-center justify-center border-y border-white/15 data-[current=true]:bg-primary data-[current=true]:text-white data-[disabled=true]:pointer-events-none"
+          class="h-8 w-8 flex items-center justify-center border-y border-white/15 data-[current=true]:bg-primary data-[disabled=true]:pointer-events-none"
           href="<%= cc.dist_url + `/category/${cc.category.slug}/?page=${page}` %>"
           data-current="<%= meta.current_page === page ? 'true' : 'false' %>"
           data-disabled="<%= page === '…' %>"

@@ -11,14 +11,14 @@
           "label": "Cor primária",
           "description": "A cor principal que aparece na loja.",
           "type": "color-picker",
-          "default": "#00a843"
+          "default": "#615afa"
         },
         {
           "key": "secondary-color",
           "label": "Cor secundária",
           "description": "A cor secundária aparece com menos frequência na loja.",
           "type": "color-picker",
-          "default": "#9205f5"
+          "default": "#7a42f1"
         },
         {
           "key": "headline",
@@ -65,8 +65,16 @@
             true,
             false
           ]
+        },
+        {
+          "key": "hero-banner",
+          "label": "Banner de apresentação",
+          "description": "Link do banner da loja.",
+          "type": "url",
+          "default": ""
         }
       ]
     }
-  ]
+  ],
+  "widgets": []
 }

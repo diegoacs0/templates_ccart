@@ -6,11 +6,13 @@
     <p class="text-xl font-bold pt-6 uppercase">PRODUTO EM DESTAQUE</p>
   <% } %>
 
-  <% if (cc.package.image) { %>
-    <img src="<%= cc.package.image %>" class="w-[165px] z-10" />
-  <% } else { %>
-    <img src="<%= cc.cdn_url %>/public/no-picture.png" class="w-[150px] z-10" />
-  <% } %>
+  <div class="z-10 cursor-pointer" onclick="showPackage(`<%= cc.package.slug %>`)">
+    <% if (cc.package.image) { %>
+      <img src="<%= cc.package.image %>" class="w-[165px]" />
+    <% } else { %>
+      <img src="<%= cc.cdn_url %>/public/no-picture.png" class="w-[150px]" />
+    <% } %>
+  </div>
 
   <div class="w-full rounded-lg font-['Poppins'] -mt-16 p-6 pt-16 <%= !cc.highlight ? 'bg-gradient-to-t from-[#1c212c] to-[#13161e]' : '' %>">
     <h1 class="mt-4 text-lg truncate font-semibold" title="<%= cc.package.name %>">
@@ -22,11 +24,12 @@
       <% if (cc.package.inventory_amount === null || cc.package.inventory_amount > 0) { %>
         <% const current_cart_item = cc.cart.packages.find((package) => package.meta.id === cc.package.id) %>
         <% const has_variables = cc.package.variables.length %>
-        
+        <% const has_variations = cc.package.variations.length %>
+
         <button 
           type="button" 
           id="<%= cc.package.id %>" 
-          data-func="<%= current_cart_item ? 'goto-cart' : has_variables ? 'open-selector' : 'add-to-cart' %>" 
+          data-func="<%= current_cart_item ? 'goto-cart' : has_variations ? 'show-package' : has_variables ? 'open-selector' : 'add-to-cart' %>" 
           data-slug="<%= cc.package.slug %>"
           class="btn-primary"
         >

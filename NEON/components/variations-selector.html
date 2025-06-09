@@ -1,0 +1,36 @@
+<% const variations = cc.package.parent?.variations ?? [] %>
+<% if (variations.length > 0) { %>
+  <div class="p-4">
+    <div class="mb-2">
+      <h4 class="font-semibold">Variações</h4>
+      <p class="text-sm text-muted-foreground">Selecione o produto desejado abaixo.</p>
+    </div>
+
+    <div class="mt-4 text-sm space-y-2">
+      <% variations.forEach((variation) => { %>
+        <% const is_selected = variation.id === cc.package.id %>
+        <button 
+          type="button"
+          data-variation-id="<%= variation.id %>"
+          data-variation-slug="<%= variation.slug %>"
+          class="w-full flex justify-between items-center p-3 gap-4 border rounded-md <%= is_selected ? 'bg-primary/10 border-primary' : 'hover:bg-muted/50' %>"
+          onclick="selectVariation(this)"
+        >
+          <div class="flex items-center gap-2">
+            <div class="w-2 h-2 rounded-full flex-shrink-0 <%= is_selected ? 'bg-primary' : 'bg-muted-foreground' %>"></div>
+            <div class="flex flex-col">
+              <span class="line-clamp-1 w-fit">
+                <%= variation.name %>
+              </span>
+
+              <span class="text-xs bg-primary/20 text-primary px-1.5 py-0.5 rounded w-fit">
+                <%= variation.inventory_amount === null ? '100+' : variation.inventory_amount %> em estoque
+              </span>
+            </div>
+          </div>
+          <span class="font-medium"><%= variation.price_display %></span>
+        </button>
+      <% }) %>
+    </div>
+  </div>
+<% } %>

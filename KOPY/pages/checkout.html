@@ -37,32 +37,65 @@
     </div>
 
     <div id="pix-display" class="mt-12 space-y-6 hidden">
+      <div class="relative w-full h-1 bg-muted rounded-full overflow-hidden">
+        <div class="absolute inset-y-0 w-24 bg-primary rounded-full animate-[loading_2s_ease-in-out_infinite]"></div>
+      </div>
+
+      <style>
+        @keyframes loading {
+          0% {
+            left: -30%;
+          }
+          100% {
+            left: 100%;
+          }
+        }
+      </style>
+
       <div class="relative">
-        <p class="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 px-2 bg-background font-medium">Concluir pagamento</p>
+        <p class="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 px-2 bg-background font-medium max-sm:text-sm whitespace-nowrap">Concluir pagamento</p>
         
-        <div class="border p-4 rounded-md pb-6">
+        <div class="border p-4 rounded-md">
           <h3 class="text-center max-w-56 mx-auto leading-5 text-muted-foreground text-sm">Use a câmera do seu celular para escanear o QR Code.</h3>
           <img id="pix-qr" class="mx-auto mt-2 size-[200px]" />
+
+          <div class="mt-8">
+            <div class="relative">
+              <div class="absolute inset-0 top-1/2 -translate-y-1/2 w-full h-[1px] bg-muted-foreground/10"></div>
+
+              <p class="text-sm text-muted-foreground text-center px-2 bg-background w-fit mx-auto relative z-10">
+                Ou use o copia e cola
+              </p>
+            </div>
+
+            <div class="flex gap-3 mt-2">
+              <input id="pix-cp" class="w-full flex-1 select-all" value="" readonly />
+              <button id="copy-pix" class="bg-primary px-4 h-9 text-sm rounded-md flex items-center gap-1.5 font-medium disabled:opacity-80">
+                <div class="icon-copy"></div>
+                <span class="font-semibold">Copiar</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div>
-        <p>Ou copie e cole o código abaixo:</p>
-        <div class="flex gap-3 mt-1">
-          <input id="pix-cp" class="w-full flex-1 select-all" value="" readonly />
-          <button id="copy-pix" class="bg-primary px-4 h-9 text-sm rounded-md flex items-center gap-1.5 font-medium disabled:opacity-80">
-            <div class="icon-copy"></div>
-            <span>Copiar</span>
-          </button>
-        </div>
-      </div>
+      <div class="relative bg-muted p-4 ps-6 rounded-md overflow-hidden border after:content-[''] after:absolute after:inset-0 after:border-s-4 after:border-primary after:w-full after:h-full">
+        <h3 class="font-bold text-lg leading-tight">Como pagar com PIX?</h3>
 
-      <div>
-        <p class="text-sm text-muted-foreground">Após realizar o pagamento clique em confimar pagamento para prosseguir.</p>
-        <a id="return-to" class="flex w-full gap-1.5 font-semibold bg-primary h-12 items-center justify-center rounded-md">
-          <div class="icon-circle-check text-xl font-medium"></div> 
-          Confirmar pagamento
-        </a>
+        <ul class="mt-4 space-y-2 text-sm text-muted-foreground">
+          <li class="flex gap-2 items-center">
+            <i class="icon-qr-code text-primary text-2xl"></i>
+            <p>Abra o aplicativo do seu banco e escaneie o QR Code acima.</p>
+          </li>
+          <li class="flex gap-2 items-center">
+            <i class="icon-copy text-primary text-2xl"></i>
+            <p>Copie o código Pix e cole no aplicativo do seu banco.</p>
+          </li>
+          <li class="flex gap-2 items-center">
+            <i class="icon-circle-check text-primary text-2xl"></i>
+            <p>Após o pagamento, o pedido será processado automaticamente.</p>
+          </li>
+        </ul>
       </div>
     </div>
 
@@ -72,9 +105,10 @@
         
         <div class="border p-4 rounded-md">
           <div class="grid grid-cols-1 sm:grid-cols-2 auto-rows-fr lg:flex gap-2">
-            <% cc.gateways.forEach((method) => { %>
+            <% cc.gateways.forEach((method, index) => { %>
               <% const use_dark = ['MERCADOPAGO'].includes(method.gateway) %>
               <button
+                <%= index === 0 ? 'data-selected=true' : '' %>
                 type="button"
                 data-gateway="<%= method.gateway %>"
                 data-require-document="<%= method.require_document %>"
@@ -123,7 +157,7 @@
           <input id="email" placeholder="Email" class="w-full" />
 
           <% if (cc.checkout_variables.length) { %>
-            <div id="checkout-variables" class="grid grid-cols-2 mt-4">
+            <div id="checkout-variables" class="gap-2 mt-4">
               <% cc.checkout_variables.forEach((checkout_variable) => { %>
                 <input 
                   id="<%= checkout_variable.name %>" 

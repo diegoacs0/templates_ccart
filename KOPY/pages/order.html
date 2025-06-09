@@ -106,29 +106,62 @@
                 <button 
                   data-modal-id="redeem-<%= package.id %>"
                   data-modal-title="<%= package.name %>"
-                  class="bg-primary px-4 h-8 text-sm rounded-md font-medium open-modal"
+                  class="btn-primary px-4 open-modal"
                 >
                   Resgatar
                 </button>
 
                 <div id="redeem-<%= package.id %>" class="hidden">
                   <div class="space-y-3">
-                    <% deliveries.map((delivery) => { %>
-                      <% const { value, type, render } = delivery %>
-                      
-                      <% if (type === 'LICENSE_KEY') { %>
-                        <div class="py-1 px-2 bg-primary/10 text-primary rounded border border-primary flex justify-between gap-1">
-                          <span class="font-medium"><%= value %></span>
-      
-                          <button class="text-right h-fit copy" value="<%= value %>">
-                            <i class="icon-copy font-normal"></i>
+                    <% const key_group = deliveries.filter((delivery) => delivery.type === 'LICENSE_KEY') %>
+                    <% const other_deliveries = deliveries.filter((delivery) => delivery.type !== 'LICENSE_KEY') %>
+
+                    <% if (key_group.length) {%>
+                      <div class="relative group">
+                        <div class="flex gap-2 justify-end absolute right-0 -top-10 translate-y-full opacity-0 
+                          group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300"
+                        >
+                          <button data-name="<%= package.name %>" class="btn-outline download-keys mb-4 h-7 w-7 p-0 text-sm">
+                            <i class="icon-download font-normal"></i>
+                          </button>
+
+                          <button class="btn-outline copy-all h-7 mb-4 text-xs">
+                            <i class="icon-copy font-normal me-1"></i> Copiar tudo
                           </button>
                         </div>
-                      <% } %>
 
+                        <div class="divide-y bg-background divide-primary border border-primary rounded-md relative">
+                          <% key_group.map((delivery) => { %>
+                            <div class="py-1 px-2 bg-primary/10 text-primary flex justify-between gap-1 m-0 first:rounded-t-md last:rounded-b-md">
+                              <span class="font-medium license-key"><%= delivery.value %></span>
+          
+                              <button class="text-right h-fit copy" value="<%= delivery.value %>">
+                                <i class="icon-copy font-normal"></i>
+                              </button>
+                            </div>
+                          <% }) %>
+                        </div>
+                      </div>
+                    <% } %>
+                    
+
+                    <% other_deliveries.map((delivery) => { %>
+                      <% const { value, type, render } = delivery %>
+                      
                       <% if (type === 'CONTENT') { %>
                         <div class="<%= render ? 'centralcart-email-viewer' : 'centralcart-content p-4 bg-muted border rounded' %>">
                           <%~ value %>
+                        </div>
+                      <% } %>
+
+                      <% if (type === 'DOWNLOAD') { %>
+                        <div class="p-4 bg-muted border rounded flex justify-between items-center">
+                          <div>
+                            <p class="font-bold"><%= value.name %></p>
+                            <p class="text-sm text-muted-foreground">Tamanho: <span class="font-semibold text-foreground"><%= value.size %></span></p>
+                          </div>
+
+                          <a href="<%= value.download_url %>" class="bg-primary flex items-center px-4 h-8 text-sm rounded-md font-medium">Baixar</a>
                         </div>
                       <% } %>
                     <% }) %>
@@ -149,8 +182,8 @@
         </p>
       </div>
 
-      <a href="/" class="mt-auto flex items-center justify-center bg-primary gap-1 h-9 rounded-md font-medium">
-        <i class="icon-house text-lg"></i> 
+      <a href="/" class="mt-auto btn-primary h-10 text-base">
+        <i class="icon-house text-lg me-1"></i> 
         Voltar ao início
       </a>
     </section>
@@ -246,7 +279,7 @@
         <h2 id="modal-title" class="text-xl font-bold mb-4"></h2>
         <p id="modal-content" class="mb-6"></p>
         <div class="flex justify-end">
-          <button id="close-modal" class="bg-primary px-4 h-9 text-sm rounded-md font-medium">
+          <button id="close-modal" class="btn-primary px-4 h-9 text-sm rounded-md">
             Fechar
           </button>
         </div>
@@ -353,6 +386,34 @@
       }, 3000)
 
       navigator.clipboard.writeText($(this).val())
+    })
+
+    const license_keys = $('.license-key').map(function () {
+      return $(this).text()
+    }).get()
+    const keys_text = license_keys.join('\n')
+
+    $(document).on('click', '.copy-all', function () {
+      $(this).attr('disabled', '1')
+      $(this).find('i').removeClass('icon-copy').addClass('icon-check')
+
+      setTimeout(() => {
+        $(this).removeAttr('disabled')
+        $(this).find('i').addClass('icon-copy').removeClass('icon-check')
+      }, 3000)
+
+      navigator.clipboard.writeText(keys_text)
+    })
+
+    $(document).on('click', '.download-keys', function () {
+      const name = $(this).attr('data-name')
+      const blob = new Blob([keys_text], { type: 'text/plain' })
+
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${license_keys.length}x - ${name}.txt`
+      a.click()
     })
   </script>
 <% } else { %>

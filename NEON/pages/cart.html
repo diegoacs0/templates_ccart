@@ -117,7 +117,7 @@
 
 <div class="modal micromodal-slide" id="checkout-modal" aria-hidden="true">
   <div class="modal__overlay" tabindex="-1" data-micromodal-close>
-    <div id="package-modal-container" class="modal__container w-[400px] rounded-lg bg-accent" role="dialog" aria-modal="true">
+    <div class="modal__container w-[400px] rounded-lg bg-accent" role="dialog" aria-modal="true">
       <div class="border-b p-4">
         <h5 class="text-xl font-semibold">Finalizar pedido</h5>
         <button
@@ -144,7 +144,7 @@
 
         <form class="space-y-4 text-sm">
           <% if (cc.cart.require_discord) { %>
-            <div class="cc__checkout___form_field flex flex-col space-y-1">
+            <div class="cc__checkout___form_field flex flex-col space-y-1 <%= cc.cart.discord_optional ? 'not-required' : '' %>">
               <label for="discord">Discord</label>
               <button class="btn-primary text-white bg-[#5865f2] hover:bg-[#4c57d1] w-full discord">
                 <i class="fa-brands fa-discord me-1"></i>
@@ -221,7 +221,7 @@
             />
 
             <label for="terms">Eu aceito os 
-              <a id="terms-form" data-micromodal-trigger="terms-modal" class="font-bold text-primary cursor-pointer">
+              <a id="terms-form" data-micromodal-trigger="terms-modal" class="font-bold text-primary cursor-pointer" onclick="event.preventDefault()">
                 Termos de Pagamento
               </a>
             </label>
@@ -239,7 +239,7 @@
 
 <div class="modal micromodal-slide" id="pix-modal" aria-hidden="true">
   <div class="modal__overlay" tabindex="-1" data-micromodal-close>
-    <div id="package-modal-container" class="modal__container w-[400px] rounded-lg bg-accent" role="dialog" aria-modal="true">
+    <div class="modal__container w-[400px] rounded-lg bg-accent" role="dialog" aria-modal="true">
       <div class="border-b p-4">
         <h5 class="text-xl font-semibold">Você está quase lá!</h5>
         <button
@@ -271,7 +271,7 @@
 
 <div class="modal micromodal-slide" id="terms-modal" aria-hidden="true">
   <div class="modal__overlay" tabindex="-1" data-micromodal-close>
-    <div id="package-modal-container" class="modal__container w-[400px] rounded-lg bg-accent" role="dialog" aria-modal="true">
+    <div class="modal__container w-[400px] rounded-lg bg-accent" role="dialog" aria-modal="true">
       <div class="border-b p-4">
         <h5 class="text-xl font-semibold">Leia os termos!</h5>
         <button

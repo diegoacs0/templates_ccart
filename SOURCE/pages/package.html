@@ -12,11 +12,9 @@
   </div>
 
   <div class="p-4 flex items-start gap-4">
-    <% if (cc.package.image) { %>
-      <img src="<%= cc.package.image %>" class="rounded-md max-w-[196px] object-contain hidden md:block">
-    <% } %>
+    <img src="<%= cc.package.image ? cc.package.image : cc.cdn('public/no-picture.png') %>" class="rounded-md max-w-[196px] object-contain hidden md:block">
 
-    <div>
+    <div class="w-full">
       <h3 class="text-sky-950 font-extrabold text-2xl uppercase <%= cc.package.image ? 'mt-2' : 'mt-0' %> dark:text-neutral-300">
         <%= cc.package.name %>
       </h3>
@@ -27,6 +25,8 @@
       </div>
 
       <div class="centralcart-content mt-4">
+        <%~ include('@components/variations-selector', cc) %>
+
         <% if (cc.package.description) { %>
           <%~ cc.package.description %>
         <% } %>

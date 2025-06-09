@@ -35,8 +35,8 @@ function hexToHSL(hex) {
   <head>
     <style>
       :root {
-        --primary: <%= hexToHSL(cc.theme.primary_color) %>;
-        --secondary: <%= hexToHSL(cc.theme.secondary_color) %>;
+        --primary: <%= hexToHSL(cc.config('primary-color')) %>;
+        --secondary: <%= hexToHSL(cc.config('secondary-color')) %>;
         --background: 223 25% 11%;
         --foreground: 0 0% 98%;
         --border: 223 25% 18%;
@@ -44,6 +44,8 @@ function hexToHSL(hex) {
         --muted-foreground: 240 5% 65%;
         --accent: 221 22% 14%;
         --accent-foreground: 240 5% 65%;
+
+        --primary-hue: calc(<%= hexToHSL(cc.theme.primary_color).split(' ')[0] %> + 30) 100% 70%;
       }
     </style>
 
@@ -105,7 +107,8 @@ function hexToHSL(hex) {
               muted: 'hsl(var(--muted))',
               'muted-foreground': 'hsl(var(--muted-foreground))',
               accent: 'hsl(var(--accent))',
-              'accent-foreground': 'hsl(var(--accent-foreground))'
+              'accent-foreground': 'hsl(var(--accent-foreground))',
+              'primary-hue': 'hsl(var(--primary-hue))'
             }
           },
           container: {
@@ -276,7 +279,7 @@ function hexToHSL(hex) {
   <script type="text/javascript">
     const dist_url = '<%= cc.dist_url %>'
   </script>
-  <script type="text/javascript" src="https://unpkg.com/micromodal/dist/micromodal.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/micromodal/dist/micromodal.min.js"></script>
   <script src="<%= cc.cdn_url %>/public/assets/js/CentralCart.js?v=<%= Math.floor(Date.now() / 60_000) %>" type="module"></script>
   <script src="<%= cc.dist_url %>/assets/scripts.js"></script>
 

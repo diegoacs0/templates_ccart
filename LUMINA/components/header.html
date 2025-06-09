@@ -1,3 +1,10 @@
+<% const top_announce = cc.config('top-announce').replace(/\[(.*?)\]/g, '<span class="font-semibold text-brand bg-white px-1.5 py-0.5">$1</span>') %>
+<% if (top_announce) { %>
+  <a class="w-full bg-brand p-3 flex items-center justify-center gap-3 relative z-10">
+    <p class="font-medium"><%~ top_announce %></p>
+  </a>
+<% } %>
+
 <header class="
   w-full h-72 bg-muted inline-flex bg-center
   bg-[url(<%= cc.theme.background ? cc.theme.background : cc.cdn_url + '/public/assets/templates/LUMINA/image-background.svg' %>)] bg-cover bg-no-repeat object-cover

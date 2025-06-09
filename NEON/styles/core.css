@@ -31,7 +31,7 @@
   pointer-events: none;
 }
 
-.cc__checkout___form_field label::after {
+.cc__checkout___form_field:not(.not-required) label::after {
   content: '*';
   color: red;
   margin-left: 4px;
